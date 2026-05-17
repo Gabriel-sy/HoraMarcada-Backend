@@ -35,4 +35,40 @@ Dependency flow: `Api` → `Infrastructure` + `Application` → `Domain`.
 
 ## Configuration
 
-`appsettings.Development.json` includes a placeholder `ConnectionStrings:Supabase` for future PostgreSQL (Supabase) integration. JWT, Hangfire, and EF Core are referenced but not wired in the foundation change.
+### Supabase / PostgreSQL
+
+The API uses Entity Framework Core with PostgreSQL via `ConnectionStrings:Supabase`.
+
+**Local development** — set the connection string in `src/Marque.Api/appsettings.Development.json`, or override with user secrets:
+
+```bash
+dotnet user-secrets set "ConnectionStrings:Supabase" "Host=...;Port=5432;Database=...;Username=...;Password=..." --project src/Marque.Api
+```
+
+For Supabase, copy the connection string from **Project Settings → Database**. Use the **direct** connection (port 5432) for `dotnet ef database update`; the pooler URL is fine for API runtime.
+
+Environment variable override: `ConnectionStrings__Supabase`.
+
+### EF Core migrations
+
+Requires [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) and the EF CLI:
+
+```bash
+dotnet tool install --global dotnet-ef --version 8.0.11
+```
+
+Create a new migration:
+
+```bash
+dotnet ef migrations add <Name> --project src/Marque.Infrastructure --startup-project src/Marque.Api
+```
+
+Apply migrations to the database:
+
+```bash
+dotnet ef database update --project src/Marque.Infrastructure --startup-project src/Marque.Api
+```
+
+After applying schema migrations, run `scripts/supabase-rls.sql` manually in the Supabase SQL editor to enable Row Level Security policies (not managed by EF).
+
+JWT and Hangfire are referenced but not wired yet.
