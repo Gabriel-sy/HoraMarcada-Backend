@@ -65,4 +65,23 @@ public sealed class Appointment
             CreatedAt = DateTimeOffset.UtcNow
         };
     }
+
+    public void Cancel()
+    {
+        if (Status == AppointmentStatus.Completed)
+            throw new DomainValidationException("Cannot cancel a completed appointment.");
+        Status = AppointmentStatus.Canceled;
+    }
+
+    public void Complete()
+    {
+        if (Status == AppointmentStatus.Canceled)
+            throw new DomainValidationException("Cannot complete a canceled appointment.");
+        Status = AppointmentStatus.Completed;
+    }
+
+    public void MarkCancelTokenUsed()
+    {
+        CancelTokenUsed = true;
+    }
 }

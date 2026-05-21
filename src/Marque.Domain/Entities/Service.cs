@@ -53,4 +53,28 @@ public sealed class Service
 
         _professionalIds.Add(professionalId);
     }
+
+    public void Deactivate()
+    {
+        Active = false;
+    }
+
+    public void Update(string name, short durationMinutes, decimal? price, bool active)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new DomainValidationException("Service name is required.");
+
+        if (durationMinutes <= 0)
+            throw new DomainValidationException("Service duration must be greater than zero.");
+
+        Name = name.Trim();
+        DurationMinutes = durationMinutes;
+        Price = Money.CreateOptional(price);
+        Active = active;
+    }
+
+    public void ClearProfessionals()
+    {
+        _professionalIds.Clear();
+    }
 }

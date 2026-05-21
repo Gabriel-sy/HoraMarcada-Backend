@@ -1,5 +1,7 @@
-## Requirements
+## Purpose
 
+Defines the domain model entities, aggregates, and value objects for the Marque backend.
+## Requirements
 ### Requirement: Store aggregate root
 
 The domain model SHALL include a `Store` entity with: unique identifier, owning `UserId`, `Name`, `Slug`, optional `LogoUrl`, optional `Address` with optional latitude/longitude, required business `WhatsApp`, `Active` flag, and `CreatedAt`.
@@ -81,3 +83,42 @@ The Application layer SHALL define repository interfaces for persisting and load
 
 - **WHEN** listing package and project references on `Marque.Domain`
 - **THEN** only BCL/analyzer dependencies are present
+
+### Requirement: Appointment state transitions in domain
+
+The `Appointment` entity SHALL expose domain methods to cancel, complete, and mark cancel token used. Transitions SHALL enforce valid state (e.g. cannot cancel an already completed appointment).
+
+#### Scenario: Cancel confirmed appointment
+
+- **WHEN** `Cancel()` is invoked on a confirmed appointment
+- **THEN** status becomes `Canceled`
+
+#### Scenario: Cannot cancel completed appointment
+
+- **WHEN** `Cancel()` is invoked on a completed appointment
+- **THEN** a domain validation error is thrown
+
+#### Scenario: Complete confirmed appointment
+
+- **WHEN** `Complete()` is invoked on a confirmed appointment
+- **THEN** status becomes `Completed`
+
+#### Scenario: Mark cancel token used
+
+- **WHEN** `MarkCancelTokenUsed()` is invoked after a successful token cancellation
+- **THEN** `CancelTokenUsed` is true
+
+### Requirement: Soft deactivation for professional and service
+
+`Professional` and `Service` entities SHALL support deactivation via domain methods setting `Active` to false without deleting the record.
+
+#### Scenario: Deactivate professional
+
+- **WHEN** `Deactivate()` is called on an active professional
+- **THEN** `Active` is false
+
+#### Scenario: Deactivate service
+
+- **WHEN** `Deactivate()` is called on an active service
+- **THEN** `Active` is false
+

@@ -9,4 +9,6 @@ public interface IServiceRepository
     Task<IReadOnlyList<Service>> ListByStoreIdAsync(Guid storeId, CancellationToken cancellationToken = default);
 
     Task AddAsync(Service service, CancellationToken cancellationToken = default);
+
+    Task UpdateAsync(Service service, CancellationToken cancellationToken = default);
 }

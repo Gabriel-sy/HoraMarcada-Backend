@@ -57,4 +57,24 @@ public sealed class Professional
         _weeklyHours.Add(hours);
         return hours;
     }
+
+    public void Deactivate()
+    {
+        Active = false;
+    }
+
+    public void Update(string name, string? photoUrl, string? whatsApp)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new DomainValidationException("Professional name is required.");
+
+        Name = name.Trim();
+        PhotoUrl = string.IsNullOrWhiteSpace(photoUrl) ? null : photoUrl.Trim();
+        WhatsApp = PhoneNumber.CreateOptional(whatsApp);
+    }
+
+    public void ClearWeeklyHours()
+    {
+        _weeklyHours.Clear();
+    }
 }

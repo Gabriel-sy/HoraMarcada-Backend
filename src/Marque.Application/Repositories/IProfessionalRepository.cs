@@ -9,4 +9,6 @@ public interface IProfessionalRepository
     Task<IReadOnlyList<Professional>> ListByStoreIdAsync(Guid storeId, CancellationToken cancellationToken = default);
 
     Task AddAsync(Professional professional, CancellationToken cancellationToken = default);
+
+    Task UpdateAsync(Professional professional, CancellationToken cancellationToken = default);
 }

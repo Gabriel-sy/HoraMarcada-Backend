@@ -80,4 +80,27 @@ public sealed class Store
         _services.Add(service);
         return service;
     }
+
+    public void Update(
+        string name,
+        string slug,
+        string whatsApp,
+        string? logoUrl,
+        string? address,
+        decimal? addressLat,
+        decimal? addressLng,
+        bool active)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new DomainValidationException("Store name is required.");
+
+        Name = name.Trim();
+        Slug = Slug.Create(slug);
+        WhatsApp = PhoneNumber.Create(whatsApp);
+        LogoUrl = string.IsNullOrWhiteSpace(logoUrl) ? null : logoUrl.Trim();
+        Address = string.IsNullOrWhiteSpace(address) ? null : address.Trim();
+        AddressLat = addressLat;
+        AddressLng = addressLng;
+        Active = active;
+    }
 }

@@ -18,6 +18,7 @@ internal sealed class EfProfessionalRepository(MarqueDbContext context) : IProfe
         CancellationToken cancellationToken = default)
     {
         return await context.Professionals
+            .Include(p => p.WeeklySchedules)
             .Where(p => p.StoreId == storeId)
             .ToListAsync(cancellationToken);
     }
@@ -25,6 +26,12 @@ internal sealed class EfProfessionalRepository(MarqueDbContext context) : IProfe
     public async Task AddAsync(Professional professional, CancellationToken cancellationToken = default)
     {
         await context.Professionals.AddAsync(professional, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task UpdateAsync(Professional professional, CancellationToken cancellationToken = default)
+    {
+        context.Professionals.Update(professional);
         await context.SaveChangesAsync(cancellationToken);
     }
 }

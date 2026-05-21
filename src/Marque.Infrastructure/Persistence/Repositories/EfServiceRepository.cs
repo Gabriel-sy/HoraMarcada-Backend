@@ -65,6 +65,31 @@ internal sealed class EfServiceRepository(MarqueDbContext context) : IServiceRep
         await context.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task UpdateAsync(Service service, CancellationToken cancellationToken = default)
+    {
+        context.Services.Update(service);
+
+        // Update professional associations
+        var existingAssociations = await context.ServiceProfessionals
+            .Where(sp => sp.ServiceId == service.Id)
+            .ToListAsync(cancellationToken);
+
+        context.ServiceProfessionals.RemoveRange(existingAssociations);
+
+        foreach (var professionalId in service.ProfessionalIds)
+        {
+            await context.ServiceProfessionals.AddAsync(
+                new ServiceProfessional
+                {
+                    ServiceId = service.Id,
+                    ProfessionalId = professionalId
+                },
+                cancellationToken);
+        }
+
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
     private async Task LoadProfessionalIdsAsync(Service service, CancellationToken cancellationToken)
     {
         var professionalIds = await context.ServiceProfessionals
