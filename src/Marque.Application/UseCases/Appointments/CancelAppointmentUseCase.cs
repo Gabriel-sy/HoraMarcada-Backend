@@ -1,4 +1,5 @@
 using Marque.Application.Exceptions;
+using Marque.Application.Models;
 using Marque.Application.Policies;
 using Marque.Application.Repositories;
 
@@ -8,14 +9,14 @@ public class CancelAppointmentUseCase(
     IAppointmentRepository appointmentRepository,
     IStoreOwnershipPolicy ownershipPolicy)
 {
-    public async Task ExecuteAsync(Guid userId, Guid storeId, Guid appointmentId, CancellationToken cancellationToken = default)
+    public async Task ExecuteAsync(Guid appointmentId, CancelAppointmentInput input, CancellationToken cancellationToken = default)
     {
-        await ownershipPolicy.EnsureUserOwnsStoreAsync(userId, storeId, cancellationToken);
+        await ownershipPolicy.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, cancellationToken);
 
         var appointment = await appointmentRepository.GetByIdAsync(appointmentId, cancellationToken);
-        if (appointment == null || appointment.StoreId != storeId)
+        if (appointment == null || appointment.StoreId != input.StoreId)
         {
-            throw new NotFoundException($"Appointment with ID {appointmentId} not found in store {storeId}.");
+            throw new NotFoundException($"Appointment with ID {appointmentId} not found in store {input.StoreId}.");
         }
 
         appointment.Cancel();

@@ -3,6 +3,7 @@ using Xunit;
 using Marque.Application.UseCases.Appointments;
 using Marque.Application.Repositories;
 using Marque.Application.Policies;
+using Marque.Application.Models;
 using Marque.Domain.Entities;
 
 namespace Marque.UnitTests.UseCases.Appointments;
@@ -31,13 +32,14 @@ public class ListAppointmentsUseCaseTests
         var storeId = Guid.NewGuid();
         var start = DateTimeOffset.UtcNow;
         var end = DateTimeOffset.UtcNow.AddDays(1);
+        var input = new ListAppointmentsInput(userId, storeId, start, end);
 
         _ownershipPolicyMock
             .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
             .ThrowsAsync(new UnauthorizedAccessException("User does not own store."));
 
         // Act & Assert
-        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _useCase.ExecuteAsync(userId, storeId, start, end));
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _useCase.ExecuteAsync(input));
         
         _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()), Times.Once);
         _appointmentRepositoryMock.Verify(r => r.ListByStoreAsync(It.IsAny<Guid>(), It.IsAny<DateTimeOffset>(), It.IsAny<DateTimeOffset>(), It.IsAny<Guid?>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -52,6 +54,7 @@ public class ListAppointmentsUseCaseTests
         var start = DateTimeOffset.UtcNow;
         var end = DateTimeOffset.UtcNow.AddDays(1);
         var professionalId = Guid.NewGuid();
+        var input = new ListAppointmentsInput(userId, storeId, start, end, professionalId);
 
         _ownershipPolicyMock
             .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
@@ -84,7 +87,7 @@ public class ListAppointmentsUseCaseTests
             .ReturnsAsync(list);
 
         // Act
-        var result = await _useCase.ExecuteAsync(userId, storeId, start, end, professionalId);
+        var result = await _useCase.ExecuteAsync(input);
 
         // Assert
         Assert.NotNull(result);

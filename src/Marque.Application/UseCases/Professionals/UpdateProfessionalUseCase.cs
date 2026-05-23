@@ -10,14 +10,14 @@ public class UpdateProfessionalUseCase(
     IProfessionalRepository professionalRepository,
     IStoreOwnershipPolicy ownershipPolicy)
 {
-    public async Task<Professional> ExecuteAsync(UpdateProfessionalInput input, CancellationToken cancellationToken = default)
+    public async Task<Professional> ExecuteAsync(Guid storeId, Guid professionalId, UpdateProfessionalInput input, CancellationToken cancellationToken = default)
     {
-        await ownershipPolicy.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, cancellationToken);
+        await ownershipPolicy.EnsureUserOwnsStoreAsync(input.UserId, storeId, cancellationToken);
 
-        var professional = await professionalRepository.GetByIdAsync(input.ProfessionalId, cancellationToken);
-        if (professional == null || professional.StoreId != input.StoreId)
+        var professional = await professionalRepository.GetByIdAsync(professionalId, cancellationToken);
+        if (professional == null || professional.StoreId != storeId)
         {
-            throw new NotFoundException($"Professional with ID {input.ProfessionalId} not found in store {input.StoreId}.");
+            throw new NotFoundException($"Professional with ID {professionalId} not found in store {storeId}.");
         }
 
         professional.Update(input.Name, input.PhotoUrl, input.WhatsApp);

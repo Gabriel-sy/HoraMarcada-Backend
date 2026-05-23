@@ -11,24 +11,24 @@ public class AddServiceUseCase(
     IProfessionalRepository professionalRepository,
     IStoreOwnershipPolicy ownershipPolicy)
 {
-    public async Task<Service> ExecuteAsync(AddServiceInput input, CancellationToken cancellationToken = default)
+    public async Task<Service> ExecuteAsync(Guid storeId, AddServiceInput input, CancellationToken cancellationToken = default)
     {
-        await ownershipPolicy.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, cancellationToken);
+        await ownershipPolicy.EnsureUserOwnsStoreAsync(input.UserId, storeId, cancellationToken);
 
         if (input.ProfessionalIds != null && input.ProfessionalIds.Count > 0)
         {
             foreach (var profId in input.ProfessionalIds)
             {
                 var professional = await professionalRepository.GetByIdAsync(profId, cancellationToken);
-                if (professional == null || professional.StoreId != input.StoreId)
+                if (professional == null || professional.StoreId != storeId)
                 {
-                    throw new DomainValidationException($"Professional {profId} does not belong to store {input.StoreId}.");
+                    throw new DomainValidationException($"Professional {profId} does not belong to store {storeId}.");
                 }
             }
         }
 
         var service = Service.Create(
-            input.StoreId,
+            storeId,
             input.Name,
             input.DurationMinutes,
             input.Price);

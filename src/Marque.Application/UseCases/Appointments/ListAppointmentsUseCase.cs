@@ -1,3 +1,4 @@
+using Marque.Application.Models;
 using Marque.Application.Policies;
 using Marque.Application.Repositories;
 using Marque.Domain.Entities;
@@ -9,16 +10,12 @@ public class ListAppointmentsUseCase(
     IStoreOwnershipPolicy ownershipPolicy)
 {
     public async Task<IReadOnlyList<Appointment>> ExecuteAsync(
-        Guid userId,
-        Guid storeId,
-        DateTimeOffset start,
-        DateTimeOffset end,
-        Guid? professionalId = null,
+        ListAppointmentsInput input,
         CancellationToken cancellationToken = default)
     {
-        await ownershipPolicy.EnsureUserOwnsStoreAsync(userId, storeId, cancellationToken);
+        await ownershipPolicy.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, cancellationToken);
 
-        var list = await appointmentRepository.ListByStoreAsync(storeId, start, end, professionalId, cancellationToken);
+        var list = await appointmentRepository.ListByStoreAsync(input.StoreId, input.Start, input.End, input.ProfessionalId, cancellationToken);
         return list.OrderBy(a => a.StartTime).ToList();
     }
 }

@@ -27,21 +27,21 @@ public class UpdateStoreUseCaseTests
     public async Task ExecuteAsync_WhenOwnershipPolicyFails_ShouldPropagateException()
     {
         // Arrange
+        var storeId = Guid.NewGuid();
         var input = new UpdateStoreInput(
             UserId: Guid.NewGuid(),
-            StoreId: Guid.NewGuid(),
             Name: "Updated Name",
             Slug: "updated-slug",
             WhatsApp: "+5511999999999"
         );
 
         _ownershipPolicyMock
-            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, It.IsAny<CancellationToken>()))
+            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()))
             .ThrowsAsync(new UnauthorizedAccessException("User does not own store."));
 
         // Act & Assert
-        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _useCase.ExecuteAsync(input));
-        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, It.IsAny<CancellationToken>()), Times.Once);
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _useCase.ExecuteAsync(storeId, input));
+        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()), Times.Once);
         _storeRepositoryMock.Verify(r => r.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never);
         _storeRepositoryMock.Verify(r => r.GetBySlugAsync(It.IsAny<Slug>(), It.IsAny<CancellationToken>()), Times.Never);
         _storeRepositoryMock.Verify(r => r.UpdateAsync(It.IsAny<Store>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -51,26 +51,26 @@ public class UpdateStoreUseCaseTests
     public async Task ExecuteAsync_WhenStoreDoesNotExist_ShouldThrowNotFoundException()
     {
         // Arrange
+        var storeId = Guid.NewGuid();
         var input = new UpdateStoreInput(
             UserId: Guid.NewGuid(),
-            StoreId: Guid.NewGuid(),
             Name: "Updated Name",
             Slug: "updated-slug",
             WhatsApp: "+5511999999999"
         );
 
         _ownershipPolicyMock
-            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, It.IsAny<CancellationToken>()))
+            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         _storeRepositoryMock
-            .Setup(r => r.GetByIdAsync(input.StoreId, It.IsAny<CancellationToken>()))
+            .Setup(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((Store?)null);
 
         // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => _useCase.ExecuteAsync(input));
-        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, It.IsAny<CancellationToken>()), Times.Once);
-        _storeRepositoryMock.Verify(r => r.GetByIdAsync(input.StoreId, It.IsAny<CancellationToken>()), Times.Once);
+        await Assert.ThrowsAsync<NotFoundException>(() => _useCase.ExecuteAsync(storeId, input));
+        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()), Times.Once);
+        _storeRepositoryMock.Verify(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>()), Times.Once);
         _storeRepositoryMock.Verify(r => r.GetBySlugAsync(It.IsAny<Slug>(), It.IsAny<CancellationToken>()), Times.Never);
         _storeRepositoryMock.Verify(r => r.UpdateAsync(It.IsAny<Store>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -85,7 +85,6 @@ public class UpdateStoreUseCaseTests
 
         var input = new UpdateStoreInput(
             UserId: userId,
-            StoreId: storeId,
             Name: "Updated Name",
             Slug: "new-slug",
             WhatsApp: "+5511999999999"
@@ -100,11 +99,11 @@ public class UpdateStoreUseCaseTests
         idField?.SetValue(conflictingStore, anotherStoreId);
 
         _ownershipPolicyMock
-            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, It.IsAny<CancellationToken>()))
+            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         _storeRepositoryMock
-            .Setup(r => r.GetByIdAsync(input.StoreId, It.IsAny<CancellationToken>()))
+            .Setup(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingStore);
 
         _storeRepositoryMock
@@ -112,9 +111,9 @@ public class UpdateStoreUseCaseTests
             .ReturnsAsync(conflictingStore);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ConflictException>(() => _useCase.ExecuteAsync(input));
-        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, It.IsAny<CancellationToken>()), Times.Once);
-        _storeRepositoryMock.Verify(r => r.GetByIdAsync(input.StoreId, It.IsAny<CancellationToken>()), Times.Once);
+        await Assert.ThrowsAsync<ConflictException>(() => _useCase.ExecuteAsync(storeId, input));
+        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()), Times.Once);
+        _storeRepositoryMock.Verify(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>()), Times.Once);
         _storeRepositoryMock.Verify(r => r.GetBySlugAsync(It.Is<Slug>(s => s.Value == input.Slug), It.IsAny<CancellationToken>()), Times.Once);
         _storeRepositoryMock.Verify(r => r.UpdateAsync(It.IsAny<Store>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -128,7 +127,6 @@ public class UpdateStoreUseCaseTests
 
         var input = new UpdateStoreInput(
             UserId: userId,
-            StoreId: storeId,
             Name: "Updated Name",
             Slug: "new-slug",
             WhatsApp: "+5511999999999",
@@ -143,11 +141,11 @@ public class UpdateStoreUseCaseTests
         idField?.SetValue(existingStore, storeId);
 
         _ownershipPolicyMock
-            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, It.IsAny<CancellationToken>()))
+            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         _storeRepositoryMock
-            .Setup(r => r.GetByIdAsync(input.StoreId, It.IsAny<CancellationToken>()))
+            .Setup(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingStore);
 
         _storeRepositoryMock
@@ -155,7 +153,7 @@ public class UpdateStoreUseCaseTests
             .ReturnsAsync((Store?)null);
 
         // Act
-        var result = await _useCase.ExecuteAsync(input);
+        var result = await _useCase.ExecuteAsync(storeId, input);
 
         // Assert
         Assert.NotNull(result);
@@ -167,8 +165,8 @@ public class UpdateStoreUseCaseTests
         Assert.Equal(input.AddressLat, result.AddressLat);
         Assert.Equal(input.AddressLng, result.AddressLng);
 
-        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, It.IsAny<CancellationToken>()), Times.Once);
-        _storeRepositoryMock.Verify(r => r.GetByIdAsync(input.StoreId, It.IsAny<CancellationToken>()), Times.Once);
+        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()), Times.Once);
+        _storeRepositoryMock.Verify(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>()), Times.Once);
         _storeRepositoryMock.Verify(r => r.GetBySlugAsync(It.Is<Slug>(s => s.Value == input.Slug), It.IsAny<CancellationToken>()), Times.Once);
         _storeRepositoryMock.Verify(r => r.UpdateAsync(existingStore, It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -182,7 +180,6 @@ public class UpdateStoreUseCaseTests
 
         var input = new UpdateStoreInput(
             UserId: userId,
-            StoreId: storeId,
             Name: "Updated Name",
             Slug: "same-slug",
             WhatsApp: "+5511999999999"
@@ -193,15 +190,15 @@ public class UpdateStoreUseCaseTests
         idField?.SetValue(existingStore, storeId);
 
         _ownershipPolicyMock
-            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, It.IsAny<CancellationToken>()))
+            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         _storeRepositoryMock
-            .Setup(r => r.GetByIdAsync(input.StoreId, It.IsAny<CancellationToken>()))
+            .Setup(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingStore);
 
         // Act
-        var result = await _useCase.ExecuteAsync(input);
+        var result = await _useCase.ExecuteAsync(storeId, input);
 
         // Assert
         Assert.NotNull(result);
@@ -209,8 +206,8 @@ public class UpdateStoreUseCaseTests
         Assert.Equal(input.Slug, result.Slug.Value);
         Assert.Equal(input.WhatsApp, result.WhatsApp.Value);
 
-        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, It.IsAny<CancellationToken>()), Times.Once);
-        _storeRepositoryMock.Verify(r => r.GetByIdAsync(input.StoreId, It.IsAny<CancellationToken>()), Times.Once);
+        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()), Times.Once);
+        _storeRepositoryMock.Verify(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>()), Times.Once);
         _storeRepositoryMock.Verify(r => r.GetBySlugAsync(It.IsAny<Slug>(), It.IsAny<CancellationToken>()), Times.Never);
         _storeRepositoryMock.Verify(r => r.UpdateAsync(existingStore, It.IsAny<CancellationToken>()), Times.Once);
     }

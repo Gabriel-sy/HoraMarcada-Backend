@@ -31,18 +31,18 @@ public class UpdateProfessionalUseCaseTests
         // Arrange
         var input = new UpdateProfessionalInput(
             UserId: Guid.NewGuid(),
-            StoreId: Guid.NewGuid(),
-            ProfessionalId: Guid.NewGuid(),
             Name: "Jane Doe"
         );
+        var storeId = Guid.NewGuid();
+        var professionalId = Guid.NewGuid();
 
         _ownershipPolicyMock
-            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, It.IsAny<CancellationToken>()))
+            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()))
             .ThrowsAsync(new UnauthorizedAccessException("User does not own store."));
 
         // Act & Assert
-        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _useCase.ExecuteAsync(input));
-        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, It.IsAny<CancellationToken>()), Times.Once);
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _useCase.ExecuteAsync(storeId, professionalId, input));
+        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()), Times.Once);
         _professionalRepositoryMock.Verify(r => r.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never);
         _professionalRepositoryMock.Verify(r => r.UpdateAsync(It.IsAny<Professional>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -53,23 +53,23 @@ public class UpdateProfessionalUseCaseTests
         // Arrange
         var input = new UpdateProfessionalInput(
             UserId: Guid.NewGuid(),
-            StoreId: Guid.NewGuid(),
-            ProfessionalId: Guid.NewGuid(),
             Name: "Jane Doe"
         );
+        var storeId = Guid.NewGuid();
+        var professionalId = Guid.NewGuid();
 
         _ownershipPolicyMock
-            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, It.IsAny<CancellationToken>()))
+            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         _professionalRepositoryMock
-            .Setup(r => r.GetByIdAsync(input.ProfessionalId, It.IsAny<CancellationToken>()))
+            .Setup(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((Professional?)null);
 
         // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => _useCase.ExecuteAsync(input));
-        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, It.IsAny<CancellationToken>()), Times.Once);
-        _professionalRepositoryMock.Verify(r => r.GetByIdAsync(input.ProfessionalId, It.IsAny<CancellationToken>()), Times.Once);
+        await Assert.ThrowsAsync<NotFoundException>(() => _useCase.ExecuteAsync(storeId, professionalId, input));
+        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()), Times.Once);
+        _professionalRepositoryMock.Verify(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>()), Times.Once);
         _professionalRepositoryMock.Verify(r => r.UpdateAsync(It.IsAny<Professional>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
@@ -84,13 +84,11 @@ public class UpdateProfessionalUseCaseTests
 
         var input = new UpdateProfessionalInput(
             UserId: userId,
-            StoreId: storeId,
-            ProfessionalId: professionalId,
             Name: "Jane Doe"
         );
 
         _ownershipPolicyMock
-            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, It.IsAny<CancellationToken>()))
+            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         var professional = Professional.Create(otherStoreId, "Jane Doe");
@@ -99,8 +97,8 @@ public class UpdateProfessionalUseCaseTests
             .ReturnsAsync(professional);
 
         // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => _useCase.ExecuteAsync(input));
-        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, It.IsAny<CancellationToken>()), Times.Once);
+        await Assert.ThrowsAsync<NotFoundException>(() => _useCase.ExecuteAsync(storeId, professionalId, input));
+        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()), Times.Once);
         _professionalRepositoryMock.Verify(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>()), Times.Once);
         _professionalRepositoryMock.Verify(r => r.UpdateAsync(It.IsAny<Professional>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -126,8 +124,6 @@ public class UpdateProfessionalUseCaseTests
 
         var input = new UpdateProfessionalInput(
             UserId: userId,
-            StoreId: storeId,
-            ProfessionalId: professionalId,
             Name: "Jane Smith",
             PhotoUrl: "http://photo.com/janesmith",
             WhatsApp: "+5511888888888",
@@ -135,7 +131,7 @@ public class UpdateProfessionalUseCaseTests
         );
 
         _ownershipPolicyMock
-            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, It.IsAny<CancellationToken>()))
+            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         var professional = Professional.Create(storeId, "Jane Doe");
@@ -148,7 +144,7 @@ public class UpdateProfessionalUseCaseTests
             .ReturnsAsync(professional);
 
         // Act
-        var result = await _useCase.ExecuteAsync(input);
+        var result = await _useCase.ExecuteAsync(storeId, professionalId, input);
 
         // Assert
         Assert.NotNull(result);
@@ -164,7 +160,7 @@ public class UpdateProfessionalUseCaseTests
         Assert.Equal(new TimeOnly(14, 0), singleSchedule.LunchEnd);
         Assert.Equal(45, singleSchedule.IntervalMinutes);
 
-        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, It.IsAny<CancellationToken>()), Times.Once);
+        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()), Times.Once);
         _professionalRepositoryMock.Verify(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>()), Times.Once);
         _professionalRepositoryMock.Verify(r => r.UpdateAsync(professional, It.IsAny<CancellationToken>()), Times.Once);
     }

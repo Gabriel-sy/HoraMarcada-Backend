@@ -3,6 +3,7 @@ using Xunit;
 using Marque.Application.UseCases.Appointments;
 using Marque.Application.Repositories;
 using Marque.Application.Policies;
+using Marque.Application.Models;
 using Marque.Application.Exceptions;
 using Marque.Domain.Entities;
 using Marque.Domain.Enums;
@@ -32,13 +33,14 @@ public class CancelAppointmentUseCaseTests
         var userId = Guid.NewGuid();
         var storeId = Guid.NewGuid();
         var appointmentId = Guid.NewGuid();
+        var input = new CancelAppointmentInput(userId, storeId);
 
         _ownershipPolicyMock
             .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
             .ThrowsAsync(new UnauthorizedAccessException("User does not own store."));
 
         // Act & Assert
-        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _useCase.ExecuteAsync(userId, storeId, appointmentId));
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _useCase.ExecuteAsync(appointmentId, input));
         
         _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()), Times.Once);
         _appointmentRepositoryMock.Verify(r => r.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -52,6 +54,7 @@ public class CancelAppointmentUseCaseTests
         var userId = Guid.NewGuid();
         var storeId = Guid.NewGuid();
         var appointmentId = Guid.NewGuid();
+        var input = new CancelAppointmentInput(userId, storeId);
 
         _ownershipPolicyMock
             .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
@@ -62,7 +65,7 @@ public class CancelAppointmentUseCaseTests
             .ReturnsAsync((Appointment?)null);
 
         // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => _useCase.ExecuteAsync(userId, storeId, appointmentId));
+        await Assert.ThrowsAsync<NotFoundException>(() => _useCase.ExecuteAsync(appointmentId, input));
 
         _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()), Times.Once);
         _appointmentRepositoryMock.Verify(r => r.GetByIdAsync(appointmentId, It.IsAny<CancellationToken>()), Times.Once);
@@ -77,6 +80,7 @@ public class CancelAppointmentUseCaseTests
         var storeId = Guid.NewGuid();
         var otherStoreId = Guid.NewGuid();
         var appointmentId = Guid.NewGuid();
+        var input = new CancelAppointmentInput(userId, storeId);
 
         _ownershipPolicyMock
             .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
@@ -97,7 +101,7 @@ public class CancelAppointmentUseCaseTests
             .ReturnsAsync(appointment);
 
         // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => _useCase.ExecuteAsync(userId, storeId, appointmentId));
+        await Assert.ThrowsAsync<NotFoundException>(() => _useCase.ExecuteAsync(appointmentId, input));
 
         _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()), Times.Once);
         _appointmentRepositoryMock.Verify(r => r.GetByIdAsync(appointmentId, It.IsAny<CancellationToken>()), Times.Once);
@@ -111,6 +115,7 @@ public class CancelAppointmentUseCaseTests
         var userId = Guid.NewGuid();
         var storeId = Guid.NewGuid();
         var appointmentId = Guid.NewGuid();
+        var input = new CancelAppointmentInput(userId, storeId);
 
         _ownershipPolicyMock
             .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
@@ -131,7 +136,7 @@ public class CancelAppointmentUseCaseTests
             .ReturnsAsync(appointment);
 
         // Act
-        await _useCase.ExecuteAsync(userId, storeId, appointmentId);
+        await _useCase.ExecuteAsync(appointmentId, input);
 
         // Assert
         Assert.Equal(AppointmentStatus.Canceled, appointment.Status);

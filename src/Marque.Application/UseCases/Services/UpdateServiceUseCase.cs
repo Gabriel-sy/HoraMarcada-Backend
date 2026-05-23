@@ -12,14 +12,14 @@ public class UpdateServiceUseCase(
     IProfessionalRepository professionalRepository,
     IStoreOwnershipPolicy ownershipPolicy)
 {
-    public async Task<Service> ExecuteAsync(UpdateServiceInput input, CancellationToken cancellationToken = default)
+    public async Task<Service> ExecuteAsync(Guid storeId, Guid serviceId, UpdateServiceInput input, CancellationToken cancellationToken = default)
     {
-        await ownershipPolicy.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, cancellationToken);
+        await ownershipPolicy.EnsureUserOwnsStoreAsync(input.UserId, storeId, cancellationToken);
 
-        var service = await serviceRepository.GetByIdAsync(input.ServiceId, cancellationToken);
-        if (service == null || service.StoreId != input.StoreId)
+        var service = await serviceRepository.GetByIdAsync(serviceId, cancellationToken);
+        if (service == null || service.StoreId != storeId)
         {
-            throw new NotFoundException($"Service with ID {input.ServiceId} not found in store {input.StoreId}.");
+            throw new NotFoundException($"Service with ID {serviceId} not found in store {storeId}.");
         }
 
         if (input.ProfessionalIds != null && input.ProfessionalIds.Count > 0)
@@ -27,9 +27,9 @@ public class UpdateServiceUseCase(
             foreach (var profId in input.ProfessionalIds)
             {
                 var professional = await professionalRepository.GetByIdAsync(profId, cancellationToken);
-                if (professional == null || professional.StoreId != input.StoreId)
+                if (professional == null || professional.StoreId != storeId)
                 {
-                    throw new DomainValidationException($"Professional {profId} does not belong to store {input.StoreId}.");
+                    throw new DomainValidationException($"Professional {profId} does not belong to store {storeId}.");
                 }
             }
         }
