@@ -32,20 +32,20 @@ public class AddServiceUseCaseTests
     public async Task ExecuteAsync_WhenOwnershipPolicyFails_ShouldPropagateException()
     {
         // Arrange
+        var userId = Guid.NewGuid();
+        var storeId = Guid.NewGuid();
         var input = new AddServiceInput(
-            UserId: Guid.NewGuid(),
             Name: "Haircut",
             DurationMinutes: 30
         );
-        var storeId = Guid.NewGuid();
 
         _ownershipPolicyMock
-            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()))
+            .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
             .ThrowsAsync(new UnauthorizedAccessException("User does not own store."));
 
         // Act & Assert
-        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _useCase.ExecuteAsync(storeId, input));
-        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()), Times.Once);
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _useCase.ExecuteAsync(userId, storeId, input));
+        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()), Times.Once);
         _professionalRepositoryMock.Verify(r => r.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never);
         _serviceRepositoryMock.Verify(r => r.AddAsync(It.IsAny<Service>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -60,14 +60,13 @@ public class AddServiceUseCaseTests
         var professionalId = Guid.NewGuid();
 
         var input = new AddServiceInput(
-            UserId: userId,
             Name: "Haircut",
             DurationMinutes: 30,
             ProfessionalIds: [professionalId]
         );
 
         _ownershipPolicyMock
-            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()))
+            .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         var professional = Professional.Create(otherStoreId, "John Doe");
@@ -76,8 +75,8 @@ public class AddServiceUseCaseTests
             .ReturnsAsync(professional);
 
         // Act & Assert
-        await Assert.ThrowsAsync<DomainValidationException>(() => _useCase.ExecuteAsync(storeId, input));
-        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()), Times.Once);
+        await Assert.ThrowsAsync<DomainValidationException>(() => _useCase.ExecuteAsync(userId, storeId, input));
+        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()), Times.Once);
         _professionalRepositoryMock.Verify(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>()), Times.Once);
         _serviceRepositoryMock.Verify(r => r.AddAsync(It.IsAny<Service>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -91,14 +90,13 @@ public class AddServiceUseCaseTests
         var professionalId = Guid.NewGuid();
 
         var input = new AddServiceInput(
-            UserId: userId,
             Name: "Haircut",
             DurationMinutes: 30,
             ProfessionalIds: [professionalId]
         );
 
         _ownershipPolicyMock
-            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()))
+            .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         _professionalRepositoryMock
@@ -106,8 +104,8 @@ public class AddServiceUseCaseTests
             .ReturnsAsync((Professional?)null);
 
         // Act & Assert
-        await Assert.ThrowsAsync<DomainValidationException>(() => _useCase.ExecuteAsync(storeId, input));
-        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()), Times.Once);
+        await Assert.ThrowsAsync<DomainValidationException>(() => _useCase.ExecuteAsync(userId, storeId, input));
+        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()), Times.Once);
         _professionalRepositoryMock.Verify(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>()), Times.Once);
         _serviceRepositoryMock.Verify(r => r.AddAsync(It.IsAny<Service>(), It.IsAny<CancellationToken>()), Times.Never);
     }
@@ -121,7 +119,6 @@ public class AddServiceUseCaseTests
         var professionalId = Guid.NewGuid();
 
         var input = new AddServiceInput(
-            UserId: userId,
             Name: "Haircut",
             DurationMinutes: 30,
             Price: 50.0m,
@@ -129,7 +126,7 @@ public class AddServiceUseCaseTests
         );
 
         _ownershipPolicyMock
-            .Setup(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()))
+            .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         var professional = Professional.Create(storeId, "John Doe");
@@ -141,7 +138,7 @@ public class AddServiceUseCaseTests
             .ReturnsAsync(professional);
 
         // Act
-        var result = await _useCase.ExecuteAsync(storeId, input);
+        var result = await _useCase.ExecuteAsync(userId, storeId, input);
 
         // Assert
         Assert.NotNull(result);
@@ -150,7 +147,7 @@ public class AddServiceUseCaseTests
         Assert.Equal(input.Price, result.Price?.Amount);
         Assert.Contains(professionalId, result.ProfessionalIds);
 
-        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(input.UserId, storeId, It.IsAny<CancellationToken>()), Times.Once);
+        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()), Times.Once);
         _professionalRepositoryMock.Verify(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>()), Times.Once);
         _serviceRepositoryMock.Verify(r => r.AddAsync(It.Is<Service>(s =>
             s.Id == result.Id &&

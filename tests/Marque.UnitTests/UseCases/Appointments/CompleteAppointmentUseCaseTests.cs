@@ -33,14 +33,14 @@ public class CompleteAppointmentUseCaseTests
         var userId = Guid.NewGuid();
         var storeId = Guid.NewGuid();
         var appointmentId = Guid.NewGuid();
-        var input = new CompleteAppointmentInput(userId, storeId);
+        var input = new CompleteAppointmentInput(storeId);
 
         _ownershipPolicyMock
             .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
             .ThrowsAsync(new UnauthorizedAccessException("User does not own store."));
 
         // Act & Assert
-        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _useCase.ExecuteAsync(appointmentId, input));
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _useCase.ExecuteAsync(userId, appointmentId, input));
         
         _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()), Times.Once);
         _appointmentRepositoryMock.Verify(r => r.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -54,7 +54,7 @@ public class CompleteAppointmentUseCaseTests
         var userId = Guid.NewGuid();
         var storeId = Guid.NewGuid();
         var appointmentId = Guid.NewGuid();
-        var input = new CompleteAppointmentInput(userId, storeId);
+        var input = new CompleteAppointmentInput(storeId);
 
         _ownershipPolicyMock
             .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
@@ -65,7 +65,7 @@ public class CompleteAppointmentUseCaseTests
             .ReturnsAsync((Appointment?)null);
 
         // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => _useCase.ExecuteAsync(appointmentId, input));
+        await Assert.ThrowsAsync<NotFoundException>(() => _useCase.ExecuteAsync(userId, appointmentId, input));
 
         _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()), Times.Once);
         _appointmentRepositoryMock.Verify(r => r.GetByIdAsync(appointmentId, It.IsAny<CancellationToken>()), Times.Once);
@@ -80,7 +80,7 @@ public class CompleteAppointmentUseCaseTests
         var storeId = Guid.NewGuid();
         var otherStoreId = Guid.NewGuid();
         var appointmentId = Guid.NewGuid();
-        var input = new CompleteAppointmentInput(userId, storeId);
+        var input = new CompleteAppointmentInput(storeId);
 
         _ownershipPolicyMock
             .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
@@ -101,7 +101,7 @@ public class CompleteAppointmentUseCaseTests
             .ReturnsAsync(appointment);
 
         // Act & Assert
-        await Assert.ThrowsAsync<NotFoundException>(() => _useCase.ExecuteAsync(appointmentId, input));
+        await Assert.ThrowsAsync<NotFoundException>(() => _useCase.ExecuteAsync(userId, appointmentId, input));
 
         _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()), Times.Once);
         _appointmentRepositoryMock.Verify(r => r.GetByIdAsync(appointmentId, It.IsAny<CancellationToken>()), Times.Once);
@@ -115,7 +115,7 @@ public class CompleteAppointmentUseCaseTests
         var userId = Guid.NewGuid();
         var storeId = Guid.NewGuid();
         var appointmentId = Guid.NewGuid();
-        var input = new CompleteAppointmentInput(userId, storeId);
+        var input = new CompleteAppointmentInput(storeId);
 
         _ownershipPolicyMock
             .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
@@ -136,7 +136,7 @@ public class CompleteAppointmentUseCaseTests
             .ReturnsAsync(appointment);
 
         // Act
-        await _useCase.ExecuteAsync(appointmentId, input);
+        await _useCase.ExecuteAsync(userId, appointmentId, input);
 
         // Assert
         Assert.Equal(AppointmentStatus.Completed, appointment.Status);

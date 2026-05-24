@@ -7,9 +7,6 @@ public class CompleteAppointmentRequestValidator : AbstractValidator<CompleteApp
 {
     public CompleteAppointmentRequestValidator()
     {
-        RuleFor(x => x.UserId)
-            .NotEmpty().WithMessage("User id is required.");
-
         RuleFor(x => x.StoreId)
             .NotEmpty().WithMessage("Store id is required.");
     }

@@ -2,6 +2,7 @@ using FluentValidation;
 using Marque.Api.Filters;
 using Marque.Application.DependencyInjection;
 using Marque.Infrastructure.DependencyInjection;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,32 @@ builder.Services.AddSwaggerGen(options =>
 
     options.EnableAnnotations();
     options.SchemaFilter<SwaggerExampleSchemaFilter>();
+
+    // Swagger JWT configuration
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter 'Bearer' followed by a space and the JWT token."
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
 });
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -40,6 +67,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

@@ -10,10 +10,11 @@ public class ListAppointmentsUseCase(
     IStoreOwnershipPolicy ownershipPolicy)
 {
     public async Task<IReadOnlyList<Appointment>> ExecuteAsync(
+        Guid userId,
         ListAppointmentsInput input,
         CancellationToken cancellationToken = default)
     {
-        await ownershipPolicy.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, cancellationToken);
+        await ownershipPolicy.EnsureUserOwnsStoreAsync(userId, input.StoreId, cancellationToken);
 
         var list = await appointmentRepository.ListByStoreAsync(input.StoreId, input.Start, input.End, input.ProfessionalId, cancellationToken);
         return list.OrderBy(a => a.StartTime).ToList();

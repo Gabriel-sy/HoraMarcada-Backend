@@ -7,9 +7,6 @@ public class UpdateServiceRequestValidator : AbstractValidator<UpdateServiceInpu
 {
     public UpdateServiceRequestValidator()
     {
-        RuleFor(x => x.UserId)
-            .NotEmpty().WithMessage("User id is required.");
-
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Service name is required.");
 

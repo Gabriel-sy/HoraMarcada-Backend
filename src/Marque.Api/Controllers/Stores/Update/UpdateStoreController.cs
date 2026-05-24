@@ -1,13 +1,16 @@
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Marque.Application.UseCases.Stores;
 using Marque.Application.Models;
 using Marque.Domain.Entities;
+using Marque.Api.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Marque.Api.Controllers.Stores.Update;
 
+[Authorize]
 [ApiController]
 [Route("api/stores/{storeId}")]
 public class UpdateStoreController(
@@ -22,6 +25,7 @@ public class UpdateStoreController(
     )]
     [SwaggerResponse(StatusCodes.Status200OK, "Returns the updated store details.", typeof(Store))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "If validation fails or request contains invalid properties.", typeof(IDictionary<string, string[]>))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "If the user is not authenticated.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status403Forbidden, "If the user is not authorized to update this store.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "If the store or user is not found.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status409Conflict, "If the new store slug is already taken by another store.", typeof(ProblemDetails))]
@@ -36,7 +40,8 @@ public class UpdateStoreController(
             return BadRequest(validationResult.ToDictionary());
         }
 
-        var store = await useCase.ExecuteAsync(storeId, input, cancellationToken);
+        var userId = User.GetUserId();
+        var store = await useCase.ExecuteAsync(userId, storeId, input, cancellationToken);
         return Ok(store);
     }
 }

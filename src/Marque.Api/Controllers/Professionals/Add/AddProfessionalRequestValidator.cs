@@ -7,9 +7,6 @@ public class AddProfessionalRequestValidator : AbstractValidator<AddProfessional
 {
     public AddProfessionalRequestValidator()
     {
-        RuleFor(x => x.UserId)
-            .NotEmpty().WithMessage("User id is required.");
-
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Professional name is required.");
 

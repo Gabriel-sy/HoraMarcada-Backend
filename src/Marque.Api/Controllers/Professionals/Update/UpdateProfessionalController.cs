@@ -1,13 +1,16 @@
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Marque.Application.UseCases.Professionals;
 using Marque.Application.Models;
 using Marque.Domain.Entities;
+using Marque.Api.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Marque.Api.Controllers.Professionals.Update;
 
+[Authorize]
 [ApiController]
 [Route("api/stores/{storeId}/professionals/{professionalId}")]
 public class UpdateProfessionalController(
@@ -22,6 +25,7 @@ public class UpdateProfessionalController(
     )]
     [SwaggerResponse(StatusCodes.Status200OK, "Returns the updated professional details.", typeof(Professional))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "If validation fails or request contains invalid properties.", typeof(IDictionary<string, string[]>))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "If the user is not authenticated.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status403Forbidden, "If the user is not authorized to update professionals in this store.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "If the store, professional, or user is not found.", typeof(ProblemDetails))]
     public async Task<IActionResult> UpdateProfessional(
@@ -36,7 +40,8 @@ public class UpdateProfessionalController(
             return BadRequest(validationResult.ToDictionary());
         }
 
-        var professional = await useCase.ExecuteAsync(storeId, professionalId, input, cancellationToken);
+        var userId = User.GetUserId();
+        var professional = await useCase.ExecuteAsync(userId, storeId, professionalId, input, cancellationToken);
         return Ok(professional);
     }
 }

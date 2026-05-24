@@ -9,9 +9,9 @@ public class CompleteAppointmentUseCase(
     IAppointmentRepository appointmentRepository,
     IStoreOwnershipPolicy ownershipPolicy)
 {
-    public async Task ExecuteAsync(Guid appointmentId, CompleteAppointmentInput input, CancellationToken cancellationToken = default)
+    public async Task ExecuteAsync(Guid userId, Guid appointmentId, CompleteAppointmentInput input, CancellationToken cancellationToken = default)
     {
-        await ownershipPolicy.EnsureUserOwnsStoreAsync(input.UserId, input.StoreId, cancellationToken);
+        await ownershipPolicy.EnsureUserOwnsStoreAsync(userId, input.StoreId, cancellationToken);
 
         var appointment = await appointmentRepository.GetByIdAsync(appointmentId, cancellationToken);
         if (appointment == null || appointment.StoreId != input.StoreId)

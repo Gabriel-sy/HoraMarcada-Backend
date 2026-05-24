@@ -1,13 +1,16 @@
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Marque.Application.UseCases.Appointments;
 using Marque.Application.Models;
 using Marque.Domain.Entities;
+using Marque.Api.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Marque.Api.Controllers.Appointments.List;
 
+[Authorize]
 [ApiController]
 [Route("api/appointments")]
 public class ListAppointmentsController(
@@ -22,6 +25,7 @@ public class ListAppointmentsController(
     )]
     [SwaggerResponse(StatusCodes.Status200OK, "Returns the list of appointments.", typeof(IReadOnlyList<Appointment>))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "If validation fails or request contains invalid properties.", typeof(IDictionary<string, string[]>))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "If the user is not authenticated.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status403Forbidden, "If the user is not authorized to view appointments for this store.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "If the store or user is not found.", typeof(ProblemDetails))]
     public async Task<IActionResult> ListAppointments(
@@ -34,7 +38,9 @@ public class ListAppointmentsController(
             return BadRequest(validationResult.ToDictionary());
         }
 
+        var userId = User.GetUserId();
         var appointments = await useCase.ExecuteAsync(
+            userId,
             request,
             cancellationToken
         );

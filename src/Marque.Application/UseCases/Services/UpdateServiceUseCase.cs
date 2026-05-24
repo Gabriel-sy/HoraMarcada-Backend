@@ -12,9 +12,9 @@ public class UpdateServiceUseCase(
     IProfessionalRepository professionalRepository,
     IStoreOwnershipPolicy ownershipPolicy)
 {
-    public async Task<Service> ExecuteAsync(Guid storeId, Guid serviceId, UpdateServiceInput input, CancellationToken cancellationToken = default)
+    public async Task<Service> ExecuteAsync(Guid userId, Guid storeId, Guid serviceId, UpdateServiceInput input, CancellationToken cancellationToken = default)
     {
-        await ownershipPolicy.EnsureUserOwnsStoreAsync(input.UserId, storeId, cancellationToken);
+        await ownershipPolicy.EnsureUserOwnsStoreAsync(userId, storeId, cancellationToken);
 
         var service = await serviceRepository.GetByIdAsync(serviceId, cancellationToken);
         if (service == null || service.StoreId != storeId)

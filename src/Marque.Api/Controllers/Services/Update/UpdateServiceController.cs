@@ -1,13 +1,16 @@
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Marque.Application.UseCases.Services;
 using Marque.Application.Models;
 using Marque.Domain.Entities;
+using Marque.Api.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Marque.Api.Controllers.Services.Update;
 
+[Authorize]
 [ApiController]
 [Route("api/stores/{storeId}/services/{serviceId}")]
 public class UpdateServiceController(
@@ -22,6 +25,7 @@ public class UpdateServiceController(
     )]
     [SwaggerResponse(StatusCodes.Status200OK, "Returns the updated service details.", typeof(Service))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "If validation fails or request contains invalid properties.", typeof(IDictionary<string, string[]>))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "If the user is not authenticated.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status403Forbidden, "If the user is not authorized to update services in this store.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "If the store, service, or user is not found.", typeof(ProblemDetails))]
     public async Task<IActionResult> UpdateService(
@@ -36,7 +40,8 @@ public class UpdateServiceController(
             return BadRequest(validationResult.ToDictionary());
         }
 
-        var service = await useCase.ExecuteAsync(storeId, serviceId, input, cancellationToken);
+        var userId = User.GetUserId();
+        var service = await useCase.ExecuteAsync(userId, storeId, serviceId, input, cancellationToken);
         return Ok(service);
     }
 }

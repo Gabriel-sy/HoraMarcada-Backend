@@ -11,9 +11,9 @@ public class AddServiceUseCase(
     IProfessionalRepository professionalRepository,
     IStoreOwnershipPolicy ownershipPolicy)
 {
-    public async Task<Service> ExecuteAsync(Guid storeId, AddServiceInput input, CancellationToken cancellationToken = default)
+    public async Task<Service> ExecuteAsync(Guid userId, Guid storeId, AddServiceInput input, CancellationToken cancellationToken = default)
     {
-        await ownershipPolicy.EnsureUserOwnsStoreAsync(input.UserId, storeId, cancellationToken);
+        await ownershipPolicy.EnsureUserOwnsStoreAsync(userId, storeId, cancellationToken);
 
         if (input.ProfessionalIds != null && input.ProfessionalIds.Count > 0)
         {

@@ -7,9 +7,6 @@ public class UpdateStoreRequestValidator : AbstractValidator<UpdateStoreInput>
 {
     public UpdateStoreRequestValidator()
     {
-        RuleFor(x => x.UserId)
-            .NotEmpty().WithMessage("User id is required.");
-
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Store name is required.");
 

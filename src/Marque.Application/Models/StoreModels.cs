@@ -3,7 +3,6 @@ using Marque.Application.Common;
 namespace Marque.Application.Models;
 
 public record CreateStoreInput(
-    [property: SwaggerExample("3fa85f64-5717-4562-b3fc-2c963f66afa6")] Guid UserId,
     [property: SwaggerExample("Vintage Barbershop")] string Name,
     [property: SwaggerExample("vintage-barber")] string Slug,
     [property: SwaggerExample("+5511999999999")] string WhatsApp,
@@ -13,7 +12,6 @@ public record CreateStoreInput(
     [property: SwaggerExample("-46.6333")] decimal? AddressLng = null);
 
 public record UpdateStoreInput(
-    [property: SwaggerExample("3fa85f64-5717-4562-b3fc-2c963f66afa6")] Guid UserId,
     [property: SwaggerExample("Vintage Barbershop Premium")] string Name,
     [property: SwaggerExample("vintage-barber-premium")] string Slug,
     [property: SwaggerExample("+5511999999999")] string WhatsApp,

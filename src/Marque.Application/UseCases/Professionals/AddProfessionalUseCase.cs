@@ -9,9 +9,9 @@ public class AddProfessionalUseCase(
     IProfessionalRepository professionalRepository,
     IStoreOwnershipPolicy ownershipPolicy)
 {
-    public async Task<Professional> ExecuteAsync(Guid storeId, AddProfessionalInput input, CancellationToken cancellationToken = default)
+    public async Task<Professional> ExecuteAsync(Guid userId, Guid storeId, AddProfessionalInput input, CancellationToken cancellationToken = default)
     {
-        await ownershipPolicy.EnsureUserOwnsStoreAsync(input.UserId, storeId, cancellationToken);
+        await ownershipPolicy.EnsureUserOwnsStoreAsync(userId, storeId, cancellationToken);
 
         var professional = Professional.Create(
             storeId,

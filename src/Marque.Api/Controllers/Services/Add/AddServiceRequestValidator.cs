@@ -7,9 +7,6 @@ public class AddServiceRequestValidator : AbstractValidator<AddServiceInput>
 {
     public AddServiceRequestValidator()
     {
-        RuleFor(x => x.UserId)
-            .NotEmpty().WithMessage("User id is required.");
-
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Service name is required.");
 

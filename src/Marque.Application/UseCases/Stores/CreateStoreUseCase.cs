@@ -8,7 +8,7 @@ namespace Marque.Application.UseCases.Stores;
 
 public class CreateStoreUseCase(IStoreRepository storeRepository)
 {
-    public async Task<Store> ExecuteAsync(CreateStoreInput input, CancellationToken cancellationToken = default)
+    public async Task<Store> ExecuteAsync(Guid userId, CreateStoreInput input, CancellationToken cancellationToken = default)
     {
         var existingStore = await storeRepository.GetBySlugAsync(Slug.Create(input.Slug), cancellationToken);
         if (existingStore != null)
@@ -17,7 +17,7 @@ public class CreateStoreUseCase(IStoreRepository storeRepository)
         }
 
         var store = Store.Create(
-            input.UserId,
+            userId,
             input.Name,
             input.Slug,
             input.WhatsApp,

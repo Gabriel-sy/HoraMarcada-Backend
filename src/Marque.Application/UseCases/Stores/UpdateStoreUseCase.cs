@@ -11,9 +11,9 @@ public class UpdateStoreUseCase(
     IStoreRepository storeRepository,
     IStoreOwnershipPolicy ownershipPolicy)
 {
-    public async Task<Store> ExecuteAsync(Guid storeId, UpdateStoreInput input, CancellationToken cancellationToken = default)
+    public async Task<Store> ExecuteAsync(Guid userId, Guid storeId, UpdateStoreInput input, CancellationToken cancellationToken = default)
     {
-        await ownershipPolicy.EnsureUserOwnsStoreAsync(input.UserId, storeId, cancellationToken);
+        await ownershipPolicy.EnsureUserOwnsStoreAsync(userId, storeId, cancellationToken);
 
         var store = await storeRepository.GetByIdAsync(storeId, cancellationToken);
         if (store == null)

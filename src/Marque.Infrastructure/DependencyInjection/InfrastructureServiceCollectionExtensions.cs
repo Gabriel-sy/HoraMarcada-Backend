@@ -1,9 +1,11 @@
 using Marque.Application.Repositories;
 using Marque.Infrastructure.Persistence;
 using Marque.Infrastructure.Persistence.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Marque.Infrastructure.DependencyInjection;
 
@@ -28,6 +30,33 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddScoped<IServiceRepository, EfServiceRepository>();
         services.AddScoped<IAppointmentRepository, EfAppointmentRepository>();
 
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            var supabaseUrl = configuration["Supabase:Url"];
+            if (string.IsNullOrWhiteSpace(supabaseUrl))
+            {
+                throw new InvalidOperationException(
+                    "Supabase URL is not configured. Set Supabase:Url in appsettings.");
+            }
+
+            var authorityUrl = $"{supabaseUrl.TrimEnd('/')}/auth/v1";
+            options.Authority = authorityUrl;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = authorityUrl,
+                ValidateAudience = true,
+                ValidAudience = "authenticated",
+                ValidateLifetime = true
+            };
+        });
+
         return services;
     }
 }
+

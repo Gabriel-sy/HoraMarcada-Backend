@@ -1,16 +1,17 @@
-using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Marque.Application.UseCases.Professionals;
+using Marque.Api.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Marque.Api.Controllers.Professionals.Deactivate;
 
+[Authorize]
 [ApiController]
 [Route("api/stores/{storeId}/professionals/{professionalId}/deactivate")]
 public class DeactivateProfessionalController(
-    DeactivateProfessionalUseCase useCase,
-    IValidator<DeactivateProfessionalRequest> validator) : ControllerBase
+    DeactivateProfessionalUseCase useCase) : ControllerBase
 {
     [HttpPost]
     [SwaggerOperation(
@@ -19,24 +20,16 @@ public class DeactivateProfessionalController(
         Tags = new[] { "Professionals" }
     )]
     [SwaggerResponse(StatusCodes.Status204NoContent, "The professional was successfully deactivated.")]
-    [SwaggerResponse(StatusCodes.Status400BadRequest, "If validation fails or request contains invalid properties.", typeof(IDictionary<string, string[]>))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "If the user is not authenticated.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status403Forbidden, "If the user is not authorized to manage professionals in this store.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "If the store, professional, or user is not found.", typeof(ProblemDetails))]
     public async Task<IActionResult> DeactivateProfessional(
         [FromRoute] Guid storeId,
         [FromRoute] Guid professionalId,
-        [FromBody] DeactivateProfessionalRequest request,
         CancellationToken cancellationToken)
     {
-        var validationResult = await validator.ValidateAsync(request, cancellationToken);
-        if (!validationResult.IsValid)
-        {
-            return BadRequest(validationResult.ToDictionary());
-        }
-
-        await useCase.ExecuteAsync(request.UserId, storeId, professionalId, cancellationToken);
+        var userId = User.GetUserId();
+        await useCase.ExecuteAsync(userId, storeId, professionalId, cancellationToken);
         return NoContent();
     }
 }
-
-public record DeactivateProfessionalRequest(Guid UserId);

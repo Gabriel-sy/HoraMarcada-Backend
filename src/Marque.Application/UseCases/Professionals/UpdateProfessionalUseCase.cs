@@ -10,9 +10,9 @@ public class UpdateProfessionalUseCase(
     IProfessionalRepository professionalRepository,
     IStoreOwnershipPolicy ownershipPolicy)
 {
-    public async Task<Professional> ExecuteAsync(Guid storeId, Guid professionalId, UpdateProfessionalInput input, CancellationToken cancellationToken = default)
+    public async Task<Professional> ExecuteAsync(Guid userId, Guid storeId, Guid professionalId, UpdateProfessionalInput input, CancellationToken cancellationToken = default)
     {
-        await ownershipPolicy.EnsureUserOwnsStoreAsync(input.UserId, storeId, cancellationToken);
+        await ownershipPolicy.EnsureUserOwnsStoreAsync(userId, storeId, cancellationToken);
 
         var professional = await professionalRepository.GetByIdAsync(professionalId, cancellationToken);
         if (professional == null || professional.StoreId != storeId)

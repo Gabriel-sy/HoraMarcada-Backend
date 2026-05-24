@@ -24,15 +24,15 @@ public class CreateStoreUseCaseTests
     public async Task ExecuteAsync_WhenSlugAlreadyExists_ShouldThrowConflictException()
     {
         // Arrange
+        var userId = Guid.NewGuid();
         var input = new CreateStoreInput(
-            UserId: Guid.NewGuid(),
             Name: "Test Store",
             Slug: "test-store",
             WhatsApp: "+5511999999999"
         );
 
         var existingStore = Store.Create(
-            input.UserId,
+            userId,
             input.Name,
             input.Slug,
             input.WhatsApp
@@ -43,7 +43,7 @@ public class CreateStoreUseCaseTests
             .ReturnsAsync(existingStore);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ConflictException>(() => _useCase.ExecuteAsync(input));
+        await Assert.ThrowsAsync<ConflictException>(() => _useCase.ExecuteAsync(userId, input));
         _storeRepositoryMock.Verify(r => r.AddAsync(It.IsAny<Store>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
@@ -51,8 +51,8 @@ public class CreateStoreUseCaseTests
     public async Task ExecuteAsync_WhenSlugDoesNotExist_ShouldCreateAndReturnStore()
     {
         // Arrange
+        var userId = Guid.NewGuid();
         var input = new CreateStoreInput(
-            UserId: Guid.NewGuid(),
             Name: "Test Store",
             Slug: "test-store",
             WhatsApp: "+5511999999999"
@@ -63,11 +63,11 @@ public class CreateStoreUseCaseTests
             .ReturnsAsync((Store?)null);
 
         // Act
-        var result = await _useCase.ExecuteAsync(input);
+        var result = await _useCase.ExecuteAsync(userId, input);
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(input.UserId, result.UserId);
+        Assert.Equal(userId, result.UserId);
         Assert.Equal(input.Name, result.Name);
         Assert.Equal(input.Slug, result.Slug.Value);
         Assert.Equal(input.WhatsApp, result.WhatsApp.Value);
@@ -75,7 +75,7 @@ public class CreateStoreUseCaseTests
         _storeRepositoryMock.Verify(
             r => r.AddAsync(It.Is<Store>(s => 
                 s.Id == result.Id &&
-                s.UserId == input.UserId &&
+                s.UserId == userId &&
                 s.Name == input.Name &&
                 s.Slug.Value == input.Slug &&
                 s.WhatsApp.Value == input.WhatsApp &&

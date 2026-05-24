@@ -1,12 +1,15 @@
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Marque.Application.UseCases.Appointments;
 using Marque.Application.Models;
+using Marque.Api.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Marque.Api.Controllers.Appointments.Complete;
 
+[Authorize]
 [ApiController]
 [Route("api/appointments/{appointmentId}/complete")]
 public class CompleteAppointmentController(
@@ -21,6 +24,7 @@ public class CompleteAppointmentController(
     )]
     [SwaggerResponse(StatusCodes.Status204NoContent, "The appointment was successfully marked as completed.")]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "If validation fails or request contains invalid properties.", typeof(IDictionary<string, string[]>))]
+    [SwaggerResponse(StatusCodes.Status401Unauthorized, "If the user is not authenticated.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status403Forbidden, "If the user is not authorized to complete appointments in this store.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "If the store, appointment, or user is not found.", typeof(ProblemDetails))]
     public async Task<IActionResult> CompleteAppointment(
@@ -34,7 +38,8 @@ public class CompleteAppointmentController(
             return BadRequest(validationResult.ToDictionary());
         }
 
-        await useCase.ExecuteAsync(appointmentId, input, cancellationToken);
+        var userId = User.GetUserId();
+        await useCase.ExecuteAsync(userId, appointmentId, input, cancellationToken);
         return NoContent();
     }
 }

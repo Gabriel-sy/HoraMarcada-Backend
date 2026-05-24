@@ -7,9 +7,6 @@ public class CancelAppointmentRequestValidator : AbstractValidator<CancelAppoint
 {
     public CancelAppointmentRequestValidator()
     {
-        RuleFor(x => x.UserId)
-            .NotEmpty().WithMessage("User id is required.");
-
         RuleFor(x => x.StoreId)
             .NotEmpty().WithMessage("Store id is required.");
     }
