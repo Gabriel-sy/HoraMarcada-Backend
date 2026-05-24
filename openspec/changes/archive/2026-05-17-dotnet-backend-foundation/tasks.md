@@ -1,6 +1,6 @@
 ## 1. Solution scaffolding
 
-- [x] 1.1 Create `Marque.sln` and four projects under `src/` (`Marque.Domain`, `Marque.Application`, `Marque.Infrastructure`, `Marque.Api`) targeting `net8.0`
+- [x] 1.1 Create `HoraMarcada.sln` and four projects under `src/` (`HoraMarcada.Domain`, `HoraMarcada.Application`, `HoraMarcada.Infrastructure`, `HoraMarcada.Api`) targeting `net8.0`
 - [x] 1.2 Wire project references per DIP: Api → Infrastructure + Application; Infrastructure → Application; Application → Domain
 - [x] 1.3 Add root `Directory.Build.props` and `Directory.Packages.props` with Central Package Management enabled
 - [x] 1.4 Add `.editorconfig` with C# conventions consistent across projects
@@ -8,9 +8,9 @@
 ## 2. Package installation
 
 - [x] 2.1 Pin versions in `Directory.Packages.props` for EF Core, Npgsql, JwtBearer, Hangfire, Swashbuckle, OpenApi
-- [x] 2.2 Reference packages in `Marque.Infrastructure` (EF Core, Npgsql, JwtBearer, Hangfire packages — no registration yet)
-- [x] 2.3 Reference packages in `Marque.Api` (OpenApi, Swashbuckle)
-- [x] 2.4 Verify `Marque.Domain` and `Marque.Application` have no infrastructure packages
+- [x] 2.2 Reference packages in `HoraMarcada.Infrastructure` (EF Core, Npgsql, JwtBearer, Hangfire packages — no registration yet)
+- [x] 2.3 Reference packages in `HoraMarcada.Api` (OpenApi, Swashbuckle)
+- [x] 2.4 Verify `HoraMarcada.Domain` and `HoraMarcada.Application` have no infrastructure packages
 
 ## 3. Domain layer
 
@@ -42,4 +42,4 @@
 ## 7. Documentation and verification
 
 - [x] 7.1 Add README with .NET 8 prerequisite, restore, build, and run instructions
-- [x] 7.2 Run `dotnet build` and `dotnet run --project src/Marque.Api`; confirm `/health` returns 200
+- [x] 7.2 Run `dotnet build` and `dotnet run --project src/HoraMarcada.Api`; confirm `/health` returns 200

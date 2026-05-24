@@ -9,7 +9,7 @@ The Application layer SHALL define interfaces for store, professional, service c
 
 #### Scenario: Interfaces live in Application project
 
-- **WHEN** inspecting `Marque.Application` service interfaces
+- **WHEN** inspecting `HoraMarcada.Application` service interfaces
 - **THEN** they are declared under `Services/` and reference only domain types and application models
 
 ### Requirement: Use cases registered in AddApplication
@@ -27,6 +27,6 @@ Outer layers (API) SHALL depend on application service interfaces, not concrete 
 
 #### Scenario: Application has no Infrastructure reference
 
-- **WHEN** inspecting `Marque.Application.csproj` project references
-- **THEN** it does not reference `Marque.Infrastructure`
+- **WHEN** inspecting `HoraMarcada.Application.csproj` project references
+- **THEN** it does not reference `HoraMarcada.Infrastructure`
 

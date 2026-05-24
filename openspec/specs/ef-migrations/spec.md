@@ -2,11 +2,11 @@
 
 ### Requirement: Design-time DbContext factory
 
-The Infrastructure project SHALL include an `IDesignTimeDbContextFactory<MarqueDbContext>` implementation that loads connection settings from the API project's configuration files and environment variables.
+The Infrastructure project SHALL include an `IDesignTimeDbContextFactory<HoraMarcadaDbContext>` implementation that loads connection settings from the API project's configuration files and environment variables.
 
 #### Scenario: EF CLI can add migrations
 
-- **WHEN** running `dotnet ef migrations add` with startup project `Marque.Api` and project `Marque.Infrastructure`
+- **WHEN** running `dotnet ef migrations add` with startup project `HoraMarcada.Api` and project `HoraMarcada.Infrastructure`
 - **THEN** the command succeeds without requiring the API host to be running
 
 ### Requirement: Initial migration matches PRD schema

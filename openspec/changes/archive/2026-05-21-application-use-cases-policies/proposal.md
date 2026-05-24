@@ -4,7 +4,7 @@ The backend has domain entities, repository ports, and EF persistence, but no ap
 
 ## What Changes
 
-- Define application service interfaces (use-case ports) in `Marque.Application` for stores, professionals, services, availability, and appointments
+- Define application service interfaces (use-case ports) in `HoraMarcada.Application` for stores, professionals, services, availability, and appointments
 - Implement use cases as application services that depend only on repository interfaces and policy abstractions — no EF, HTTP, JWT, or WhatsApp types
 - Add ownership/authorization policy interface (`IStoreOwnershipPolicy`) and implementation using repositories to verify the authenticated user owns a store
 - Add availability calculation as an application service implementing PRD section 6.4 (weekly hours, lunch, interval, appointment collision)
@@ -31,7 +31,7 @@ The backend has domain entities, repository ports, and EF persistence, but no ap
 
 ## Impact
 
-- **Code**: `Marque.Application` (Services/, Policies/, DTOs or commands as needed); `Marque.Domain` (entity methods); repository interface extensions in Application
+- **Code**: `HoraMarcada.Application` (Services/, Policies/, DTOs or commands as needed); `HoraMarcada.Domain` (entity methods); repository interface extensions in Application
 - **Dependencies**: Application remains free of EF Core and ASP.NET; may add minimal abstractions for time (`IClock`) if needed for testability
 - **Systems**: No API endpoints, Supabase JWT middleware, WhatsApp, Hangfire, or cancel-token JWT signing in this change — those consume these ports next
 - **Out of scope**: HTTP controllers, MediatR, integration tests, notification dispatch, cancel-token generation

@@ -1,6 +1,6 @@
 ## Context
 
-`dotnet-backend-foundation` delivered Domain entities, value objects, and repository ports. `supabase-ef-persistence` implemented EF repositories and PostgreSQL schema. `Marque.Application.AddApplication()` is empty; the API has no controllers. The PRD defines entrepreneur CRUD, public booking with availability, and appointment lifecycle with ownership enforced server-side (PRD 6.3, 6.4, 9.1).
+`dotnet-backend-foundation` delivered Domain entities, value objects, and repository ports. `supabase-ef-persistence` implemented EF repositories and PostgreSQL schema. `HoraMarcada.Application.AddApplication()` is empty; the API has no controllers. The PRD defines entrepreneur CRUD, public booking with availability, and appointment lifecycle with ownership enforced server-side (PRD 6.3, 6.4, 9.1).
 
 The user requires strict DIP: **policies and use cases** live in Application/Domain; **details** (EF, JWT, HTTP, WhatsApp) stay in Infrastructure/API. API controllers will depend on application service interfaces only.
 
@@ -9,7 +9,7 @@ The user requires strict DIP: **policies and use cases** live in Application/Dom
 **Goals:**
 
 - Application service interfaces for each PRD workflow area (store, professional, service, availability, appointment)
-- Concrete use-case classes in `Marque.Application` implementing those interfaces via repository ports and policies
+- Concrete use-case classes in `HoraMarcada.Application` implementing those interfaces via repository ports and policies
 - `IStoreOwnershipPolicy` abstraction verifying `store.UserId == authenticatedUserId` before mutating store-scoped resources
 - Availability algorithm matching PRD 6.4 (slots, lunch exclusion, appointment collision)
 - Domain methods for appointment state transitions (`Cancel`, `Complete`) and entity deactivation where appropriate

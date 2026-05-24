@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: Application Use Case Test Coverage
-The system SHALL have automated unit test coverage for all use cases defined in the `Marque.Application` project, specifically under `Marque.Application.UseCases`.
+The system SHALL have automated unit test coverage for all use cases defined in the `HoraMarcada.Application` project, specifically under `HoraMarcada.Application.UseCases`.
 
 #### Scenario: Unit Test Coverage for Use Cases
 - **WHEN** the test suite is executed
@@ -29,7 +29,7 @@ All unit tests SHALL follow a consistent naming convention: `[MethodName]_[Scena
 - **THEN** they SHALL follow the format `ExecuteAsync_When[Condition]_Should[Result]` to clearly convey the intent and behavior of the test
 
 ### Requirement: Organization by Folders
-The unit test project SHALL organize its test files in folders that mirror the folder structure and namespace layout of the use cases in `Marque.Application/UseCases`.
+The unit test project SHALL organize its test files in folders that mirror the folder structure and namespace layout of the use cases in `HoraMarcada.Application/UseCases`.
 
 #### Scenario: Test Project Directory Structure
 - **WHEN** looking at the directory structure of the test project

@@ -2,7 +2,7 @@
 
 ### Requirement: Solution contains four layered projects
 
-The repository SHALL contain a .NET 8 solution named `Marque.sln` with exactly these projects under `src/`: `Marque.Domain`, `Marque.Application`, `Marque.Infrastructure`, and `Marque.Api`.
+The repository SHALL contain a .NET 8 solution named `HoraMarcada.sln` with exactly these projects under `src/`: `HoraMarcada.Domain`, `HoraMarcada.Application`, `HoraMarcada.Infrastructure`, and `HoraMarcada.Api`.
 
 #### Scenario: Solution builds successfully
 
@@ -11,11 +11,11 @@ The repository SHALL contain a .NET 8 solution named `Marque.sln` with exactly t
 
 ### Requirement: Dependency direction enforces DIP
 
-Project references SHALL follow inward-only dependency flow: `Marque.Api` references `Marque.Infrastructure` and `Marque.Application`; `Marque.Infrastructure` references `Marque.Application`; `Marque.Application` references `Marque.Domain`; `Marque.Domain` references no other Marque projects.
+Project references SHALL follow inward-only dependency flow: `HoraMarcada.Api` references `HoraMarcada.Infrastructure` and `HoraMarcada.Application`; `HoraMarcada.Infrastructure` references `HoraMarcada.Application`; `HoraMarcada.Application` references `HoraMarcada.Domain`; `HoraMarcada.Domain` references no other HoraMarcada projects.
 
 #### Scenario: Domain has no infrastructure references
 
-- **WHEN** inspecting `Marque.Domain.csproj`
+- **WHEN** inspecting `HoraMarcada.Domain.csproj`
 - **THEN** it contains no project references to Infrastructure or Api and no packages for EF Core, ASP.NET Core, or Hangfire
 
 ### Requirement: Central package management
@@ -29,7 +29,7 @@ The solution SHALL use `Directory.Packages.props` at the repository root to cent
 
 ### Requirement: API host runs with health endpoint
 
-`Marque.Api` SHALL be an ASP.NET Core 8 Web API project that starts via `dotnet run` and exposes a health check endpoint returning HTTP 200.
+`HoraMarcada.Api` SHALL be an ASP.NET Core 8 Web API project that starts via `dotnet run` and exposes a health check endpoint returning HTTP 200.
 
 #### Scenario: Health check responds
 
@@ -47,7 +47,7 @@ The API SHALL register OpenAPI/Swagger middleware enabled only in the Developmen
 
 ### Requirement: Repository documents build steps
 
-The repository SHALL include a README with .NET 8 SDK prerequisite, restore, build, and run instructions for `Marque.Api`.
+The repository SHALL include a README with .NET 8 SDK prerequisite, restore, build, and run instructions for `HoraMarcada.Api`.
 
 #### Scenario: New developer can run locally
 

@@ -1,6 +1,6 @@
 # Domain Model and Business Logic
 
-This document details the business domain model, invariants, scheduling calculations, and core data flows of the Marque application.
+This document details the business domain model, invariants, scheduling calculations, and core data flows of the HoraMarcada application.
 
 ---
 

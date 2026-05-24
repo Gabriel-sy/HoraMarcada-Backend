@@ -1,16 +1,16 @@
 ## Context
 
-Currently, the `Marque` solution contains four projects: `Marque.Domain`, `Marque.Application`, `Marque.Infrastructure`, and `Marque.Api`. There is no project for automated testing. This proposal designs the setup of the testing infrastructure and implements unit tests for all application layer use cases in `Marque.Application/UseCases`.
+Currently, the `HoraMarcada` solution contains four projects: `HoraMarcada.Domain`, `HoraMarcada.Application`, `HoraMarcada.Infrastructure`, and `HoraMarcada.Api`. There is no project for automated testing. This proposal designs the setup of the testing infrastructure and implements unit tests for all application layer use cases in `HoraMarcada.Application/UseCases`.
 
 ## Goals / Non-Goals
 
 **Goals:**
-- Set up a new unit test project `Marque.UnitTests` in the `tests/` directory and add it to `Marque.sln`.
+- Set up a new unit test project `HoraMarcada.UnitTests` in the `tests/` directory and add it to `HoraMarcada.sln`.
 - Enable Central Package Management (CPM) for all test-related package dependencies.
 - Implement comprehensive unit tests for all use cases in the application layer using `xUnit` and `Moq`.
 - Follow the Arrange-Act-Assert (AAA) pattern for readability and maintainability.
 - Use a clear naming convention: `ExecuteAsync_When[Scenario]_Should[Expectation]`.
-- Organize tests in a directory structure that mirrors `Marque.Application/UseCases`.
+- Organize tests in a directory structure that mirrors `HoraMarcada.Application/UseCases`.
 
 **Non-Goals:**
 - Setting up integration tests or API/E2E test suites (e.g., using WebApplicationFactory or real databases).
@@ -19,7 +19,7 @@ Currently, the `Marque` solution contains four projects: `Marque.Domain`, `Marqu
 ## Decisions
 
 ### 1. Test Project Placement and Naming
-- **Decision:** Place the project at `tests/Marque.UnitTests/Marque.UnitTests.csproj`.
+- **Decision:** Place the project at `tests/HoraMarcada.UnitTests/HoraMarcada.UnitTests.csproj`.
 - **Rationale:** Separating production code (`src/`) from test code (`tests/`) is a standard .NET project structure. Using a single test project for the entire solution avoids project bloat while keeping namespaces separated.
 
 ### 2. Central Package Management (CPM) Configuration
@@ -33,10 +33,10 @@ Currently, the `Marque` solution contains four projects: `Marque.Domain`, `Marqu
   - `coverlet.collector` version `6.0.2`
 
 ### 3. Test Organization
-- **Decision:** Folder names in `Marque.UnitTests` will exactly mirror the namespace of the use case class they test.
+- **Decision:** Folder names in `HoraMarcada.UnitTests` will exactly mirror the namespace of the use case class they test.
 - **Example:**
-  - Class: `Marque.Application.UseCases.Availability.GetAvailableSlotsUseCase`
-  - Test File: `tests/Marque.UnitTests/UseCases/Availability/GetAvailableSlotsUseCaseTests.cs`
+  - Class: `HoraMarcada.Application.UseCases.Availability.GetAvailableSlotsUseCase`
+  - Test File: `tests/HoraMarcada.UnitTests/UseCases/Availability/GetAvailableSlotsUseCaseTests.cs`
 
 ### 4. Mocking Strategy
 - **Decision:** Use Moq (`Mock<T>`) to mock repository interfaces (`IStoreRepository`, `IServiceRepository`, `IProfessionalRepository`, `IAppointmentRepository`) and other external services.

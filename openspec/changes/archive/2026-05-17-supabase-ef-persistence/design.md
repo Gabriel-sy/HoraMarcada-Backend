@@ -1,6 +1,6 @@
 ## Context
 
-The `dotnet-backend-foundation` change delivered Clean Architecture projects, domain entities aligned to PRD section 5, and Application repository ports without implementations. EF Core and Npgsql packages are referenced in `Marque.Infrastructure` but not configured. `appsettings.Development.json` already defines a placeholder `ConnectionStrings:Supabase` value.
+The `dotnet-backend-foundation` change delivered Clean Architecture projects, domain entities aligned to PRD section 5, and Application repository ports without implementations. EF Core and Npgsql packages are referenced in `HoraMarcada.Infrastructure` but not configured. `appsettings.Development.json` already defines a placeholder `ConnectionStrings:Supabase` value.
 
 Supabase hosts PostgreSQL with optional Row Level Security (PRD section 5.3). The API will connect with a service role or direct connection string for migrations and server-side writes; RLS policies are applied in Supabase SQL, not via EF migrations.
 
@@ -8,7 +8,7 @@ Supabase hosts PostgreSQL with optional Row Level Security (PRD section 5.3). Th
 
 **Goals:**
 
-- `MarqueDbContext` exposing all PRD tables with PostgreSQL-compatible mappings
+- `HoraMarcadaDbContext` exposing all PRD tables with PostgreSQL-compatible mappings
 - Fluent `IEntityTypeConfiguration<>` classes per aggregate/entity, using snake_case table and column names matching PRD SQL
 - Value converters for `Slug`, `PhoneNumber`, `Money`, and `AppointmentStatus`
 - Initial EF migration creating schema equivalent to PRD 5.2 (including indexes on appointments)
@@ -29,11 +29,11 @@ Supabase hosts PostgreSQL with optional Row Level Security (PRD section 5.3). Th
 
 ### 1. Persistence folder layout
 
-**Decision:** Under `src/Marque.Infrastructure/Persistence/`:
+**Decision:** Under `src/HoraMarcada.Infrastructure/Persistence/`:
 
 | Subfolder | Contents |
 |-----------|----------|
-| `MarqueDbContext.cs` | DbContext + DbSets |
+| `HoraMarcadaDbContext.cs` | DbContext + DbSets |
 | `Configurations/` | One configuration class per entity |
 | `Converters/` | Shared value converters (optional) |
 | `Repositories/` | EF implementations of Application ports |
@@ -79,7 +79,7 @@ Supabase hosts PostgreSQL with optional Row Level Security (PRD section 5.3). Th
 **Decision:** Read `ConnectionStrings:Supabase` from configuration. Support environment variable override `ConnectionStrings__Supabase` (standard .NET config). Register:
 
 ```csharp
-services.AddDbContext<MarqueDbContext>(options =>
+services.AddDbContext<HoraMarcadaDbContext>(options =>
     options.UseNpgsql(connectionString));
 ```
 
@@ -89,9 +89,9 @@ services.AddDbContext<MarqueDbContext>(options =>
 
 ### 7. Design-time factory
 
-**Decision:** `MarqueDesignTimeDbContextFactory` in Infrastructure implements `IDesignTimeDbContextFactory<MarqueDbContext>`, builds configuration from `../Marque.Api/appsettings.json` + `appsettings.Development.json` + environment variables.
+**Decision:** `HoraMarcadaDesignTimeDbContextFactory` in Infrastructure implements `IDesignTimeDbContextFactory<HoraMarcadaDbContext>`, builds configuration from `../HoraMarcada.Api/appsettings.json` + `appsettings.Development.json` + environment variables.
 
-**Rationale:** `dotnet ef migrations add` runs with startup project `Marque.Api` and project `Marque.Infrastructure`.
+**Rationale:** `dotnet ef migrations add` runs with startup project `HoraMarcada.Api` and project `HoraMarcada.Infrastructure`.
 
 ### 8. Repository implementation scope
 
@@ -114,7 +114,7 @@ services.AddDbContext<MarqueDbContext>(options =>
 - `Microsoft.EntityFrameworkCore.Design` (PrivateAssets) on Infrastructure for tooling
 - `Microsoft.Extensions.Configuration.Json` and `Microsoft.Extensions.Configuration.EnvironmentVariables` for design-time factory
 
-Api project references Design package only if needed as startup project (typically `--startup-project Marque.Api`).
+Api project references Design package only if needed as startup project (typically `--startup-project HoraMarcada.Api`).
 
 ## Risks / Trade-offs
 
@@ -129,8 +129,8 @@ Api project references Design package only if needed as startup project (typical
 ## Migration Plan
 
 1. Configure Supabase project and copy database connection string to user secrets or environment
-2. `dotnet ef migrations add InitialCreate --project src/Marque.Infrastructure --startup-project src/Marque.Api`
-3. `dotnet ef database update --project src/Marque.Infrastructure --startup-project src/Marque.Api`
+2. `dotnet ef migrations add InitialCreate --project src/HoraMarcada.Infrastructure --startup-project src/HoraMarcada.Api`
+3. `dotnet ef database update --project src/HoraMarcada.Infrastructure --startup-project src/HoraMarcada.Api`
 4. Run `scripts/supabase-rls.sql` in Supabase SQL editor (manual)
 5. Verify tables in Supabase Table Editor
 

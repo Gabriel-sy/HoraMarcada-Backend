@@ -1,0 +1,22 @@
+using HoraMarcada.Application.Models;
+using HoraMarcada.Application.Policies;
+using HoraMarcada.Application.Repositories;
+using HoraMarcada.Domain.Entities;
+
+namespace HoraMarcada.Application.UseCases.Appointments;
+
+public class ListAppointmentsUseCase(
+    IAppointmentRepository appointmentRepository,
+    IStoreOwnershipPolicy ownershipPolicy)
+{
+    public async Task<IReadOnlyList<Appointment>> ExecuteAsync(
+        Guid userId,
+        ListAppointmentsInput input,
+        CancellationToken cancellationToken = default)
+    {
+        await ownershipPolicy.EnsureUserOwnsStoreAsync(userId, input.StoreId, cancellationToken);
+
+        var list = await appointmentRepository.ListByStoreAsync(input.StoreId, input.Start, input.End, input.ProfessionalId, cancellationToken);
+        return list.OrderBy(a => a.StartTime).ToList();
+    }
+}

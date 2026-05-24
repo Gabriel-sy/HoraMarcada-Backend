@@ -1,8 +1,8 @@
 ## 1. Project Setup and Configuration
 
 - [x] 1.1 Add test package versions to `Directory.Packages.props`
-- [x] 1.2 Create the test project file `tests/Marque.UnitTests/Marque.UnitTests.csproj` referencing `Marque.Application`
-- [x] 1.3 Add `Marque.UnitTests.csproj` to the solution file `Marque.sln`
+- [x] 1.2 Create the test project file `tests/HoraMarcada.UnitTests/HoraMarcada.UnitTests.csproj` referencing `HoraMarcada.Application`
+- [x] 1.3 Add `HoraMarcada.UnitTests.csproj` to the solution file `HoraMarcada.sln`
 
 ## 2. Store Use Cases Unit Tests
 

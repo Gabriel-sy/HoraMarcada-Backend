@@ -1,6 +1,6 @@
 # Architectural Specifications
 
-This document outlines the architectural boundaries, dependency flows, SOLID principles implementation, and database mappings of the Marque backend.
+This document outlines the architectural boundaries, dependency flows, SOLID principles implementation, and database mappings of the HoraMarcada backend.
 
 ---
 
@@ -10,43 +10,43 @@ The backend is built following Clean Architecture principles, separating core bu
 
 ```
        ┌──────────────────────────────────────────────┐
-       │                  Marque.Api                  │
+       │                  HoraMarcada.Api                  │
        └──────────────────────┬───────────────────────┘
                               │ Reference
        ┌──────────────────────▼───────────────────────┐
-       │             Marque.Infrastructure            │
+       │             HoraMarcada.Infrastructure            │
        └──────────────────────┬───────────────────────┘
                               │ Reference
        ┌──────────────────────▼───────────────────────┐
-       │              Marque.Application              │
+       │              HoraMarcada.Application              │
        └──────────────────────┬───────────────────────┘
                               │ Reference
        ┌──────────────────────▼───────────────────────┐
-       │                Marque.Domain                 │
+       │                HoraMarcada.Domain                 │
        └──────────────────────────────────────────────┘
 ```
 
 ### Layer Details & Directory Structure
 
-#### 1. Marque.Domain
+#### 1. HoraMarcada.Domain
 - **Role**: Core business domain model. Holds enterprise invariants, entity definitions, value objects, and domain exceptions.
 - **Dependencies**: Zero runtime dependencies. No references to database libraries (EF Core), HTTP layers, or external frameworks.
-- **Key Path**: [src/Marque.Domain](../src/Marque.Domain)
+- **Key Path**: [src/HoraMarcada.Domain](../src/HoraMarcada.Domain)
 
-#### 2. Marque.Application
+#### 2. HoraMarcada.Application
 - **Role**: Use-case orchestration. Translates external requests into domain workflows. Declares repository interfaces (ports) and defines input/output DTO structures.
-- **Dependencies**: Depends ONLY on `Marque.Domain`.
-- **Key Path**: [src/Marque.Application](../src/Marque.Application)
+- **Dependencies**: Depends ONLY on `HoraMarcada.Domain`.
+- **Key Path**: [src/HoraMarcada.Application](../src/HoraMarcada.Application)
 
-#### 3. Marque.Infrastructure
+#### 3. HoraMarcada.Infrastructure
 - **Role**: Gateway to external dependencies (database persistence, security providers, messaging systems). Implements repository ports and configures ORM mappings.
-- **Dependencies**: Depends on `Marque.Application` and `Marque.Domain`.
-- **Key Path**: [src/Marque.Infrastructure](../src/Marque.Infrastructure)
+- **Dependencies**: Depends on `HoraMarcada.Application` and `HoraMarcada.Domain`.
+- **Key Path**: [src/HoraMarcada.Infrastructure](../src/HoraMarcada.Infrastructure)
 
-#### 4. Marque.Api
+#### 4. HoraMarcada.Api
 - **Role**: Presentation and composition root. Exposes HTTP endpoints, configures the ASP.NET routing pipeline, parses and validates incoming payloads, maps exceptions to HTTP responses, and handles JWT authorization checks.
-- **Dependencies**: Depends on both `Marque.Infrastructure` and `Marque.Application`.
-- **Key Path**: [src/Marque.Api](../src/Marque.Api)
+- **Dependencies**: Depends on both `HoraMarcada.Infrastructure` and `HoraMarcada.Application`.
+- **Key Path**: [src/HoraMarcada.Api](../src/HoraMarcada.Api)
 
 ---
 
@@ -74,8 +74,8 @@ The codebase enforces SOLID principles to remain flexible, testable, and simple.
 ### Dependency Inversion Principle (DIP)
 - High-level orchestrators (`UseCases`) depend directly on interface abstractions (`IRepository`), not on concrete SQL implementations (`EfRepository`).
 - Dependency injection composition is split into extension methods:
-  - `AddApplication()` in `Marque.Application`
-  - `AddInfrastructure()` in `Marque.Infrastructure`
+  - `AddApplication()` in `HoraMarcada.Application`
+  - `AddInfrastructure()` in `HoraMarcada.Infrastructure`
 
 ---
 
@@ -108,7 +108,7 @@ builder.Property(s => s.Slug)
 ```
 
 These converters are defined centrally in:
-[ValueObjectConverters.cs](../src/Marque.Infrastructure/Persistence/Converters/ValueObjectConverters.cs)
+[ValueObjectConverters.cs](../src/HoraMarcada.Infrastructure/Persistence/Converters/ValueObjectConverters.cs)
 
 ---
 

@@ -1,6 +1,6 @@
 ## Context
 
-The Marque backend API requires security for its administrative endpoints. A store owner (entrepreneur) needs to authenticate, and their authenticated session must restrict operations to their own store. Currently, endpoints rely on `UserId` values supplied in the request bodies or route paths, allowing any client to perform operations on behalf of any user.
+The HoraMarcada backend API requires security for its administrative endpoints. A store owner (entrepreneur) needs to authenticate, and their authenticated session must restrict operations to their own store. Currently, endpoints rely on `UserId` values supplied in the request bodies or route paths, allowing any client to perform operations on behalf of any user.
 
 ## Goals / Non-Goals
 

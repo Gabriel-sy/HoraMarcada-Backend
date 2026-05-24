@@ -2,11 +2,11 @@
 
 ### Requirement: Single-endpoint Controller Structure
 
-The API controllers SHALL be structured with one folder and file for each endpoint under `src/Marque.Api/Controllers/`. The namespace of each controller MUST match its folder structure (e.g., `Marque.Api.Controllers.Services.AddService`).
+The API controllers SHALL be structured with one folder and file for each endpoint under `src/HoraMarcada.Api/Controllers/`. The namespace of each controller MUST match its folder structure (e.g., `HoraMarcada.Api.Controllers.Services.AddService`).
 
 #### Scenario: Dedicated endpoint folders
-- **WHEN** inspecting `src/Marque.Api/Controllers`
-- **THEN** each endpoint resides in its own subfolder containing a single controller class file (e.g., `src/Marque.Api/Controllers/Services/Add/AddServiceController.cs`)
+- **WHEN** inspecting `src/HoraMarcada.Api/Controllers`
+- **THEN** each endpoint resides in its own subfolder containing a single controller class file (e.g., `src/HoraMarcada.Api/Controllers/Services/Add/AddServiceController.cs`)
 
 ### Requirement: Request Validation with FluentValidation
 

@@ -1,6 +1,6 @@
 ## Context
 
-Greenfield repository with only `PRD.md`. The product is an appointment scheduling SaaS (Marque) targeting small service businesses. The PRD specifies ASP.NET Core 8, PostgreSQL via Supabase, Supabase Auth JWT, Hangfire, and WhatsApp integration. This change scaffolds the backend skeleton with Clean Architecture and a domain model aligned to PRD section 5 (data model), without implementing API features yet.
+Greenfield repository with only `PRD.md`. The product is an appointment scheduling SaaS (HoraMarcada) targeting small service businesses. The PRD specifies ASP.NET Core 8, PostgreSQL via Supabase, Supabase Auth JWT, Hangfire, and WhatsApp integration. This change scaffolds the backend skeleton with Clean Architecture and a domain model aligned to PRD section 5 (data model), without implementing API features yet.
 
 The user requires layered architecture with strict Dependency Inversion Principle (DIP): inner layers define abstractions; outer layers implement them. **Policies** (business rules, invariants, ownership) belong in Domain/Application; **details** (EF Core, HTTP, JWT validation, messaging) belong in Infrastructure/API only.
 
@@ -29,20 +29,20 @@ The user requires layered architecture with strict Dependency Inversion Principl
 
 ### 1. Solution layout and naming
 
-**Decision:** Use solution name `Marque.sln` with projects under `src/`:
+**Decision:** Use solution name `HoraMarcada.sln` with projects under `src/`:
 
 | Project | Responsibility |
 |---------|----------------|
-| `Marque.Domain` | Entities, value objects, enums, domain exceptions |
-| `Marque.Application` | Repository interfaces, DTOs for future use cases (minimal now) |
-| `Marque.Infrastructure` | EF Core, external services (empty stub with DI extension) |
-| `Marque.Api` | ASP.NET Core host, `Program.cs`, middleware pipeline |
+| `HoraMarcada.Domain` | Entities, value objects, enums, domain exceptions |
+| `HoraMarcada.Application` | Repository interfaces, DTOs for future use cases (minimal now) |
+| `HoraMarcada.Infrastructure` | EF Core, external services (empty stub with DI extension) |
+| `HoraMarcada.Api` | ASP.NET Core host, `Program.cs`, middleware pipeline |
 
-**Rationale:** Matches PRD stack and common .NET Clean Architecture naming. `Marque` is the product name from the repo context.
+**Rationale:** Matches PRD stack and common .NET Clean Architecture naming. `HoraMarcada` is the product name from the repo context.
 
 ### 2. Where repository interfaces live
 
-**Decision:** Define repository interfaces in `Marque.Application` (e.g. `IStoreRepository`, `IAppointmentRepository`). Domain stays persistence-ignorant.
+**Decision:** Define repository interfaces in `HoraMarcada.Application` (e.g. `IStoreRepository`, `IAppointmentRepository`). Domain stays persistence-ignorant.
 
 **Rationale:** Application layer owns use-case orchestration ports; Domain only knows entities and domain services. Classic Clean Architecture.
 
@@ -108,8 +108,8 @@ Domain: **no** EF or ASP.NET packages.
 ### 8. Project references
 
 ```
-Marque.Api → Marque.Infrastructure → Marque.Application → Marque.Domain
-Marque.Api → Marque.Application (for DI registration of handlers later)
+HoraMarcada.Api → HoraMarcada.Infrastructure → HoraMarcada.Application → HoraMarcada.Domain
+HoraMarcada.Api → HoraMarcada.Application (for DI registration of handlers later)
 ```
 
 Infrastructure must not be referenced by Domain or Application.
@@ -120,7 +120,7 @@ Infrastructure must not be referenced by Domain or Application.
 |------|------------|
 | Over-modeling domain before first use case | Keep entities aligned 1:1 with PRD tables; defer domain services until availability/booking changes |
 | Hangfire/EF packages added but unused | Document as intentional placeholders in README; no startup registration in this change |
-| PRD uses `AgendaApp` naming in examples | Standardize on `Marque` in code; note in README |
+| PRD uses `AgendaApp` naming in examples | Standardize on `HoraMarcada` in code; note in README |
 | N:N `service_professional` modeled only as ids on entities initially | Add `Service.AssignProfessional(ProfessionalId)` on aggregate when CRUD change lands |
 
 ## Migration Plan
@@ -129,11 +129,11 @@ N/A — greenfield. After merge:
 
 1. `dotnet restore`
 2. `dotnet build`
-3. `dotnet run --project src/Marque.Api`
+3. `dotnet run --project src/HoraMarcada.Api`
 
 No database migration in this change.
 
 ## Open Questions
 
-- Confirm product assembly prefix `Marque` vs `AgendaApp` from PRD section 8 (design assumes `Marque`)
+- Confirm product assembly prefix `HoraMarcada` vs `AgendaApp` from PRD section 8 (design assumes `HoraMarcada`)
 - Whether `Application` should reference `MediatR` now or in the first feature change (defer to keep foundation minimal)

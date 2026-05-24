@@ -9,7 +9,7 @@ To maintain strict invariants, follow these rules when adding or modifying domai
 
 Example Entity outline:
 ```csharp
-namespace Marque.Domain.Entities;
+namespace HoraMarcada.Domain.Entities;
 
 public sealed class SampleEntity
 {
@@ -42,7 +42,7 @@ public sealed class SampleEntity
 
 Example Value Object:
 ```csharp
-namespace Marque.Domain.ValueObjects;
+namespace HoraMarcada.Domain.ValueObjects;
 
 public sealed record SampleValue
 {
@@ -72,7 +72,7 @@ public sealed record SampleValue
 
 Example Use Case:
 ```csharp
-namespace Marque.Application.UseCases.Stores;
+namespace HoraMarcada.Application.UseCases.Stores;
 
 public class CreateStoreUseCase
 {
@@ -104,7 +104,7 @@ Group each route under a folder named after its action. The folder should contai
 2. The FluentValidation request validator class.
 
 Example directory path:
-`src/Marque.Api/Controllers/Stores/Create/`
+`src/HoraMarcada.Api/Controllers/Stores/Create/`
 - `CreateStoreController.cs`
 - `CreateStoreRequestValidator.cs`
 
@@ -113,7 +113,7 @@ Inject `IValidator<T>` into the controller constructor and call `ValidateAsync` 
 
 Example Controller & Validator:
 ```csharp
-namespace Marque.Api.Controllers.Stores.Create;
+namespace HoraMarcada.Api.Controllers.Stores.Create;
 
 [ApiController]
 [Route("api/stores")]

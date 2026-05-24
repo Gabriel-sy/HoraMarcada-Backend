@@ -1,6 +1,6 @@
 ## Why
 
-Currently, the Marque backend API has no authentication or authorization mechanism. Private endpoints (such as store management, professional/service updates, and private schedule retrieval) are completely unsecured and rely on the client explicitly passing the user ID in the request payload or route, which is insecure. Adding user authentication via Supabase JWT validation secures these private endpoints and ensures that users can only modify and view resources belonging to their own stores.
+Currently, the HoraMarcada backend API has no authentication or authorization mechanism. Private endpoints (such as store management, professional/service updates, and private schedule retrieval) are completely unsecured and rely on the client explicitly passing the user ID in the request payload or route, which is insecure. Adding user authentication via Supabase JWT validation secures these private endpoints and ensures that users can only modify and view resources belonging to their own stores.
 
 ## What Changes
 
@@ -18,11 +18,11 @@ Currently, the Marque backend API has no authentication or authorization mechani
 
 ## Impact
 
-- **Marque.Api**:
+- **HoraMarcada.Api**:
   - `Program.cs`: Register JWT Bearer authentication services, configure token validation parameters pointing to the Supabase JWKS/Metadata endpoint, and inject authentication and authorization middlewares into the HTTP pipeline.
   - Controllers: Annotate private controllers with `[Authorize]` and update route handlers to retrieve the authenticated user ID directly from claims.
-- **Marque.Application**:
+- **HoraMarcada.Application**:
   - Update DTO models (like `CreateStoreInput`, `UpdateStoreInput`) to remove the client-provided `UserId` parameter.
   - Update use cases where necessary to receive the user ID from the API controller.
 - **Dependencies**:
-  - Added dependency on `Microsoft.AspNetCore.Authentication.JwtBearer` (already present in `Marque.Infrastructure.csproj`).
+  - Added dependency on `Microsoft.AspNetCore.Authentication.JwtBearer` (already present in `HoraMarcada.Infrastructure.csproj`).

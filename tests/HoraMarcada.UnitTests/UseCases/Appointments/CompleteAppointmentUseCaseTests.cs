@@ -1,0 +1,153 @@
+using Moq;
+using Xunit;
+using HoraMarcada.Application.UseCases.Appointments;
+using HoraMarcada.Application.Repositories;
+using HoraMarcada.Application.Policies;
+using HoraMarcada.Application.Models;
+using HoraMarcada.Application.Exceptions;
+using HoraMarcada.Domain.Entities;
+using HoraMarcada.Domain.Enums;
+
+namespace HoraMarcada.UnitTests.UseCases.Appointments;
+
+public class CompleteAppointmentUseCaseTests
+{
+    private readonly Mock<IAppointmentRepository> _appointmentRepositoryMock;
+    private readonly Mock<IStoreOwnershipPolicy> _ownershipPolicyMock;
+    private readonly CompleteAppointmentUseCase _useCase;
+
+    public CompleteAppointmentUseCaseTests()
+    {
+        _appointmentRepositoryMock = new Mock<IAppointmentRepository>();
+        _ownershipPolicyMock = new Mock<IStoreOwnershipPolicy>();
+        _useCase = new CompleteAppointmentUseCase(
+            _appointmentRepositoryMock.Object,
+            _ownershipPolicyMock.Object
+        );
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenOwnershipPolicyFails_ShouldPropagateException()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var storeId = Guid.NewGuid();
+        var appointmentId = Guid.NewGuid();
+        var input = new CompleteAppointmentInput(storeId);
+
+        _ownershipPolicyMock
+            .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
+            .ThrowsAsync(new UnauthorizedAccessException("User does not own store."));
+
+        // Act & Assert
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _useCase.ExecuteAsync(userId, appointmentId, input));
+        
+        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()), Times.Once);
+        _appointmentRepositoryMock.Verify(r => r.GetByIdAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()), Times.Never);
+        _appointmentRepositoryMock.Verify(r => r.UpdateAsync(It.IsAny<Appointment>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenAppointmentDoesNotExist_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var storeId = Guid.NewGuid();
+        var appointmentId = Guid.NewGuid();
+        var input = new CompleteAppointmentInput(storeId);
+
+        _ownershipPolicyMock
+            .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        _appointmentRepositoryMock
+            .Setup(r => r.GetByIdAsync(appointmentId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Appointment?)null);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<NotFoundException>(() => _useCase.ExecuteAsync(userId, appointmentId, input));
+
+        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()), Times.Once);
+        _appointmentRepositoryMock.Verify(r => r.GetByIdAsync(appointmentId, It.IsAny<CancellationToken>()), Times.Once);
+        _appointmentRepositoryMock.Verify(r => r.UpdateAsync(It.IsAny<Appointment>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenAppointmentDoesNotBelongToStore_ShouldThrowNotFoundException()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var storeId = Guid.NewGuid();
+        var otherStoreId = Guid.NewGuid();
+        var appointmentId = Guid.NewGuid();
+        var input = new CompleteAppointmentInput(storeId);
+
+        _ownershipPolicyMock
+            .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        var appointment = Appointment.Create(
+            otherStoreId,
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            "Customer",
+            "+5511999999999",
+            "customer@example.com",
+            DateTimeOffset.UtcNow.AddHours(1),
+            DateTimeOffset.UtcNow.AddHours(2)
+        );
+
+        _appointmentRepositoryMock
+            .Setup(r => r.GetByIdAsync(appointmentId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(appointment);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<NotFoundException>(() => _useCase.ExecuteAsync(userId, appointmentId, input));
+
+        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()), Times.Once);
+        _appointmentRepositoryMock.Verify(r => r.GetByIdAsync(appointmentId, It.IsAny<CancellationToken>()), Times.Once);
+        _appointmentRepositoryMock.Verify(r => r.UpdateAsync(It.IsAny<Appointment>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenValidInput_ShouldCompleteAppointment()
+    {
+        // Arrange
+        var userId = Guid.NewGuid();
+        var storeId = Guid.NewGuid();
+        var appointmentId = Guid.NewGuid();
+        var input = new CompleteAppointmentInput(storeId);
+
+        _ownershipPolicyMock
+            .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask);
+
+        var appointment = Appointment.Create(
+            storeId,
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            "Customer",
+            "+5511999999999",
+            "customer@example.com",
+            DateTimeOffset.UtcNow.AddHours(1),
+            DateTimeOffset.UtcNow.AddHours(2)
+        );
+
+        _appointmentRepositoryMock
+            .Setup(r => r.GetByIdAsync(appointmentId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(appointment);
+
+        // Act
+        await _useCase.ExecuteAsync(userId, appointmentId, input);
+
+        // Assert
+        Assert.Equal(AppointmentStatus.Completed, appointment.Status);
+        
+        _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()), Times.Once);
+        _appointmentRepositoryMock.Verify(r => r.GetByIdAsync(appointmentId, It.IsAny<CancellationToken>()), Times.Once);
+        _appointmentRepositoryMock.Verify(r => r.UpdateAsync(It.Is<Appointment>(a => 
+            a.Id == appointment.Id &&
+            a.Status == AppointmentStatus.Completed
+        ), It.IsAny<CancellationToken>()), Times.Once);
+    }
+}

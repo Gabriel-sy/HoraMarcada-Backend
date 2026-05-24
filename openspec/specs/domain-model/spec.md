@@ -1,6 +1,6 @@
 ## Purpose
 
-Defines the domain model entities, aggregates, and value objects for the Marque backend.
+Defines the domain model entities, aggregates, and value objects for the HoraMarcada backend.
 ## Requirements
 ### Requirement: Store aggregate root
 
@@ -72,16 +72,16 @@ The Application layer SHALL define repository interfaces for persisting and load
 
 #### Scenario: Application does not reference EF Core
 
-- **WHEN** inspecting `Marque.Application.csproj`
+- **WHEN** inspecting `HoraMarcada.Application.csproj`
 - **THEN** it contains no Entity Framework Core package references
 
 ### Requirement: Domain has no external framework dependencies
 
-`Marque.Domain` SHALL not reference Entity Framework, ASP.NET Core, Hangfire, or HTTP client libraries.
+`HoraMarcada.Domain` SHALL not reference Entity Framework, ASP.NET Core, Hangfire, or HTTP client libraries.
 
 #### Scenario: Domain project dependency check
 
-- **WHEN** listing package and project references on `Marque.Domain`
+- **WHEN** listing package and project references on `HoraMarcada.Domain`
 - **THEN** only BCL/analyzer dependencies are present
 
 ### Requirement: Appointment state transitions in domain

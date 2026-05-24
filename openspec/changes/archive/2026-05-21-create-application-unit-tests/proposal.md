@@ -4,9 +4,9 @@ Currently, the application layer use cases lack automated test coverage, making 
 
 ## What Changes
 
-- Create a new unit testing project `Marque.UnitTests` under the `tests` directory.
+- Create a new unit testing project `HoraMarcada.UnitTests` under the `tests` directory.
 - Configure `Directory.Packages.props` and the test project to support `xUnit` and `Moq` using Central Package Management (CPM).
-- Structure the test project to mirror `Marque.Application/UseCases` by organizing tests into folders matching the use case namespaces: `Appointments`, `Availability`, `Professionals`, `Services`, and `Stores`.
+- Structure the test project to mirror `HoraMarcada.Application/UseCases` by organizing tests into folders matching the use case namespaces: `Appointments`, `Availability`, `Professionals`, `Services`, and `Stores`.
 - Write comprehensive unit tests for all application use cases using the Arrange-Act-Assert (AAA) pattern.
 - Establish clean test naming conventions (e.g., `ExecuteAsync_WhenCondition_ShouldExpectedResult`).
 
@@ -19,6 +19,6 @@ Currently, the application layer use cases lack automated test coverage, making 
 
 ## Impact
 
-- Solution structure: Added a new `tests` folder and a `Marque.UnitTests.csproj` project reference in `Marque.sln`.
+- Solution structure: Added a new `tests` folder and a `HoraMarcada.UnitTests.csproj` project reference in `HoraMarcada.sln`.
 - Dependency management: Added test dependencies (`xunit`, `moq`, `xunit.runner.visualstudio`, `Microsoft.NET.Test.Sdk`, `coverlet.collector`) to `Directory.Packages.props`.
 - Development workflow: Added automated test execution via `dotnet test`.

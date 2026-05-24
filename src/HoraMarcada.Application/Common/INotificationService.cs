@@ -1,0 +1,48 @@
+using HoraMarcada.Domain.Entities;
+
+namespace HoraMarcada.Application.Common;
+
+public interface INotificationService
+{
+    Task SendBookingConfirmationToCustomerAsync(
+        Appointment appointment,
+        Store store,
+        Service service,
+        Professional professional,
+        CancellationToken cancellationToken = default);
+
+    Task SendBookingNotificationToProfessionalAsync(
+        Appointment appointment,
+        Store store,
+        Service service,
+        Professional professional,
+        CancellationToken cancellationToken = default);
+
+    Task SendBookingNotificationToStoreAsync(
+        Appointment appointment,
+        Store store,
+        Service service,
+        Professional professional,
+        CancellationToken cancellationToken = default);
+
+    Task SendCancellationNoticeToCustomerAsync(
+        Appointment appointment,
+        Store store,
+        Service service,
+        Professional professional,
+        CancellationToken cancellationToken = default);
+
+    Task SendCancellationNotificationToProfessionalAsync(
+        Appointment appointment,
+        Store store,
+        Service service,
+        Professional professional,
+        CancellationToken cancellationToken = default);
+
+    Task SendCancellationNotificationToStoreAsync(
+        Appointment appointment,
+        Store store,
+        Service service,
+        Professional professional,
+        CancellationToken cancellationToken = default);
+}

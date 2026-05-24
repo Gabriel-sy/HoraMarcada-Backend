@@ -1,19 +1,19 @@
 # Testing Guidelines
 
-This document details how to write, structure, mock, and run tests in the Marque backend repository.
+This document details how to write, structure, mock, and run tests in the HoraMarcada backend repository.
 
 ---
 
 ## 1. Test Project Structure
 
-All unit tests are located inside the [tests/Marque.UnitTests](../tests/Marque.UnitTests) project.
+All unit tests are located inside the [tests/HoraMarcada.UnitTests](../tests/HoraMarcada.UnitTests) project.
 
-The test directory layout mirrors the design of the `Marque.Application` use cases:
-- `tests/Marque.UnitTests/UseCases/Stores/`
-- `tests/Marque.UnitTests/UseCases/Professionals/`
-- `tests/Marque.UnitTests/UseCases/Services/`
-- `tests/Marque.UnitTests/UseCases/Availability/`
-- `tests/Marque.UnitTests/UseCases/Appointments/`
+The test directory layout mirrors the design of the `HoraMarcada.Application` use cases:
+- `tests/HoraMarcada.UnitTests/UseCases/Stores/`
+- `tests/HoraMarcada.UnitTests/UseCases/Professionals/`
+- `tests/HoraMarcada.UnitTests/UseCases/Services/`
+- `tests/HoraMarcada.UnitTests/UseCases/Availability/`
+- `tests/HoraMarcada.UnitTests/UseCases/Appointments/`
 
 ---
 
@@ -81,7 +81,7 @@ dotnet test
 
 ### Run Specific Test Project
 ```bash
-dotnet test tests/Marque.UnitTests
+dotnet test tests/HoraMarcada.UnitTests
 ```
 
 ### Filter by Class

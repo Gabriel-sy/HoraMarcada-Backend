@@ -7,7 +7,7 @@ The Infrastructure layer SHALL provide EF Core implementations for `IStoreReposi
 #### Scenario: Repositories registered in DI
 
 - **WHEN** the API host calls `AddInfrastructure()`
-- **THEN** resolving `IStoreRepository` returns the EF implementation backed by `MarqueDbContext`
+- **THEN** resolving `IStoreRepository` returns the EF implementation backed by `HoraMarcadaDbContext`
 
 ### Requirement: Store repository operations
 

@@ -4,7 +4,7 @@ The backend foundation established domain entities and repository ports, but not
 
 ## What Changes
 
-- Add `MarqueDbContext` with `DbSet`s for all PRD tables: stores, professionals, weekly_hours, services, service_professional (join), appointments
+- Add `HoraMarcadaDbContext` with `DbSet`s for all PRD tables: stores, professionals, weekly_hours, services, service_professional (join), appointments
 - Implement EF Core entity type configurations (fluent API) mapping domain entities to PRD column names, types, constraints, and relationships
 - Add value converters for domain value objects (`Slug`, `PhoneNumber`, `Money`) and enums (`AppointmentStatus`)
 - Register `DbContext` and connection options in `AddInfrastructure()` using Supabase PostgreSQL connection string from configuration
@@ -29,7 +29,7 @@ The backend foundation established domain entities and repository ports, but not
 
 ## Impact
 
-- **Code**: `Marque.Infrastructure` (Persistence folder: DbContext, Configurations, Repositories, Migrations); `InfrastructureServiceCollectionExtensions`; optional `Marque.Api` appsettings
+- **Code**: `HoraMarcada.Infrastructure` (Persistence folder: DbContext, Configurations, Repositories, Migrations); `InfrastructureServiceCollectionExtensions`; optional `HoraMarcada.Api` appsettings
 - **Dependencies**: `Microsoft.EntityFrameworkCore.Design` (tools), possibly `Microsoft.Extensions.Configuration` packages for design-time factory
 - **Systems**: Supabase PostgreSQL project must exist; connection string required at runtime and for migrations
 - **Out of scope**: Supabase Auth JWT middleware, RLS policy SQL execution via EF, API endpoints, Hangfire schema, integration tests against live Supabase

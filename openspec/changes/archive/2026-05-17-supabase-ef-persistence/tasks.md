@@ -1,14 +1,14 @@
 ## 1. Packages and project setup
 
 - [x] 1.1 Add `Microsoft.EntityFrameworkCore.Design`, `Microsoft.Extensions.Configuration.Json`, and `Microsoft.Extensions.Configuration.EnvironmentVariables` to `Directory.Packages.props`
-- [x] 1.2 Reference Design (PrivateAssets) and configuration packages in `Marque.Infrastructure.csproj`
-- [x] 1.3 Add `Microsoft.EntityFrameworkCore.Design` reference to `Marque.Api` for EF CLI startup project support
+- [x] 1.2 Reference Design (PrivateAssets) and configuration packages in `HoraMarcada.Infrastructure.csproj`
+- [x] 1.3 Add `Microsoft.EntityFrameworkCore.Design` reference to `HoraMarcada.Api` for EF CLI startup project support
 
 ## 2. DbContext and persistence structure
 
-- [x] 2.1 Create `Persistence/MarqueDbContext.cs` with DbSets for Store, Professional, WeeklyHours, Service, ServiceProfessional (join), Appointment
+- [x] 2.1 Create `Persistence/HoraMarcadaDbContext.cs` with DbSets for Store, Professional, WeeklyHours, Service, ServiceProfessional (join), Appointment
 - [x] 2.2 Apply all `IEntityTypeConfiguration<>` classes from assembly in `OnModelCreating`
-- [x] 2.3 Add `MarqueDesignTimeDbContextFactory` loading config from `Marque.Api` appsettings
+- [x] 2.3 Add `HoraMarcadaDesignTimeDbContextFactory` loading config from `HoraMarcada.Api` appsettings
 
 ## 3. Entity configurations
 
@@ -23,7 +23,7 @@
 
 - [x] 4.1 Update `InfrastructureServiceCollectionExtensions.AddInfrastructure(IServiceCollection, IConfiguration)` to register `DbContext` with `UseNpgsql(ConnectionStrings:Supabase)`
 - [x] 4.2 Validate connection string is present; throw `InvalidOperationException` with clear message if missing
-- [x] 4.3 Update `Marque.Api` `Program.cs` to pass `builder.Configuration` into `AddInfrastructure`
+- [x] 4.3 Update `HoraMarcada.Api` `Program.cs` to pass `builder.Configuration` into `AddInfrastructure`
 
 ## 5. Migrations
 

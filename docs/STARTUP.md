@@ -1,6 +1,6 @@
 ## 1. Project Overview
 
-**Marque** is an online scheduling SaaS system aimed at small service businesses (e.g., barbershops, salons, manicurists). Its focus is on extreme simplicity for customers and automation via WhatsApp integrations for confirmations, reminders, and cancellations.
+**HoraMarcada** is an online scheduling SaaS system aimed at small service businesses (e.g., barbershops, salons, manicurists). Its focus is on extreme simplicity for customers and automation via WhatsApp integrations for confirmations, reminders, and cancellations.
 
 ### User Roles
 - **Entrepreneur (Admin)**: Registers the store, manages services, professionals, weekly hours, and schedules via the web panel. Authenticated via Supabase.
@@ -28,16 +28,16 @@ Use this table to find where you need to go in the repository based on the task 
 | Task Type | Target Directory / File | Description |
 | :--- | :--- | :--- |
 | **Understand Business Rules** | [BUSINESS_LOGIC.md](BUSINESS_LOGIC.md) | High-level requirements and domain model details. |
-| **Modify Business Invariants** | [Marque.Domain](../src/Marque.Domain) | Entities, Value Objects, and domain exceptions. |
-| **Add New Features / Core Logic** | [Marque.Application/UseCases](../src/Marque.Application/UseCases) | Core application use cases and business orchestration. |
-| **Define Persistence Contracts** | [Marque.Application/Repositories](../src/Marque.Application/Repositories) | Repository interface declarations (ports). |
-| **Implement Database Access** | [Marque.Infrastructure/Persistence/Repositories](../src/Marque.Infrastructure/Persistence/Repositories) | EF Core implementations of repository interfaces (adapters). |
-| **Configure DB Schemas / Mappings** | [Marque.Infrastructure/Persistence/Configurations](../src/Marque.Infrastructure/Persistence/Configurations) | Fluent API entity mapping configurations. |
-| **Add Database Migrations** | [Marque.Infrastructure/Migrations](../src/Marque.Infrastructure/Migrations) | EF Core schema migrations. |
-| **Add API Endpoints** | [Marque.Api/Controllers](../src/Marque.Api/Controllers) | Controller classes grouped by resource. |
-| **Define API Request Validation** | [Marque.Api/Controllers](../src/Marque.Api/Controllers) | FluentValidation request validators. |
-| **Write/Run Unit Tests** | [Marque.UnitTests](../tests/Marque.UnitTests) | Test suites mirroring use cases. |
-| **Manage Background Jobs** | [Marque.Infrastructure/DependencyInjection](../src/Marque.Infrastructure/DependencyInjection) | Hangfire initialization and registration. |
+| **Modify Business Invariants** | [HoraMarcada.Domain](../src/HoraMarcada.Domain) | Entities, Value Objects, and domain exceptions. |
+| **Add New Features / Core Logic** | [HoraMarcada.Application/UseCases](../src/HoraMarcada.Application/UseCases) | Core application use cases and business orchestration. |
+| **Define Persistence Contracts** | [HoraMarcada.Application/Repositories](../src/HoraMarcada.Application/Repositories) | Repository interface declarations (ports). |
+| **Implement Database Access** | [HoraMarcada.Infrastructure/Persistence/Repositories](../src/HoraMarcada.Infrastructure/Persistence/Repositories) | EF Core implementations of repository interfaces (adapters). |
+| **Configure DB Schemas / Mappings** | [HoraMarcada.Infrastructure/Persistence/Configurations](../src/HoraMarcada.Infrastructure/Persistence/Configurations) | Fluent API entity mapping configurations. |
+| **Add Database Migrations** | [HoraMarcada.Infrastructure/Migrations](../src/HoraMarcada.Infrastructure/Migrations) | EF Core schema migrations. |
+| **Add API Endpoints** | [HoraMarcada.Api/Controllers](../src/HoraMarcada.Api/Controllers) | Controller classes grouped by resource. |
+| **Define API Request Validation** | [HoraMarcada.Api/Controllers](../src/HoraMarcada.Api/Controllers) | FluentValidation request validators. |
+| **Write/Run Unit Tests** | [HoraMarcada.UnitTests](../tests/HoraMarcada.UnitTests) | Test suites mirroring use cases. |
+| **Manage Background Jobs** | [HoraMarcada.Infrastructure/DependencyInjection](../src/HoraMarcada.Infrastructure/DependencyInjection) | Hangfire initialization and registration. |
 
 ---
 
