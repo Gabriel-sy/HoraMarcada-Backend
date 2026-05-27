@@ -117,5 +117,7 @@ These converters are defined centrally in:
 - **Supabase Auth**: Incoming requests supply a JWT in the `Authorization` header. The middleware validates this token using the JWKS endpoint provided by Supabase:
   `https://{project}.supabase.co/auth/v1/user`
 - **Supabase Row Level Security (RLS)**: Secures direct database access. Store owners can only query stores where `user_id = auth.uid()`. Check [supabase-rls.sql](../scripts/supabase-rls.sql) for execution details.
+- **Asynchronous Notification Pipeline**: Emails and notifications are dispatched asynchronously via the `INotificationService` to keep API response times minimal. We use the **Decorator Pattern** (`QueueNotificationServiceDecorator`) to intercept calls to `INotificationService` from the Use Cases and immediately place a job onto an in-memory queue (`ChannelNotificationQueue` using `System.Threading.Channels`). A background worker (`NotificationQueueProcessor` running as a `BackgroundService`) dequeues these jobs, resolves the concrete `ResendEmailNotificationService` in a scoped container, and dispatches the e-mail with a linear backoff retry policy (maximum of 3 attempts) in case of transient API errors.
 - **Hangfire**: Triggers automatic WhatsApp reminders and summary dispatches.
 - **WhatsApp Gateway**: Communicates using Z-API / Evolution API (MVP) or Twilio (production) integration.
+

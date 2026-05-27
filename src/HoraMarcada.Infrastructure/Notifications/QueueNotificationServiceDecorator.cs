@@ -1,0 +1,109 @@
+using HoraMarcada.Application.Common;
+using HoraMarcada.Domain.Entities;
+
+namespace HoraMarcada.Infrastructure.Notifications;
+
+public class QueueNotificationServiceDecorator(INotificationQueue queue) : INotificationService
+{
+    public Task SendBookingConfirmationToCustomerAsync(
+        Appointment appointment,
+        Store store,
+        Service service,
+        Professional professional,
+        CancellationToken cancellationToken = default)
+    {
+        queue.QueueNotification(new NotificationJob(
+            NotificationJobType.BookingConfirmationToCustomer,
+            appointment,
+            store,
+            service,
+            professional
+        ));
+        return Task.CompletedTask;
+    }
+
+    public Task SendBookingNotificationToProfessionalAsync(
+        Appointment appointment,
+        Store store,
+        Service service,
+        Professional professional,
+        CancellationToken cancellationToken = default)
+    {
+        queue.QueueNotification(new NotificationJob(
+            NotificationJobType.BookingNotificationToProfessional,
+            appointment,
+            store,
+            service,
+            professional
+        ));
+        return Task.CompletedTask;
+    }
+
+    public Task SendBookingNotificationToStoreAsync(
+        Appointment appointment,
+        Store store,
+        Service service,
+        Professional professional,
+        CancellationToken cancellationToken = default)
+    {
+        queue.QueueNotification(new NotificationJob(
+            NotificationJobType.BookingNotificationToStore,
+            appointment,
+            store,
+            service,
+            professional
+        ));
+        return Task.CompletedTask;
+    }
+
+    public Task SendCancellationNoticeToCustomerAsync(
+        Appointment appointment,
+        Store store,
+        Service service,
+        Professional professional,
+        CancellationToken cancellationToken = default)
+    {
+        queue.QueueNotification(new NotificationJob(
+            NotificationJobType.CancellationNoticeToCustomer,
+            appointment,
+            store,
+            service,
+            professional
+        ));
+        return Task.CompletedTask;
+    }
+
+    public Task SendCancellationNotificationToProfessionalAsync(
+        Appointment appointment,
+        Store store,
+        Service service,
+        Professional professional,
+        CancellationToken cancellationToken = default)
+    {
+        queue.QueueNotification(new NotificationJob(
+            NotificationJobType.CancellationNotificationToProfessional,
+            appointment,
+            store,
+            service,
+            professional
+        ));
+        return Task.CompletedTask;
+    }
+
+    public Task SendCancellationNotificationToStoreAsync(
+        Appointment appointment,
+        Store store,
+        Service service,
+        Professional professional,
+        CancellationToken cancellationToken = default)
+    {
+        queue.QueueNotification(new NotificationJob(
+            NotificationJobType.CancellationNotificationToStore,
+            appointment,
+            store,
+            service,
+            professional
+        ));
+        return Task.CompletedTask;
+    }
+}

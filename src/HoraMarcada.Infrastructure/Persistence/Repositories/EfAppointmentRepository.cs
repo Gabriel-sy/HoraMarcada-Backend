@@ -25,8 +25,11 @@ internal sealed class EfAppointmentRepository(HoraMarcadaDbContext context) : IA
         Guid? professionalId = null,
         CancellationToken cancellationToken = default)
     {
+        var startUtc = start.ToUniversalTime();
+        var endUtc = end.ToUniversalTime();
+
         var query = context.Appointments
-            .Where(a => a.StoreId == storeId && a.StartTime >= start && a.StartTime <= end);
+            .Where(a => a.StoreId == storeId && a.StartTime >= startUtc && a.StartTime <= endUtc);
 
         if (professionalId.HasValue)
         {
@@ -41,7 +44,7 @@ internal sealed class EfAppointmentRepository(HoraMarcadaDbContext context) : IA
         DateTimeOffset date,
         CancellationToken cancellationToken = default)
     {
-        var startOfDay = new DateTimeOffset(date.Year, date.Month, date.Day, 0, 0, 0, date.Offset);
+        var startOfDay = new DateTimeOffset(date.Year, date.Month, date.Day, 0, 0, 0, date.Offset).ToUniversalTime();
         var endOfDay = startOfDay.AddDays(1);
 
         return await context.Appointments

@@ -35,7 +35,8 @@ public class BookAppointmentUseCaseTests
             _storeRepositoryMock.Object,
             _serviceRepositoryMock.Object,
             _professionalRepositoryMock.Object,
-            _appointmentRepositoryMock.Object
+            _appointmentRepositoryMock.Object,
+            _timeProviderMock.Object
         );
 
         _useCase = new BookAppointmentUseCase(
@@ -246,7 +247,7 @@ public class BookAppointmentUseCaseTests
 
         await Assert.ThrowsAsync<ConflictException>(() => _useCase.ExecuteAsync(input));
 
-        _timeProviderMock.Verify(t => t.UtcNow, Times.Once);
+        _timeProviderMock.Verify(t => t.UtcNow, Times.AtLeastOnce());
         _storeRepositoryMock.Verify(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>()), Times.Exactly(2));
         _serviceRepositoryMock.Verify(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>()), Times.Exactly(2));
         _professionalRepositoryMock.Verify(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>()), Times.Exactly(3));
@@ -303,7 +304,7 @@ public class BookAppointmentUseCaseTests
         Assert.Equal(input.StartTime.AddMinutes(30), result.EndTime);
         Assert.NotNull(result.CancelToken);
 
-        _timeProviderMock.Verify(t => t.UtcNow, Times.Once);
+        _timeProviderMock.Verify(t => t.UtcNow, Times.AtLeastOnce());
         _storeRepositoryMock.Verify(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>()), Times.Exactly(2));
         _serviceRepositoryMock.Verify(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>()), Times.Exactly(2));
         _professionalRepositoryMock.Verify(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>()), Times.Exactly(3));

@@ -38,7 +38,10 @@ public static class InfrastructureServiceCollectionExtensions
             options.ApiToken = configuration["Resend:ApiKey"]!;
         });
 
-        services.AddScoped<INotificationService, ResendEmailNotificationService>();
+        services.AddSingleton<INotificationQueue, ChannelNotificationQueue>();
+        services.AddHostedService<NotificationQueueProcessor>();
+        services.AddScoped<ResendEmailNotificationService>();
+        services.AddScoped<INotificationService, QueueNotificationServiceDecorator>();
 
         services.AddAuthentication(options =>
         {

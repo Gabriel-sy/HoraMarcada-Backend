@@ -1,3 +1,4 @@
+using HoraMarcada.Application.Common;
 using HoraMarcada.Application.Exceptions;
 using HoraMarcada.Application.Repositories;
 using HoraMarcada.Domain.Entities;
@@ -10,7 +11,8 @@ public class GetAvailableSlotsUseCase(
     IStoreRepository storeRepository,
     IServiceRepository serviceRepository,
     IProfessionalRepository professionalRepository,
-    IAppointmentRepository appointmentRepository)
+    IAppointmentRepository appointmentRepository,
+    ITimeProvider timeProvider)
 {
     public async Task<IReadOnlyList<DateTimeOffset>> ExecuteAsync(
         Guid storeId,
@@ -96,7 +98,7 @@ public class GetAvailableSlotsUseCase(
                     }
                 }
 
-                if (!overlapsLunch)
+                if (!overlapsLunch && slotStart >= timeProvider.UtcNow)
                 {
                     bool overlapsAppointment = false;
                     foreach (var app in appointments)

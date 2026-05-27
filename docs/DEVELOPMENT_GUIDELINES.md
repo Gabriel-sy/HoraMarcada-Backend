@@ -69,6 +69,8 @@ public sealed record SampleValue
 - Each use case must have a single public method (e.g., `ExecuteAsync`) that orchestrates a specific business process.
 - Use constructor dependency injection to pass repository ports and core service contracts.
 - Do not reference database concepts (such as SQL, EF Core contexts, transactions) inside the Use Cases. Depend only on repository ports (e.g., `IStoreRepository`).
+- **Notifications**: When a use case needs to send a notification (e.g. Booking confirmations or cancellations), it should depend on the `INotificationService` interface and call its methods. Do not worry about async latency or database scope disposal: an underlying decorator transparently offloads these notifications to an in-memory queue to process them in the background.
+
 
 Example Use Case:
 ```csharp
