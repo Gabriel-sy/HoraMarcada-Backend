@@ -19,8 +19,8 @@ public class ResendEmailNotificationService(IResend resend, IConfiguration confi
         var subject = $"Agendamento Confirmado - {store.Name}";
         var ctaHtml = $"""
             <tr>
-                <td style="padding: 0 40px 30px 40px; text-align: center;">
-                    <a href="https://horamarcada.com/cancel/{appointment.CancelToken}" style="display: inline-block; padding: 12px 24px; background-color: #ef4444; color: #ffffff; font-size: 14px; font-weight: 600; text-decoration: none; border-radius: 8px; box-shadow: 0 2px 4px rgb(239 68 68 / 0.2);">Cancelar Agendamento</a>
+                <td style="padding: 8px 0 32px 0;">
+                    <a href="https://horamarcada.com/cancel/{appointment.CancelToken}" style="display: inline-block; padding: 12px 20px; background-color: #ffffff; border: 1px solid #ef4444; color: #ef4444; font-size: 14px; font-weight: 500; text-decoration: none; border-radius: 6px;">Cancelar Agendamento</a>
                 </td>
             </tr>
             """;
@@ -30,12 +30,12 @@ public class ResendEmailNotificationService(IResend resend, IConfiguration confi
             appointment.CustomerName,
             "Seu agendamento foi confirmado com sucesso. Abaixo estão os detalhes da sua reserva:",
             "Confirmado",
-            "#ecfdf5",
-            "#047857",
-            "#4ade80",
+            "#f0f7e8",
+            "#5b8a2a",
+            "#a3d271",
             service.Name,
             professional.Name,
-            appointment.StartTime.ToString("dd/MM/yyyy HH:mm"),
+            FormatDateTime(appointment.StartTime),
             "",
             ctaHtml
         );
@@ -61,17 +61,17 @@ public class ResendEmailNotificationService(IResend resend, IConfiguration confi
         var subject = $"Novo Agendamento - {store.Name}";
         var extraHtml = $"""
             <tr>
-                <td style="padding: 0 0 12px 0;">
-                    <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; display: block; margin-bottom: 2px;">Cliente</span>
-                    <strong style="font-size: 15px; color: #0f172a;">{appointment.CustomerName} ({appointment.CustomerWhatsApp.Value})</strong>
+                <td style="padding: 14px 0; border-bottom: 1px solid #e5e5e5;">
+                    <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #737373; display: block; margin-bottom: 4px;">Cliente</span>
+                    <span style="font-size: 15px; color: #000000; font-weight: 500;">{appointment.CustomerName} ({appointment.CustomerWhatsApp.Value})</span>
                 </td>
             </tr>
             """;
 
         var ctaHtml = $"""
             <tr>
-                <td style="padding: 0 40px 30px 40px; text-align: center;">
-                    <a href="https://horamarcada.com/cancel/{appointment.CancelToken}" style="display: inline-block; padding: 12px 24px; background-color: #ef4444; color: #ffffff; font-size: 14px; font-weight: 600; text-decoration: none; border-radius: 8px; box-shadow: 0 2px 4px rgb(239 68 68 / 0.2);">Cancelar Agendamento</a>
+                <td style="padding: 8px 0 32px 0;">
+                    <a href="https://horamarcada.com/cancel/{appointment.CancelToken}" style="display: inline-block; padding: 12px 20px; background-color: #ffffff; border: 1px solid #ef4444; color: #ef4444; font-size: 14px; font-weight: 500; text-decoration: none; border-radius: 6px;">Cancelar Agendamento</a>
                 </td>
             </tr>
             """;
@@ -81,12 +81,12 @@ public class ResendEmailNotificationService(IResend resend, IConfiguration confi
             professional.Name,
             "Você tem um novo agendamento marcado. Confira os detalhes abaixo:",
             "Novo Agendamento",
-            "#f0fdf4",
-            "#166534",
-            "#4ade80",
+            "#f0f7e8",
+            "#5b8a2a",
+            "#a3d271",
             service.Name,
             professional.Name,
-            appointment.StartTime.ToString("dd/MM/yyyy HH:mm"),
+            FormatDateTime(appointment.StartTime),
             extraHtml,
             ctaHtml
         );
@@ -112,9 +112,9 @@ public class ResendEmailNotificationService(IResend resend, IConfiguration confi
         var subject = $"Novo Agendamento em {store.Name}";
         var extraHtml = $"""
             <tr>
-                <td style="padding: 0 0 12px 0;">
-                    <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; display: block; margin-bottom: 2px;">Cliente</span>
-                    <strong style="font-size: 15px; color: #0f172a;">{appointment.CustomerName} ({appointment.CustomerWhatsApp.Value})</strong>
+                <td style="padding: 14px 0; border-bottom: 1px solid #e5e5e5;">
+                    <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #737373; display: block; margin-bottom: 4px;">Cliente</span>
+                    <span style="font-size: 15px; color: #000000; font-weight: 500;">{appointment.CustomerName} ({appointment.CustomerWhatsApp.Value})</span>
                 </td>
             </tr>
             """;
@@ -124,12 +124,12 @@ public class ResendEmailNotificationService(IResend resend, IConfiguration confi
             store.Name,
             "Um novo agendamento foi realizado em seu estabelecimento. Confira os detalhes:",
             "Novo Agendamento",
-            "#f0fdf4",
-            "#166534",
-            "#4ade80",
+            "#f0f7e8",
+            "#5b8a2a",
+            "#a3d271",
             service.Name,
             professional.Name,
-            appointment.StartTime.ToString("dd/MM/yyyy HH:mm"),
+            FormatDateTime(appointment.StartTime),
             extraHtml,
             ""
         );
@@ -163,7 +163,7 @@ public class ResendEmailNotificationService(IResend resend, IConfiguration confi
             "#ef4444",
             service.Name,
             professional.Name,
-            appointment.StartTime.ToString("dd/MM/yyyy HH:mm"),
+            FormatDateTime(appointment.StartTime),
             "",
             ""
         );
@@ -189,9 +189,9 @@ public class ResendEmailNotificationService(IResend resend, IConfiguration confi
         var subject = $"Agendamento Cancelado - {store.Name}";
         var extraHtml = $"""
             <tr>
-                <td style="padding: 0 0 12px 0;">
-                    <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; display: block; margin-bottom: 2px;">Cliente</span>
-                    <strong style="font-size: 15px; color: #0f172a;">{appointment.CustomerName}</strong>
+                <td style="padding: 14px 0; border-bottom: 1px solid #e5e5e5;">
+                    <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #737373; display: block; margin-bottom: 4px;">Cliente</span>
+                    <span style="font-size: 15px; color: #000000; font-weight: 500;">{appointment.CustomerName}</span>
                 </td>
             </tr>
             """;
@@ -206,7 +206,7 @@ public class ResendEmailNotificationService(IResend resend, IConfiguration confi
             "#ef4444",
             service.Name,
             professional.Name,
-            appointment.StartTime.ToString("dd/MM/yyyy HH:mm"),
+            FormatDateTime(appointment.StartTime),
             extraHtml,
             ""
         );
@@ -232,9 +232,9 @@ public class ResendEmailNotificationService(IResend resend, IConfiguration confi
         var subject = $"Agendamento Cancelado em {store.Name}";
         var extraHtml = $"""
             <tr>
-                <td style="padding: 0 0 12px 0;">
-                    <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; display: block; margin-bottom: 2px;">Cliente</span>
-                    <strong style="font-size: 15px; color: #0f172a;">{appointment.CustomerName}</strong>
+                <td style="padding: 14px 0; border-bottom: 1px solid #e5e5e5;">
+                    <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #737373; display: block; margin-bottom: 4px;">Cliente</span>
+                    <span style="font-size: 15px; color: #000000; font-weight: 500;">{appointment.CustomerName}</span>
                 </td>
             </tr>
             """;
@@ -249,7 +249,7 @@ public class ResendEmailNotificationService(IResend resend, IConfiguration confi
             "#ef4444",
             service.Name,
             professional.Name,
-            appointment.StartTime.ToString("dd/MM/yyyy HH:mm"),
+            FormatDateTime(appointment.StartTime),
             extraHtml,
             ""
         );
@@ -287,70 +287,60 @@ public class ResendEmailNotificationService(IResend resend, IConfiguration confi
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>{statusText} - {storeName}</title>
             </head>
-            <body style="margin: 0; padding: 0; background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
-                <table role="presentation" style="width: 100%; border-collapse: collapse;">
+            <body style="margin: 0; padding: 0; background-color: #ffffff; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;">
+                <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #ffffff;">
                     <tr>
-                        <td align="center" style="padding: 40px 0;">
-                            <table role="presentation" style="width: 100%; max-width: 580px; border-collapse: collapse; background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);">
+                        <td align="center" style="padding: 40px 16px;">
+                            <table role="presentation" style="width: 100%; max-width: 520px; border-collapse: collapse; text-align: left;">
                                 <tr>
-                                    <td style="height: 6px; background-color: {themeColor};"></td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 40px 40px 20px 40px; text-align: center;">
-                                        <span style="font-size: 24px; font-weight: 700; color: #0f172a; letter-spacing: -0.025em;">{storeName}</span>
+                                    <td style="padding: 0 0 24px 0; border-bottom: 1px solid #e5e5e5;">
+                                        <table role="presentation" style="width: 100%; border-collapse: collapse;">
+                                            <tr>
+                                                <td>
+                                                    <span style="font-size: 18px; font-weight: 700; color: #000000; letter-spacing: -0.02em;">{storeName}</span>
+                                                </td>
+                                                <td align="right">
+                                                    <span style="display: inline-block; padding: 4px 10px; background-color: {badgeBg}; color: {badgeText}; font-size: 11px; font-weight: 600; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em;">{statusText}</span>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding: 0 40px 30px 40px; text-align: center;">
-                                        <div style="display: inline-block; padding: 6px 16px; background-color: {badgeBg}; border-radius: 9999px;">
-                                            <span style="font-size: 14px; font-weight: 600; color: {badgeText};">{statusText}</span>
-                                        </div>
+                                    <td style="padding: 32px 0 24px 0;">
+                                        <p style="margin: 0; font-size: 16px; line-height: 1.5; color: #000000; font-weight: 600;">Olá, {recipientName}</p>
+                                        <p style="margin: 12px 0 0 0; font-size: 15px; line-height: 1.6; color: #737373;">{introText}</p>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="padding: 0 40px 20px 40px;">
-                                        <p style="margin: 0; font-size: 16px; line-height: 1.6; color: #334155;">
-                                            Olá <strong>{recipientName}</strong>,
-                                        </p>
-                                        <p style="margin: 8px 0 0 0; font-size: 15px; line-height: 1.6; color: #475569;">
-                                            {introText}
-                                        </p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="padding: 0 40px 30px 40px;">
-                                        <div style="padding: 24px; background-color: #f8fafc; border-radius: 12px; border-left: 4px solid {themeColor};">
-                                            <table role="presentation" style="width: 100%; border-collapse: collapse;">
-                                                <tr>
-                                                    <td style="padding: 0 0 12px 0;">
-                                                        <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; display: block; margin-bottom: 2px;">Serviço</span>
-                                                        <strong style="font-size: 15px; color: #0f172a;">{serviceName}</strong>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding: 0 0 12px 0;">
-                                                        <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; display: block; margin-bottom: 2px;">Profissional</span>
-                                                        <strong style="font-size: 15px; color: #0f172a;">{professionalName}</strong>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td style="padding: 0 0 12px 0;">
-                                                        <span style="font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; display: block; margin-bottom: 2px;">Data e Hora</span>
-                                                        <strong style="font-size: 15px; color: #0f172a;">{dateTime}</strong>
-                                                    </td>
-                                                </tr>
-                                                {extraFieldsHtml}
-                                            </table>
-                                        </div>
+                                    <td style="padding: 0 0 24px 0;">
+                                        <table role="presentation" style="width: 100%; border-collapse: collapse; border-top: 1px solid #e5e5e5;">
+                                            <tr>
+                                                <td style="padding: 14px 0; border-bottom: 1px solid #e5e5e5;">
+                                                    <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #737373; display: block; margin-bottom: 4px;">Serviço</span>
+                                                    <span style="font-size: 15px; color: #000000; font-weight: 500;">{serviceName}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 14px 0; border-bottom: 1px solid #e5e5e5;">
+                                                    <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #737373; display: block; margin-bottom: 4px;">Profissional</span>
+                                                    <span style="font-size: 15px; color: #000000; font-weight: 500;">{professionalName}</span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 14px 0; border-bottom: 1px solid #e5e5e5;">
+                                                    <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: #737373; display: block; margin-bottom: 4px;">Data e Hora</span>
+                                                    <span style="font-size: 15px; color: #000000; font-weight: 500;">{dateTime}</span>
+                                                </td>
+                                            </tr>
+                                            {extraFieldsHtml}
+                                        </table>
                                     </td>
                                 </tr>
                                 {ctaButtonHtml}
                                 <tr>
-                                    <td style="padding: 0 40px 40px 40px; text-align: center; border-top: 1px solid #f1f5f9;">
-                                        <p style="margin: 20px 0 0 0; font-size: 12px; color: #94a3b8; line-height: 1.5;">
-                                            Este é um e-mail automático enviado pelo <strong>HoraMarcada</strong>.<br>
-                                            Por favor, não responda a este e-mail.
-                                        </p>
+                                    <td style="padding: 32px 0 0 0; border-top: 1px solid #e5e5e5;">
+                                        <p style="margin: 0; font-size: 12px; color: #a3a3a3; line-height: 1.5;">Este é um e-mail automático enviado pelo <strong>HoraMarcada</strong>.<br>Por favor, não responda a esta mensagem.</p>
                                     </td>
                                 </tr>
                             </table>
@@ -360,5 +350,10 @@ public class ResendEmailNotificationService(IResend resend, IConfiguration confi
             </body>
             </html>
             """;
+    }
+
+    private static string FormatDateTime(DateTimeOffset dateTime)
+    {
+        return dateTime.ToOffset(TimeSpan.FromHours(-3)).ToString("dd/MM/yyyy HH:mm");
     }
 }

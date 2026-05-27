@@ -64,6 +64,42 @@ public class ResendEmailNotificationServiceTests
     }
 
     [Fact]
+    public async Task SendBookingConfirmationToCustomerAsync_ShouldFormatTimeInUtcMinus3()
+    {
+        var storeId = Guid.NewGuid();
+        var professionalId = Guid.NewGuid();
+        var serviceId = Guid.NewGuid();
+        var store = Store.Create(storeId, "Store Name", "store-slug", "+5511999999999", "store@example.com");
+        var service = Service.Create(storeId, "Haircut", 30);
+        var professional = Professional.Create(storeId, "Jane Doe", email: "jane@example.com");
+        var idField = typeof(Professional).GetProperty("Id");
+        idField?.SetValue(professional, professionalId);
+
+        var startTimeUtc = new DateTimeOffset(2026, 5, 27, 23, 0, 0, TimeSpan.Zero);
+        var appointment = Appointment.Create(
+            storeId,
+            professionalId,
+            serviceId,
+            "John Doe",
+            "+5511988888888",
+            "john@example.com",
+            startTimeUtc,
+            startTimeUtc.AddMinutes(30),
+            cancelToken: "cancel123"
+        );
+
+        _resendMock
+            .Setup(r => r.EmailSendAsync(It.IsAny<EmailMessage>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ResendResponse<Guid>(Guid.NewGuid(), null!));
+
+        await _service.SendBookingConfirmationToCustomerAsync(appointment, store, service, professional);
+
+        _resendMock.Verify(r => r.EmailSendAsync(It.Is<EmailMessage>(m =>
+            m.HtmlBody.Contains("27/05/2026 20:00")
+        ), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
     public async Task SendBookingNotificationToProfessionalAsync_ShouldSendEmailToProfessional()
     {
         var storeId = Guid.NewGuid();
