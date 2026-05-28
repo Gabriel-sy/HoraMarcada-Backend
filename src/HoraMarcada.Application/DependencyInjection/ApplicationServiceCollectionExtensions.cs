@@ -29,6 +29,7 @@ public static class ApplicationServiceCollectionExtensions
         services.AddScoped<AddServiceUseCase>();
         services.AddScoped<ListServicesUseCase>();
         services.AddScoped<UpdateServiceUseCase>();
+        services.AddScoped<DeleteServiceUseCase>();
         services.AddScoped<ListProfessionalsForServiceUseCase>();
 
         services.AddScoped<GetAvailableSlotsUseCase>();

@@ -90,6 +90,12 @@ internal sealed class EfServiceRepository(HoraMarcadaDbContext context) : IServi
         await context.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task DeleteAsync(Service service, CancellationToken cancellationToken = default)
+    {
+        context.Services.Remove(service);
+        await context.SaveChangesAsync(cancellationToken);
+    }
+
     private async Task LoadProfessionalIdsAsync(Service service, CancellationToken cancellationToken)
     {
         var professionalIds = await context.ServiceProfessionals
