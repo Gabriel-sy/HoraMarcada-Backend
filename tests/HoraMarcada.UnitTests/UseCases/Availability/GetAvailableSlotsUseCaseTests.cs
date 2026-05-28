@@ -17,6 +17,7 @@ public class GetAvailableSlotsUseCaseTests
     private readonly Mock<IProfessionalRepository> _professionalRepositoryMock;
     private readonly Mock<IAppointmentRepository> _appointmentRepositoryMock;
     private readonly Mock<ITimeProvider> _timeProviderMock;
+    private readonly Mock<IAppConfiguration> _appConfigurationMock;
     private readonly GetAvailableSlotsUseCase _useCase;
 
     public GetAvailableSlotsUseCaseTests()
@@ -26,13 +27,17 @@ public class GetAvailableSlotsUseCaseTests
         _professionalRepositoryMock = new Mock<IProfessionalRepository>();
         _appointmentRepositoryMock = new Mock<IAppointmentRepository>();
         _timeProviderMock = new Mock<ITimeProvider>();
+        _appConfigurationMock = new Mock<IAppConfiguration>();
+
+        _appConfigurationMock.Setup(c => c.MinimumSlotLeadTimeMinutes).Returns(0);
 
         _useCase = new GetAvailableSlotsUseCase(
             _storeRepositoryMock.Object,
             _serviceRepositoryMock.Object,
             _professionalRepositoryMock.Object,
             _appointmentRepositoryMock.Object,
-            _timeProviderMock.Object
+            _timeProviderMock.Object,
+            _appConfigurationMock.Object
         );
     }
 
@@ -274,5 +279,51 @@ public class GetAvailableSlotsUseCaseTests
         Assert.Equal(new DateTimeOffset(2026, 5, 21, 10, 30, 0, TimeSpan.FromHours(-3)), slots[0]);
         Assert.Equal(new DateTimeOffset(2026, 5, 21, 11, 0, 0, TimeSpan.FromHours(-3)), slots[1]);
         Assert.Equal(new DateTimeOffset(2026, 5, 21, 11, 30, 0, TimeSpan.FromHours(-3)), slots[2]);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenMinimumLeadTimeConfigured_ShouldFilterTooCloseSlots()
+    {
+        var storeId = Guid.NewGuid();
+        var serviceId = Guid.NewGuid();
+        var professionalId = Guid.NewGuid();
+        var date = new DateTimeOffset(2026, 5, 21, 0, 0, 0, TimeSpan.FromHours(-3));
+
+        var store = Store.Create(Guid.NewGuid(), "Store", "store", "+5511999999999", "store@example.com");
+        var service = Service.Create(storeId, "Service", 30);
+        service.AssignProfessional(professionalId);
+
+        var professional = Professional.Create(storeId, "Jane Doe");
+        var profIdField = typeof(Professional).GetProperty("Id");
+        profIdField?.SetValue(professional, professionalId);
+
+        professional.AddWeeklyHours(
+            dayOfWeek: 4,
+            startTime: new TimeOnly(9, 0),
+            endTime: new TimeOnly(12, 0),
+            intervalMinutes: 30
+        );
+
+        _timeProviderMock
+            .Setup(t => t.UtcNow)
+            .Returns(new DateTimeOffset(2026, 5, 21, 10, 15, 0, TimeSpan.FromHours(-3)));
+
+        _appConfigurationMock
+            .Setup(c => c.MinimumSlotLeadTimeMinutes)
+            .Returns(30);
+
+        _storeRepositoryMock.Setup(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>())).ReturnsAsync(store);
+        _serviceRepositoryMock.Setup(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>())).ReturnsAsync(service);
+        _professionalRepositoryMock.Setup(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>())).ReturnsAsync(professional);
+        _appointmentRepositoryMock
+            .Setup(r => r.ListByProfessionalAndDateAsync(professionalId, date, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Appointment>());
+
+        var slots = await _useCase.ExecuteAsync(storeId, serviceId, date, professionalId);
+
+        Assert.NotNull(slots);
+        Assert.Equal(2, slots.Count);
+        Assert.Equal(new DateTimeOffset(2026, 5, 21, 11, 0, 0, TimeSpan.FromHours(-3)), slots[0]);
+        Assert.Equal(new DateTimeOffset(2026, 5, 21, 11, 30, 0, TimeSpan.FromHours(-3)), slots[1]);
     }
 }

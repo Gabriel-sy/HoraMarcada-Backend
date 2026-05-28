@@ -1,5 +1,6 @@
 using HoraMarcada.Application.Common;
 using HoraMarcada.Application.Repositories;
+using HoraMarcada.Infrastructure.Configuration;
 using HoraMarcada.Infrastructure.Notifications;
 using HoraMarcada.Infrastructure.Persistence;
 using HoraMarcada.Infrastructure.Persistence.Repositories;
@@ -32,6 +33,7 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddScoped<IProfessionalRepository, EfProfessionalRepository>();
         services.AddScoped<IServiceRepository, EfServiceRepository>();
         services.AddScoped<IAppointmentRepository, EfAppointmentRepository>();
+        services.AddScoped<IAppConfiguration, AppConfiguration>();
 
         services.AddResend(options =>
         {

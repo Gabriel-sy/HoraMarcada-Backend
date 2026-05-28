@@ -12,7 +12,8 @@ public class GetAvailableSlotsUseCase(
     IServiceRepository serviceRepository,
     IProfessionalRepository professionalRepository,
     IAppointmentRepository appointmentRepository,
-    ITimeProvider timeProvider)
+    ITimeProvider timeProvider,
+    IAppConfiguration appConfiguration)
 {
     public async Task<IReadOnlyList<DateTimeOffset>> ExecuteAsync(
         Guid storeId,
@@ -98,7 +99,8 @@ public class GetAvailableSlotsUseCase(
                     }
                 }
 
-                if (!overlapsLunch && slotStart >= timeProvider.UtcNow)
+                var minTime = timeProvider.UtcNow.AddMinutes(appConfiguration.MinimumSlotLeadTimeMinutes);
+                if (!overlapsLunch && slotStart >= minTime)
                 {
                     bool overlapsAppointment = false;
                     foreach (var app in appointments)
