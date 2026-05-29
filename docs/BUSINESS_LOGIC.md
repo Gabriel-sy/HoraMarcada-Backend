@@ -43,6 +43,13 @@ The domain layer encapsulates entities and value objects containing business rul
   - `EndTime` must be after `StartTime`.
   - State transitions are strictly controlled via domain methods. You cannot cancel an appointment that has already been completed, and you cannot complete an appointment that has been canceled.
 
+### TimeBlock
+- **Role**: Represents administrative time ranges blocked by the store owner/entrepreneur, during which no appointments can be scheduled for a specific professional.
+- **Invariants**:
+  - Associated with a valid `StoreId`.
+  - Associated with a valid `ProfessionalId`.
+  - `EndTime` must be after `StartTime`.
+
 ### Value Objects
 - **Slug**: Enforces lowercase alphanumeric characters and hyphens only (`^[a-z0-9]+(?:-[a-z0-9]+)*$`).
 - **PhoneNumber**: Validates E.164-friendly phone formats.
@@ -61,13 +68,15 @@ Calculating free slots is a core requirement and is implemented in the applicati
                                          │
                       Determine candidate professionals
                                          │
-            For each professional, fetch WeeklyHours & Appointments
+          For each professional, fetch WeeklyHours, Appointments & TimeBlocks
                                          │
                     Loop from StartTime to EndTime step Interval
                                          │
                      Check: slot + duration <= EndTime?
                                          │
                      Check: overlaps lunch interval?
+                                         │
+                      Check: overlaps any TimeBlock?
                                          │
                  Check: overlaps existing appointments?
                                          │
@@ -80,14 +89,15 @@ Calculating free slots is a core requirement and is implemented in the applicati
 1. **Validation**: Check that the store and service exist, that the service belongs to the store, and that the service is active.
 2. **Professional Selection**: If a specific `professionalId` is requested, verify they are active and assigned to this service. If no professional is specified, get all active professionals assigned to this service.
 3. **Weekly Hours Lookup**: For each candidate professional, fetch the `WeeklyHours` configuration corresponding to the day-of-week of the target date.
-4. **Existing Appointments Fetch**: Load all appointments for the professional on the target date whose status is not `Canceled`.
+4. **Existing Appointments & Time Blocks Fetch**: Load all appointments (with status not `Canceled`) and all administrative time blocks for the professional on the target date.
 5. **Slot Generation**:
    - Begin at `StartTime`.
    - Generate slots incremented by the professional's `IntervalMinutes`.
    - Stop when the slot start time plus the service duration exceeds the professional's `EndTime`.
 6. **Lunch Overlap Filtering**: Exclude slots where `slotStart < LunchEnd` and `slotEnd > LunchStart`.
-7. **Appointment Overlap Filtering**: Exclude slots where `slotStart < appointment.EndTime` and `slotEnd > appointment.StartTime`.
-8. **Aggregation**: Collect all valid slots, sort them chronologically, and return unique slot starting times.
+7. **Time Block Overlap Filtering**: Exclude slots where `slotStart < timeBlock.EndTime` and `slotEnd > timeBlock.StartTime`.
+8. **Appointment Overlap Filtering**: Exclude slots where `slotStart < appointment.EndTime` and `slotEnd > appointment.StartTime`.
+9. **Aggregation**: Collect all valid slots, sort them chronologically, and return unique slot starting times.
 
 ---
 

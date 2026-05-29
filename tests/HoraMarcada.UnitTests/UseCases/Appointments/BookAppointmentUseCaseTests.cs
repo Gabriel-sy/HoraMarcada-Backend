@@ -17,6 +17,7 @@ public class BookAppointmentUseCaseTests
     private readonly Mock<IStoreRepository> _storeRepositoryMock;
     private readonly Mock<IServiceRepository> _serviceRepositoryMock;
     private readonly Mock<IProfessionalRepository> _professionalRepositoryMock;
+    private readonly Mock<ITimeBlockRepository> _timeBlockRepositoryMock;
     private readonly Mock<ITimeProvider> _timeProviderMock;
     private readonly Mock<INotificationService> _notificationServiceMock;
     private readonly Mock<IAppConfiguration> _appConfigurationMock;
@@ -29,17 +30,23 @@ public class BookAppointmentUseCaseTests
         _storeRepositoryMock = new Mock<IStoreRepository>();
         _serviceRepositoryMock = new Mock<IServiceRepository>();
         _professionalRepositoryMock = new Mock<IProfessionalRepository>();
+        _timeBlockRepositoryMock = new Mock<ITimeBlockRepository>();
         _timeProviderMock = new Mock<ITimeProvider>();
         _notificationServiceMock = new Mock<INotificationService>();
         _appConfigurationMock = new Mock<IAppConfiguration>();
 
         _appConfigurationMock.Setup(c => c.MinimumSlotLeadTimeMinutes).Returns(0);
 
+        _timeBlockRepositoryMock
+            .Setup(r => r.ListByProfessionalAndDateAsync(It.IsAny<Guid>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<TimeBlock>());
+
         _getAvailableSlotsUseCase = new GetAvailableSlotsUseCase(
             _storeRepositoryMock.Object,
             _serviceRepositoryMock.Object,
             _professionalRepositoryMock.Object,
             _appointmentRepositoryMock.Object,
+            _timeBlockRepositoryMock.Object,
             _timeProviderMock.Object,
             _appConfigurationMock.Object
         );

@@ -11,6 +11,7 @@ public sealed class HoraMarcadaDbContext(DbContextOptions<HoraMarcadaDbContext> 
     public DbSet<Service> Services => Set<Service>();
     public DbSet<ServiceProfessional> ServiceProfessionals => Set<ServiceProfessional>();
     public DbSet<Appointment> Appointments => Set<Appointment>();
+    public DbSet<TimeBlock> TimeBlocks => Set<TimeBlock>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

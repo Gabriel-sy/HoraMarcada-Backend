@@ -5,6 +5,7 @@ using HoraMarcada.Application.UseCases.Availability;
 using HoraMarcada.Application.UseCases.Professionals;
 using HoraMarcada.Application.UseCases.Services;
 using HoraMarcada.Application.UseCases.Stores;
+using HoraMarcada.Application.UseCases.TimeBlocks;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HoraMarcada.Application.DependencyInjection;
@@ -33,6 +34,10 @@ public static class ApplicationServiceCollectionExtensions
         services.AddScoped<ListProfessionalsForServiceUseCase>();
 
         services.AddScoped<GetAvailableSlotsUseCase>();
+
+        services.AddScoped<CreateTimeBlockUseCase>();
+        services.AddScoped<DeleteTimeBlockUseCase>();
+        services.AddScoped<ListTimeBlocksUseCase>();
 
         services.AddScoped<BookAppointmentUseCase>();
         services.AddScoped<ListAppointmentsUseCase>();

@@ -16,6 +16,7 @@ public class GetAvailableSlotsUseCaseTests
     private readonly Mock<IServiceRepository> _serviceRepositoryMock;
     private readonly Mock<IProfessionalRepository> _professionalRepositoryMock;
     private readonly Mock<IAppointmentRepository> _appointmentRepositoryMock;
+    private readonly Mock<ITimeBlockRepository> _timeBlockRepositoryMock;
     private readonly Mock<ITimeProvider> _timeProviderMock;
     private readonly Mock<IAppConfiguration> _appConfigurationMock;
     private readonly GetAvailableSlotsUseCase _useCase;
@@ -26,16 +27,22 @@ public class GetAvailableSlotsUseCaseTests
         _serviceRepositoryMock = new Mock<IServiceRepository>();
         _professionalRepositoryMock = new Mock<IProfessionalRepository>();
         _appointmentRepositoryMock = new Mock<IAppointmentRepository>();
+        _timeBlockRepositoryMock = new Mock<ITimeBlockRepository>();
         _timeProviderMock = new Mock<ITimeProvider>();
         _appConfigurationMock = new Mock<IAppConfiguration>();
 
         _appConfigurationMock.Setup(c => c.MinimumSlotLeadTimeMinutes).Returns(0);
+
+        _timeBlockRepositoryMock
+            .Setup(r => r.ListByProfessionalAndDateAsync(It.IsAny<Guid>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<TimeBlock>());
 
         _useCase = new GetAvailableSlotsUseCase(
             _storeRepositoryMock.Object,
             _serviceRepositoryMock.Object,
             _professionalRepositoryMock.Object,
             _appointmentRepositoryMock.Object,
+            _timeBlockRepositoryMock.Object,
             _timeProviderMock.Object,
             _appConfigurationMock.Object
         );
@@ -325,5 +332,55 @@ public class GetAvailableSlotsUseCaseTests
         Assert.Equal(2, slots.Count);
         Assert.Equal(new DateTimeOffset(2026, 5, 21, 11, 0, 0, TimeSpan.FromHours(-3)), slots[0]);
         Assert.Equal(new DateTimeOffset(2026, 5, 21, 11, 30, 0, TimeSpan.FromHours(-3)), slots[1]);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenTimeBlockExists_ShouldFilterOverlappingSlots()
+    {
+        var storeId = Guid.NewGuid();
+        var serviceId = Guid.NewGuid();
+        var professionalId = Guid.NewGuid();
+        var date = new DateTimeOffset(2026, 5, 21, 0, 0, 0, TimeSpan.FromHours(-3));
+
+        var store = Store.Create(Guid.NewGuid(), "Store", "store", "+5511999999999", "store@example.com");
+        var service = Service.Create(storeId, "Service", 30);
+        service.AssignProfessional(professionalId);
+
+        var professional = Professional.Create(storeId, "Jane Doe");
+        var profIdField = typeof(Professional).GetProperty("Id");
+        profIdField?.SetValue(professional, professionalId);
+
+        professional.AddWeeklyHours(
+            dayOfWeek: 4,
+            startTime: new TimeOnly(9, 0),
+            endTime: new TimeOnly(12, 0),
+            intervalMinutes: 30
+        );
+
+        var timeBlock = TimeBlock.Create(
+            storeId,
+            professionalId,
+            new DateTimeOffset(2026, 5, 21, 9, 30, 0, TimeSpan.FromHours(-3)),
+            new DateTimeOffset(2026, 5, 21, 10, 30, 0, TimeSpan.FromHours(-3))
+        );
+
+        _storeRepositoryMock.Setup(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>())).ReturnsAsync(store);
+        _serviceRepositoryMock.Setup(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>())).ReturnsAsync(service);
+        _professionalRepositoryMock.Setup(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>())).ReturnsAsync(professional);
+        _appointmentRepositoryMock
+            .Setup(r => r.ListByProfessionalAndDateAsync(professionalId, date, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Appointment>());
+        _timeBlockRepositoryMock
+            .Setup(r => r.ListByProfessionalAndDateAsync(professionalId, date, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<TimeBlock> { timeBlock });
+
+        var slots = await _useCase.ExecuteAsync(storeId, serviceId, date, professionalId);
+
+        Assert.NotNull(slots);
+        Assert.Equal(4, slots.Count);
+        Assert.Equal(new DateTimeOffset(2026, 5, 21, 9, 0, 0, TimeSpan.FromHours(-3)), slots[0]);
+        Assert.Equal(new DateTimeOffset(2026, 5, 21, 10, 30, 0, TimeSpan.FromHours(-3)), slots[1]);
+        Assert.Equal(new DateTimeOffset(2026, 5, 21, 11, 0, 0, TimeSpan.FromHours(-3)), slots[2]);
+        Assert.Equal(new DateTimeOffset(2026, 5, 21, 11, 30, 0, TimeSpan.FromHours(-3)), slots[3]);
     }
 }

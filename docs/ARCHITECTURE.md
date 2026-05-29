@@ -70,6 +70,7 @@ The codebase enforces SOLID principles to remain flexible, testable, and simple.
   - `IProfessionalRepository`
   - `IServiceRepository`
   - `IAppointmentRepository`
+  - `ITimeBlockRepository`
 
 ### Dependency Inversion Principle (DIP)
 - High-level orchestrators (`UseCases`) depend directly on interface abstractions (`IRepository`), not on concrete SQL implementations (`EfRepository`).

@@ -12,6 +12,7 @@ public class GetAvailableSlotsUseCase(
     IServiceRepository serviceRepository,
     IProfessionalRepository professionalRepository,
     IAppointmentRepository appointmentRepository,
+    ITimeBlockRepository timeBlockRepository,
     ITimeProvider timeProvider,
     IAppConfiguration appConfiguration)
 {
@@ -73,6 +74,7 @@ public class GetAvailableSlotsUseCase(
                 continue;
 
             var appointments = await appointmentRepository.ListByProfessionalAndDateAsync(pid, date, cancellationToken);
+            var blocks = await timeBlockRepository.ListByProfessionalAndDateAsync(pid, date, cancellationToken);
 
             var current = schedule.StartTime;
             var endTime = schedule.EndTime;
@@ -102,22 +104,35 @@ public class GetAvailableSlotsUseCase(
                 var minTime = timeProvider.UtcNow.AddMinutes(appConfiguration.MinimumSlotLeadTimeMinutes);
                 if (!overlapsLunch && slotStart >= minTime)
                 {
-                    bool overlapsAppointment = false;
-                    foreach (var app in appointments)
+                    bool overlapsBlock = false;
+                    foreach (var block in blocks)
                     {
-                        if (app.Status != AppointmentStatus.Canceled)
+                        if (slotStart < block.EndTime && slotEnd > block.StartTime)
                         {
-                            if (slotStart < app.EndTime && slotEnd > app.StartTime)
-                            {
-                                overlapsAppointment = true;
-                                break;
-                            }
+                            overlapsBlock = true;
+                            break;
                         }
                     }
 
-                    if (!overlapsAppointment)
+                    if (!overlapsBlock)
                     {
-                        allSlots.Add(slotStart);
+                        bool overlapsAppointment = false;
+                        foreach (var app in appointments)
+                        {
+                            if (app.Status != AppointmentStatus.Canceled)
+                            {
+                                if (slotStart < app.EndTime && slotEnd > app.StartTime)
+                                {
+                                    overlapsAppointment = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!overlapsAppointment)
+                        {
+                            allSlots.Add(slotStart);
+                        }
                     }
                 }
 

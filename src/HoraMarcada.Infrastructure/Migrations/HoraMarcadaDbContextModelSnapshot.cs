@@ -244,6 +244,43 @@ namespace HoraMarcada.Infrastructure.Migrations
                     b.ToTable("stores", (string)null);
                 });
 
+            modelBuilder.Entity("HoraMarcada.Domain.Entities.TimeBlock", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset>("EndTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("end_time");
+
+                    b.Property<Guid>("ProfessionalId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("professional_id");
+
+                    b.Property<DateTimeOffset>("StartTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("start_time");
+
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("store_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StoreId");
+
+                    b.HasIndex("ProfessionalId", "StartTime", "EndTime")
+                        .HasDatabaseName("idx_time_blocks_professional_start");
+
+                    b.ToTable("time_blocks", (string)null);
+                });
+
             modelBuilder.Entity("HoraMarcada.Domain.Entities.WeeklyHours", b =>
                 {
                     b.Property<Guid>("Id")
@@ -338,6 +375,21 @@ namespace HoraMarcada.Infrastructure.Migrations
                 {
                     b.HasOne("HoraMarcada.Domain.Entities.Store", null)
                         .WithMany("Services")
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HoraMarcada.Domain.Entities.TimeBlock", b =>
+                {
+                    b.HasOne("HoraMarcada.Domain.Entities.Professional", null)
+                        .WithMany()
+                        .HasForeignKey("ProfessionalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("HoraMarcada.Domain.Entities.Store", null)
+                        .WithMany()
                         .HasForeignKey("StoreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
