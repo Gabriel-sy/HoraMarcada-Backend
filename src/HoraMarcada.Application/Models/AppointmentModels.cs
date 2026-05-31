@@ -25,3 +25,6 @@ public record CancelAppointmentByTokenInput(
 
 public record CompleteAppointmentInput(
     [property: SwaggerExample("3fa85f64-5717-4562-b3fc-2c963f66afa6")] Guid StoreId);
+
+public record ConfirmAppointmentByTokenInput(
+    [property: SwaggerExample("cancel_token_here")] string CancelToken);

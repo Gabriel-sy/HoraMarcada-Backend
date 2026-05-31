@@ -43,6 +43,7 @@ public static class ApplicationServiceCollectionExtensions
         services.AddScoped<ListAppointmentsUseCase>();
         services.AddScoped<CancelAppointmentUseCase>();
         services.AddScoped<CancelAppointmentByTokenUseCase>();
+        services.AddScoped<ConfirmAppointmentByTokenUseCase>();
         services.AddScoped<CompleteAppointmentUseCase>();
 
         return services;

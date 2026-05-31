@@ -96,7 +96,7 @@ namespace HoraMarcada.Infrastructure.Migrations
 
                     b.ToTable("appointments", null, t =>
                         {
-                            t.HasCheckConstraint("CK_appointments_status", "status IN ('confirmed', 'canceled', 'completed')");
+                            t.HasCheckConstraint("CK_appointments_status", "status IN ('confirmed', 'canceled', 'completed', 'confirmedbyuser')");
                         });
                 });
 

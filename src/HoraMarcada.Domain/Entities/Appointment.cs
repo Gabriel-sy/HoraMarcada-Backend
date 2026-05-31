@@ -83,6 +83,13 @@ public sealed class Appointment
         Status = AppointmentStatus.Completed;
     }
 
+    public void ConfirmPresence()
+    {
+        if (Status != AppointmentStatus.Confirmed)
+            throw new DomainValidationException("Only confirmed appointments can have presence confirmed by customer.");
+        Status = AppointmentStatus.ConfirmedByUser;
+    }
+
     public void MarkCancelTokenUsed()
     {
         CancelTokenUsed = true;

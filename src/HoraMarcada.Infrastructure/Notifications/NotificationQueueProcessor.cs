@@ -60,6 +60,9 @@ public class NotificationQueueProcessor(
                     case NotificationJobType.CancellationNotificationToStore:
                         await emailService.SendCancellationNotificationToStoreAsync(job.Appointment, job.Store, job.Service, job.Professional, stoppingToken);
                         break;
+                    case NotificationJobType.BookingReminder24h:
+                        await emailService.SendBookingReminder24hAsync(job.Appointment, job.Store, job.Service, job.Professional, stoppingToken);
+                        break;
                 }
 
                 return;

@@ -20,6 +20,7 @@ public class BookAppointmentUseCaseTests
     private readonly Mock<ITimeBlockRepository> _timeBlockRepositoryMock;
     private readonly Mock<ITimeProvider> _timeProviderMock;
     private readonly Mock<INotificationService> _notificationServiceMock;
+    private readonly Mock<IBackgroundJobService> _backgroundJobServiceMock;
     private readonly Mock<IAppConfiguration> _appConfigurationMock;
     private readonly GetAvailableSlotsUseCase _getAvailableSlotsUseCase;
     private readonly BookAppointmentUseCase _useCase;
@@ -33,6 +34,7 @@ public class BookAppointmentUseCaseTests
         _timeBlockRepositoryMock = new Mock<ITimeBlockRepository>();
         _timeProviderMock = new Mock<ITimeProvider>();
         _notificationServiceMock = new Mock<INotificationService>();
+        _backgroundJobServiceMock = new Mock<IBackgroundJobService>();
         _appConfigurationMock = new Mock<IAppConfiguration>();
 
         _appConfigurationMock.Setup(c => c.MinimumSlotLeadTimeMinutes).Returns(0);
@@ -58,6 +60,7 @@ public class BookAppointmentUseCaseTests
             _professionalRepositoryMock.Object,
             _getAvailableSlotsUseCase,
             _notificationServiceMock.Object,
+            _backgroundJobServiceMock.Object,
             _timeProviderMock.Object
         );
     }
@@ -343,5 +346,354 @@ public class BookAppointmentUseCaseTests
 
         _notificationServiceMock.Verify(n => n.SendBookingNotificationToProfessionalAsync(
             result, store, service, professional, It.IsAny<CancellationToken>()), Times.Once);
+
+        _backgroundJobServiceMock.Verify(s => s.ScheduleReminder(It.IsAny<Guid>(), It.IsAny<DateTimeOffset>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenAppointmentIsMoreThan30hInFuture_ShouldScheduleReminder()
+    {
+        var storeId = Guid.NewGuid();
+        var serviceId = Guid.NewGuid();
+        var professionalId = Guid.NewGuid();
+
+        var input = new BookAppointmentInput(
+            StoreId: storeId,
+            ProfessionalId: professionalId,
+            ServiceId: serviceId,
+            CustomerName: "Customer",
+            CustomerWhatsApp: "+5511999999999",
+            CustomerEmail: "customer@example.com",
+            StartTime: new DateTimeOffset(2026, 5, 21, 10, 0, 0, TimeSpan.FromHours(-3))
+        );
+
+        _timeProviderMock
+            .Setup(t => t.UtcNow)
+            .Returns(input.StartTime.AddDays(-2));
+
+        var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
+        var service = Service.Create(storeId, "Service", 30);
+        service.AssignProfessional(professionalId);
+
+        var professional = Professional.Create(storeId, "Jane Doe", email: "professional@example.com");
+        var idField = typeof(Professional).GetProperty("Id");
+        idField?.SetValue(professional, professionalId);
+        professional.AddWeeklyHours(4, new TimeOnly(9, 0), new TimeOnly(12, 0), intervalMinutes: 30);
+
+        _storeRepositoryMock.Setup(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>())).ReturnsAsync(store);
+        _serviceRepositoryMock.Setup(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>())).ReturnsAsync(service);
+        _professionalRepositoryMock.Setup(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>())).ReturnsAsync(professional);
+        _appointmentRepositoryMock
+            .Setup(r => r.ListByProfessionalAndDateAsync(professionalId, It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Appointment>());
+
+        var result = await _useCase.ExecuteAsync(input);
+
+        Assert.NotNull(result);
+        _backgroundJobServiceMock.Verify(s => s.ScheduleReminder(result.Id, result.StartTime.AddHours(-24)), Times.Once);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenAppointmentIsLessThan30hInFuture_ShouldNotScheduleReminder()
+    {
+        var storeId = Guid.NewGuid();
+        var serviceId = Guid.NewGuid();
+        var professionalId = Guid.NewGuid();
+
+        var input = new BookAppointmentInput(
+            StoreId: storeId,
+            ProfessionalId: professionalId,
+            ServiceId: serviceId,
+            CustomerName: "Customer",
+            CustomerWhatsApp: "+5511999999999",
+            CustomerEmail: "customer@example.com",
+            StartTime: new DateTimeOffset(2026, 5, 21, 10, 0, 0, TimeSpan.FromHours(-3))
+        );
+
+        _timeProviderMock
+            .Setup(t => t.UtcNow)
+            .Returns(input.StartTime.AddHours(-29));
+
+        var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
+        var service = Service.Create(storeId, "Service", 30);
+        service.AssignProfessional(professionalId);
+
+        var professional = Professional.Create(storeId, "Jane Doe", email: "professional@example.com");
+        var idField = typeof(Professional).GetProperty("Id");
+        idField?.SetValue(professional, professionalId);
+        professional.AddWeeklyHours(4, new TimeOnly(9, 0), new TimeOnly(12, 0), intervalMinutes: 30);
+
+        _storeRepositoryMock.Setup(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>())).ReturnsAsync(store);
+        _serviceRepositoryMock.Setup(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>())).ReturnsAsync(service);
+        _professionalRepositoryMock.Setup(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>())).ReturnsAsync(professional);
+        _appointmentRepositoryMock
+            .Setup(r => r.ListByProfessionalAndDateAsync(professionalId, It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Appointment>());
+
+        var result = await _useCase.ExecuteAsync(input);
+
+        Assert.NotNull(result);
+        _backgroundJobServiceMock.Verify(s => s.ScheduleReminder(It.IsAny<Guid>(), It.IsAny<DateTimeOffset>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenReminderTimeIsDuringQuietHoursMorning_ShouldShiftTo8AM()
+    {
+        var storeId = Guid.NewGuid();
+        var serviceId = Guid.NewGuid();
+        var professionalId = Guid.NewGuid();
+
+        var input = new BookAppointmentInput(
+            StoreId: storeId,
+            ProfessionalId: professionalId,
+            ServiceId: serviceId,
+            CustomerName: "Customer",
+            CustomerWhatsApp: "+5511999999999",
+            CustomerEmail: "customer@example.com",
+            StartTime: new DateTimeOffset(2026, 5, 21, 6, 0, 0, TimeSpan.FromHours(-3))
+        );
+
+        _timeProviderMock
+            .Setup(t => t.UtcNow)
+            .Returns(input.StartTime.AddDays(-2));
+
+        var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
+        var service = Service.Create(storeId, "Service", 30);
+        service.AssignProfessional(professionalId);
+
+        var professional = Professional.Create(storeId, "Jane Doe", email: "professional@example.com");
+        var idField = typeof(Professional).GetProperty("Id");
+        idField?.SetValue(professional, professionalId);
+        professional.AddWeeklyHours(4, new TimeOnly(6, 0), new TimeOnly(12, 0), intervalMinutes: 30);
+
+        _storeRepositoryMock.Setup(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>())).ReturnsAsync(store);
+        _serviceRepositoryMock.Setup(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>())).ReturnsAsync(service);
+        _professionalRepositoryMock.Setup(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>())).ReturnsAsync(professional);
+        _appointmentRepositoryMock
+            .Setup(r => r.ListByProfessionalAndDateAsync(professionalId, It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Appointment>());
+
+        var result = await _useCase.ExecuteAsync(input);
+
+        Assert.NotNull(result);
+        var expectedReminderTime = new DateTimeOffset(2026, 5, 20, 8, 0, 0, TimeSpan.FromHours(-3));
+        _backgroundJobServiceMock.Verify(s => s.ScheduleReminder(result.Id, expectedReminderTime), Times.Once);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenReminderTimeIsDuringQuietHoursNight_ShouldShiftTo9PM()
+    {
+        var storeId = Guid.NewGuid();
+        var serviceId = Guid.NewGuid();
+        var professionalId = Guid.NewGuid();
+
+        var input = new BookAppointmentInput(
+            StoreId: storeId,
+            ProfessionalId: professionalId,
+            ServiceId: serviceId,
+            CustomerName: "Customer",
+            CustomerWhatsApp: "+5511999999999",
+            CustomerEmail: "customer@example.com",
+            StartTime: new DateTimeOffset(2026, 5, 21, 22, 30, 0, TimeSpan.FromHours(-3))
+        );
+
+        _timeProviderMock
+            .Setup(t => t.UtcNow)
+            .Returns(input.StartTime.AddDays(-2));
+
+        var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
+        var service = Service.Create(storeId, "Service", 30);
+        service.AssignProfessional(professionalId);
+
+        var professional = Professional.Create(storeId, "Jane Doe", email: "professional@example.com");
+        var idField = typeof(Professional).GetProperty("Id");
+        idField?.SetValue(professional, professionalId);
+        professional.AddWeeklyHours(4, new TimeOnly(9, 0), new TimeOnly(23, 0), intervalMinutes: 30);
+
+        _storeRepositoryMock.Setup(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>())).ReturnsAsync(store);
+        _serviceRepositoryMock.Setup(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>())).ReturnsAsync(service);
+        _professionalRepositoryMock.Setup(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>())).ReturnsAsync(professional);
+        _appointmentRepositoryMock
+            .Setup(r => r.ListByProfessionalAndDateAsync(professionalId, It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Appointment>());
+
+        var result = await _useCase.ExecuteAsync(input);
+
+        Assert.NotNull(result);
+        var expectedReminderTime = new DateTimeOffset(2026, 5, 20, 21, 0, 0, TimeSpan.FromHours(-3));
+        _backgroundJobServiceMock.Verify(s => s.ScheduleReminder(result.Id, expectedReminderTime), Times.Once);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenAdjustedReminderTimeIsLessThan6hBuffer_ShouldNotScheduleReminder()
+    {
+        var storeId = Guid.NewGuid();
+        var serviceId = Guid.NewGuid();
+        var professionalId = Guid.NewGuid();
+
+        var input = new BookAppointmentInput(
+            StoreId: storeId,
+            ProfessionalId: professionalId,
+            ServiceId: serviceId,
+            CustomerName: "Customer",
+            CustomerWhatsApp: "+5511999999999",
+            CustomerEmail: "customer@example.com",
+            StartTime: new DateTimeOffset(2026, 5, 21, 6, 0, 0, TimeSpan.FromHours(-3))
+        );
+
+        _timeProviderMock
+            .Setup(t => t.UtcNow)
+            .Returns(new DateTimeOffset(2026, 5, 20, 3, 0, 0, TimeSpan.FromHours(-3)));
+
+        var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
+        var service = Service.Create(storeId, "Service", 30);
+        service.AssignProfessional(professionalId);
+
+        var professional = Professional.Create(storeId, "Jane Doe", email: "professional@example.com");
+        var idField = typeof(Professional).GetProperty("Id");
+        idField?.SetValue(professional, professionalId);
+        professional.AddWeeklyHours(4, new TimeOnly(6, 0), new TimeOnly(12, 0), intervalMinutes: 30);
+
+        _storeRepositoryMock.Setup(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>())).ReturnsAsync(store);
+        _serviceRepositoryMock.Setup(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>())).ReturnsAsync(service);
+        _professionalRepositoryMock.Setup(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>())).ReturnsAsync(professional);
+        _appointmentRepositoryMock
+            .Setup(r => r.ListByProfessionalAndDateAsync(professionalId, It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Appointment>());
+
+        var result = await _useCase.ExecuteAsync(input);
+
+        Assert.NotNull(result);
+        _backgroundJobServiceMock.Verify(s => s.ScheduleReminder(It.IsAny<Guid>(), It.IsAny<DateTimeOffset>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_When24hReminderFailsBuffer_ShouldFallbackToMorningOfAppointment()
+    {
+        var storeId = Guid.NewGuid();
+        var serviceId = Guid.NewGuid();
+        var professionalId = Guid.NewGuid();
+
+        var input = new BookAppointmentInput(
+            StoreId: storeId,
+            ProfessionalId: professionalId,
+            ServiceId: serviceId,
+            CustomerName: "Customer",
+            CustomerWhatsApp: "+5511999999999",
+            CustomerEmail: "customer@example.com",
+            StartTime: new DateTimeOffset(2026, 6, 1, 17, 0, 0, TimeSpan.FromHours(-3))
+        );
+
+        _timeProviderMock
+            .Setup(t => t.UtcNow)
+            .Returns(new DateTimeOffset(2026, 5, 31, 15, 30, 0, TimeSpan.FromHours(-3)));
+
+        var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
+        var service = Service.Create(storeId, "Service", 30);
+        service.AssignProfessional(professionalId);
+
+        var professional = Professional.Create(storeId, "Jane Doe", email: "professional@example.com");
+        var idField = typeof(Professional).GetProperty("Id");
+        idField?.SetValue(professional, professionalId);
+        professional.AddWeeklyHours(1, new TimeOnly(9, 0), new TimeOnly(18, 0), intervalMinutes: 30);
+
+        _storeRepositoryMock.Setup(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>())).ReturnsAsync(store);
+        _serviceRepositoryMock.Setup(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>())).ReturnsAsync(service);
+        _professionalRepositoryMock.Setup(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>())).ReturnsAsync(professional);
+        _appointmentRepositoryMock
+            .Setup(r => r.ListByProfessionalAndDateAsync(professionalId, It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Appointment>());
+
+        var result = await _useCase.ExecuteAsync(input);
+
+        Assert.NotNull(result);
+        var expectedReminderTime = new DateTimeOffset(2026, 6, 1, 8, 0, 0, TimeSpan.FromHours(-3));
+        _backgroundJobServiceMock.Verify(s => s.ScheduleReminder(result.Id, expectedReminderTime), Times.Once);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_When24hReminderFailsBufferAndFallbackFailsLeadTime_ShouldNotSchedule()
+    {
+        var storeId = Guid.NewGuid();
+        var serviceId = Guid.NewGuid();
+        var professionalId = Guid.NewGuid();
+
+        var input = new BookAppointmentInput(
+            StoreId: storeId,
+            ProfessionalId: professionalId,
+            ServiceId: serviceId,
+            CustomerName: "Customer",
+            CustomerWhatsApp: "+5511999999999",
+            CustomerEmail: "customer@example.com",
+            StartTime: new DateTimeOffset(2026, 6, 1, 10, 0, 0, TimeSpan.FromHours(-3))
+        );
+
+        _timeProviderMock
+            .Setup(t => t.UtcNow)
+            .Returns(new DateTimeOffset(2026, 5, 31, 15, 30, 0, TimeSpan.FromHours(-3)));
+
+        var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
+        var service = Service.Create(storeId, "Service", 30);
+        service.AssignProfessional(professionalId);
+
+        var professional = Professional.Create(storeId, "Jane Doe", email: "professional@example.com");
+        var idField = typeof(Professional).GetProperty("Id");
+        idField?.SetValue(professional, professionalId);
+        professional.AddWeeklyHours(1, new TimeOnly(9, 0), new TimeOnly(18, 0), intervalMinutes: 30);
+
+        _storeRepositoryMock.Setup(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>())).ReturnsAsync(store);
+        _serviceRepositoryMock.Setup(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>())).ReturnsAsync(service);
+        _professionalRepositoryMock.Setup(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>())).ReturnsAsync(professional);
+        _appointmentRepositoryMock
+            .Setup(r => r.ListByProfessionalAndDateAsync(professionalId, It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Appointment>());
+
+        var result = await _useCase.ExecuteAsync(input);
+
+        Assert.NotNull(result);
+        _backgroundJobServiceMock.Verify(s => s.ScheduleReminder(It.IsAny<Guid>(), It.IsAny<DateTimeOffset>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_When24hReminderFailsBufferAndFallbackFailsBuffer_ShouldNotSchedule()
+    {
+        var storeId = Guid.NewGuid();
+        var serviceId = Guid.NewGuid();
+        var professionalId = Guid.NewGuid();
+
+        var input = new BookAppointmentInput(
+            StoreId: storeId,
+            ProfessionalId: professionalId,
+            ServiceId: serviceId,
+            CustomerName: "Customer",
+            CustomerWhatsApp: "+5511999999999",
+            CustomerEmail: "customer@example.com",
+            StartTime: new DateTimeOffset(2026, 6, 1, 14, 0, 0, TimeSpan.FromHours(-3))
+        );
+
+        _timeProviderMock
+            .Setup(t => t.UtcNow)
+            .Returns(new DateTimeOffset(2026, 6, 1, 5, 0, 0, TimeSpan.FromHours(-3)));
+
+        var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
+        var service = Service.Create(storeId, "Service", 30);
+        service.AssignProfessional(professionalId);
+
+        var professional = Professional.Create(storeId, "Jane Doe", email: "professional@example.com");
+        var idField = typeof(Professional).GetProperty("Id");
+        idField?.SetValue(professional, professionalId);
+        professional.AddWeeklyHours(1, new TimeOnly(9, 0), new TimeOnly(18, 0), intervalMinutes: 30);
+
+        _storeRepositoryMock.Setup(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>())).ReturnsAsync(store);
+        _serviceRepositoryMock.Setup(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>())).ReturnsAsync(service);
+        _professionalRepositoryMock.Setup(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>())).ReturnsAsync(professional);
+        _appointmentRepositoryMock
+            .Setup(r => r.ListByProfessionalAndDateAsync(professionalId, It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Appointment>());
+
+        var result = await _useCase.ExecuteAsync(input);
+
+        Assert.NotNull(result);
+        _backgroundJobServiceMock.Verify(s => s.ScheduleReminder(It.IsAny<Guid>(), It.IsAny<DateTimeOffset>()), Times.Never);
     }
 }

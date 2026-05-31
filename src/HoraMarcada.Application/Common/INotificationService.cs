@@ -45,4 +45,11 @@ public interface INotificationService
         Service service,
         Professional professional,
         CancellationToken cancellationToken = default);
+
+    Task SendBookingReminder24hAsync(
+        Appointment appointment,
+        Store store,
+        Service service,
+        Professional professional,
+        CancellationToken cancellationToken = default);
 }

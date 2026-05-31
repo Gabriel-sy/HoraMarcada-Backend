@@ -106,4 +106,21 @@ public class QueueNotificationServiceDecorator(INotificationQueue queue) : INoti
         ));
         return Task.CompletedTask;
     }
+
+    public Task SendBookingReminder24hAsync(
+        Appointment appointment,
+        Store store,
+        Service service,
+        Professional professional,
+        CancellationToken cancellationToken = default)
+    {
+        queue.QueueNotification(new NotificationJob(
+            NotificationJobType.BookingReminder24h,
+            appointment,
+            store,
+            service,
+            professional
+        ));
+        return Task.CompletedTask;
+    }
 }

@@ -9,7 +9,8 @@ public enum NotificationJobType
     BookingNotificationToStore,
     CancellationNoticeToCustomer,
     CancellationNotificationToProfessional,
-    CancellationNotificationToStore
+    CancellationNotificationToStore,
+    BookingReminder24h
 }
 
 public record NotificationJob(

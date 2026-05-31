@@ -1,4 +1,5 @@
 using FluentValidation;
+using Hangfire;
 using HoraMarcada.Api.Filters;
 using HoraMarcada.Application.DependencyInjection;
 using HoraMarcada.Infrastructure.DependencyInjection;
@@ -79,6 +80,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseHangfireDashboard("/hangfire");
 
 app.MapControllers();
 

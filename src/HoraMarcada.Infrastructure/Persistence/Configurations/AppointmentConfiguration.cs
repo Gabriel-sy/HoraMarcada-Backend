@@ -12,7 +12,7 @@ internal sealed class AppointmentConfiguration : IEntityTypeConfiguration<Appoin
         builder.ToTable("appointments", t =>
             t.HasCheckConstraint(
                 "CK_appointments_status",
-                "status IN ('confirmed', 'canceled', 'completed')"));
+                "status IN ('confirmed', 'canceled', 'completed', 'confirmedbyuser')"));
 
         builder.HasKey(a => a.Id);
         builder.Property(a => a.Id).HasColumnName("id");

@@ -10,6 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Resend;
+using Hangfire;
+using Hangfire.PostgreSql;
+using HoraMarcada.Infrastructure.Services;
 
 namespace HoraMarcada.Infrastructure.DependencyInjection;
 
@@ -45,6 +48,16 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddHostedService<NotificationQueueProcessor>();
         services.AddScoped<ResendEmailNotificationService>();
         services.AddScoped<INotificationService, QueueNotificationServiceDecorator>();
+
+        services.AddHangfire(config => config
+            .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UsePostgreSqlStorage(c => c.UseNpgsqlConnection(connectionString)));
+
+        services.AddHangfireServer();
+
+        services.AddScoped<IBackgroundJobService, HangfireBackgroundJobService>();
 
         services.AddAuthentication(options =>
         {

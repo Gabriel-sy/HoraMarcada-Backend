@@ -15,6 +15,7 @@ public class BookAppointmentUseCase(
     IProfessionalRepository professionalRepository,
     GetAvailableSlotsUseCase getAvailableSlotsUseCase,
     INotificationService notificationService,
+    IBackgroundJobService backgroundJobService,
     ITimeProvider timeProvider)
 {
     public async Task<Appointment> ExecuteAsync(BookAppointmentInput input, CancellationToken cancellationToken = default)
@@ -80,6 +81,39 @@ public class BookAppointmentUseCase(
         if (professional.Email != null)
         {
             await notificationService.SendBookingNotificationToProfessionalAsync(appointment, store, service, professional, cancellationToken);
+        }
+
+        var reminderTime = input.StartTime.AddHours(-24);
+        var localHour = reminderTime.Hour;
+
+        if (localHour < 8)
+        {
+            reminderTime = new DateTimeOffset(
+                reminderTime.Year, reminderTime.Month, reminderTime.Day,
+                8, 0, 0, reminderTime.Offset);
+        }
+        else if (localHour >= 22)
+        {
+            reminderTime = new DateTimeOffset(
+                reminderTime.Year, reminderTime.Month, reminderTime.Day,
+                21, 0, 0, reminderTime.Offset);
+        }
+
+        if (reminderTime > timeProvider.UtcNow.AddHours(6))
+        {
+            backgroundJobService.ScheduleReminder(appointment.Id, reminderTime);
+        }
+        else
+        {
+            var morningReminderTime = new DateTimeOffset(
+                input.StartTime.Year, input.StartTime.Month, input.StartTime.Day,
+                8, 0, 0, input.StartTime.Offset);
+
+            if (morningReminderTime > timeProvider.UtcNow.AddHours(6) &&
+                morningReminderTime <= input.StartTime.AddHours(-3))
+            {
+                backgroundJobService.ScheduleReminder(appointment.Id, morningReminderTime);
+            }
         }
 
         return appointment;

@@ -124,6 +124,16 @@ Calculating free slots is a core requirement and is implemented in the applicati
 5. The token is marked used (`CancelTokenUsed = true`).
 6. WhatsApp alerts are sent to the store owner and the professional. (Not implemented yet)
 
+### 24-Hour Appointment Reminder Scheduling
+To help customers remember their appointments, the system schedules a 24-hour reminder email (via Hangfire) with one-click actions to confirm presence or reschedule. The scheduling applies the following rules:
+- **Quiet Hours Shift**: If the ideal reminder time (exactly 24 hours before the appointment) falls between **22:00 and 08:00** in the appointment's local time:
+  - If the reminder time falls in the morning/dawn (< 08:00), it is shifted forward to **08:00 AM** on the same day.
+  - If the reminder time falls late at night (>= 22:00), it is shifted backward to **09:00 PM (21:00)** on the same day.
+- **Redundancy Buffer**: The reminder is only scheduled if the final adjusted reminder time is at least **6 hours** in the future relative to the booking creation time (`UtcNow`).
+- **Same-Day Morning Fallback**: If the adjusted 24-hour reminder time is invalid (falls in the past or fails the 6-hour buffer check), the system attempts a second-chance fallback to send the reminder on the **morning of the appointment at 08:00 AM** (local time). This fallback is scheduled only if:
+  - The morning fallback time is at least **6 hours in the future** relative to the booking creation time.
+  - The morning fallback time is at least **3 hours before** the appointment start time (to avoid sending a reminder too close to the appointment).
+
 ---
 
 ## 4. Soft Deactivation Semantics
