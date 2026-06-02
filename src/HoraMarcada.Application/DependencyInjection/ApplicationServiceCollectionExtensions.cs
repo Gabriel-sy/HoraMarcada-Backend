@@ -21,6 +21,7 @@ public static class ApplicationServiceCollectionExtensions
         services.AddScoped<GetStoreByUserIdUseCase>();
         services.AddScoped<GetStoreBySlugUseCase>();
         services.AddScoped<UpdateStoreUseCase>();
+        services.AddScoped<GetStoreStatisticsUseCase>();
 
         services.AddScoped<AddProfessionalUseCase>();
         services.AddScoped<ListProfessionalsUseCase>();
