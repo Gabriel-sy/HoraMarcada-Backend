@@ -31,7 +31,18 @@ internal sealed class EfProfessionalRepository(HoraMarcadaDbContext context) : I
 
     public async Task UpdateAsync(Professional professional, CancellationToken cancellationToken = default)
     {
-        context.Professionals.Update(professional);
+        var entry = context.Entry(professional);
+        if (entry.State == EntityState.Detached)
+        {
+            context.Professionals.Update(professional);
+        }
+        else
+        {
+            foreach (var weeklyHour in professional.WeeklySchedules)
+            {
+                context.Entry(weeklyHour).State = EntityState.Added;
+            }
+        }
         await context.SaveChangesAsync(cancellationToken);
     }
 }
