@@ -37,6 +37,7 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddScoped<IServiceRepository, EfServiceRepository>();
         services.AddScoped<IAppointmentRepository, EfAppointmentRepository>();
         services.AddScoped<ITimeBlockRepository, EfTimeBlockRepository>();
+        services.AddScoped<ICustomerRepository, EfCustomerRepository>();
         services.AddScoped<IAppConfiguration, AppConfiguration>();
 
         services.AddResend(options =>

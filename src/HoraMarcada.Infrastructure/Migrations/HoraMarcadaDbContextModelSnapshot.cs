@@ -20,6 +20,7 @@ namespace HoraMarcada.Infrastructure.Migrations
                 .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "unaccent");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("HoraMarcada.Domain.Entities.Appointment", b =>
@@ -41,20 +42,9 @@ namespace HoraMarcada.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<string>("CustomerEmail")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("customer_email");
-
-                    b.Property<string>("CustomerName")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("customer_name");
-
-                    b.Property<string>("CustomerWhatsApp")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("customer_whatsapp");
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("customer_id");
 
                     b.Property<DateTimeOffset>("EndTime")
                         .HasColumnType("timestamp with time zone")
@@ -86,6 +76,8 @@ namespace HoraMarcada.Infrastructure.Migrations
                     b.HasIndex("CancelToken")
                         .IsUnique();
 
+                    b.HasIndex("CustomerId");
+
                     b.HasIndex("ServiceId");
 
                     b.HasIndex("ProfessionalId", "StartTime")
@@ -98,6 +90,47 @@ namespace HoraMarcada.Infrastructure.Migrations
                         {
                             t.HasCheckConstraint("CK_appointments_status", "status IN ('confirmed', 'canceled', 'completed', 'confirmedbyuser')");
                         });
+                });
+
+            modelBuilder.Entity("HoraMarcada.Domain.Entities.Customer", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("text")
+                        .HasColumnName("email");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("store_id");
+
+                    b.Property<string>("WhatsApp")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("whatsapp");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StoreId")
+                        .HasDatabaseName("idx_customers_store");
+
+                    b.HasIndex("StoreId", "WhatsApp")
+                        .IsUnique()
+                        .HasDatabaseName("idx_customers_store_whatsapp");
+
+                    b.ToTable("customers", (string)null);
                 });
 
             modelBuilder.Entity("HoraMarcada.Domain.Entities.Professional", b =>
@@ -343,6 +376,12 @@ namespace HoraMarcada.Infrastructure.Migrations
 
             modelBuilder.Entity("HoraMarcada.Domain.Entities.Appointment", b =>
                 {
+                    b.HasOne("HoraMarcada.Domain.Entities.Customer", "Customer")
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("HoraMarcada.Domain.Entities.Professional", null)
                         .WithMany()
                         .HasForeignKey("ProfessionalId")
@@ -359,6 +398,17 @@ namespace HoraMarcada.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("StoreId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("HoraMarcada.Domain.Entities.Customer", b =>
+                {
+                    b.HasOne("HoraMarcada.Domain.Entities.Store", null)
+                        .WithMany()
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

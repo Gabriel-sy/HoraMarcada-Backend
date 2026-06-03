@@ -19,21 +19,16 @@ internal sealed class AppointmentConfiguration : IEntityTypeConfiguration<Appoin
         builder.Property(a => a.StoreId).HasColumnName("store_id").IsRequired();
         builder.Property(a => a.ProfessionalId).HasColumnName("professional_id").IsRequired();
         builder.Property(a => a.ServiceId).HasColumnName("service_id").IsRequired();
-        builder.Property(a => a.CustomerName).HasColumnName("customer_name").IsRequired();
-        builder.Property(a => a.CustomerWhatsApp)
-            .HasColumnName("customer_whatsapp")
-            .HasConversion(ValueObjectConverters.PhoneNumberConverter)
-            .IsRequired();
-        builder.Property(a => a.CustomerEmail)
-            .HasColumnName("customer_email")
-            .HasConversion(ValueObjectConverters.EmailConverter)
-            .IsRequired();
+        builder.Ignore(a => a.CustomerName);
+        builder.Ignore(a => a.CustomerWhatsApp);
+        builder.Ignore(a => a.CustomerEmail);
         builder.Property(a => a.StartTime).HasColumnName("start_time").IsRequired();
         builder.Property(a => a.EndTime).HasColumnName("end_time").IsRequired();
         builder.Property(a => a.Status)
             .HasColumnName("status")
             .HasConversion(ValueObjectConverters.AppointmentStatusConverter)
             .IsRequired();
+        builder.Property(a => a.CustomerId).HasColumnName("customer_id").IsRequired();
         builder.Property(a => a.CancelToken).HasColumnName("cancel_token");
         builder.HasIndex(a => a.CancelToken).IsUnique();
         builder.Property(a => a.CancelTokenUsed).HasColumnName("cancel_token_used");
@@ -57,6 +52,11 @@ internal sealed class AppointmentConfiguration : IEntityTypeConfiguration<Appoin
         builder.HasOne<Service>()
             .WithMany()
             .HasForeignKey(a => a.ServiceId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(a => a.Customer)
+            .WithMany()
+            .HasForeignKey(a => a.CustomerId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

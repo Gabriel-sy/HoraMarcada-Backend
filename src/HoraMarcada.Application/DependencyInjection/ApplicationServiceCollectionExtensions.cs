@@ -2,6 +2,7 @@ using HoraMarcada.Application.Common;
 using HoraMarcada.Application.Policies;
 using HoraMarcada.Application.UseCases.Appointments;
 using HoraMarcada.Application.UseCases.Availability;
+using HoraMarcada.Application.UseCases.Customers;
 using HoraMarcada.Application.UseCases.Professionals;
 using HoraMarcada.Application.UseCases.Services;
 using HoraMarcada.Application.UseCases.Stores;
@@ -46,6 +47,10 @@ public static class ApplicationServiceCollectionExtensions
         services.AddScoped<CancelAppointmentByTokenUseCase>();
         services.AddScoped<ConfirmAppointmentByTokenUseCase>();
         services.AddScoped<CompleteAppointmentUseCase>();
+
+        services.AddScoped<ListCustomersUseCase>();
+        services.AddScoped<GetCustomerUseCase>();
+        services.AddScoped<UpdateCustomerUseCase>();
 
         return services;
     }

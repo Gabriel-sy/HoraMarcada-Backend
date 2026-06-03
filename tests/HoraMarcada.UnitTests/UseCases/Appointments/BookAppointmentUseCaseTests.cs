@@ -22,6 +22,7 @@ public class BookAppointmentUseCaseTests
     private readonly Mock<INotificationService> _notificationServiceMock;
     private readonly Mock<IBackgroundJobService> _backgroundJobServiceMock;
     private readonly Mock<IAppConfiguration> _appConfigurationMock;
+    private readonly Mock<ICustomerRepository> _customerRepositoryMock;
     private readonly GetAvailableSlotsUseCase _getAvailableSlotsUseCase;
     private readonly BookAppointmentUseCase _useCase;
 
@@ -36,6 +37,7 @@ public class BookAppointmentUseCaseTests
         _notificationServiceMock = new Mock<INotificationService>();
         _backgroundJobServiceMock = new Mock<IBackgroundJobService>();
         _appConfigurationMock = new Mock<IAppConfiguration>();
+        _customerRepositoryMock = new Mock<ICustomerRepository>();
 
         _appConfigurationMock.Setup(c => c.MinimumSlotLeadTimeMinutes).Returns(0);
 
@@ -61,7 +63,8 @@ public class BookAppointmentUseCaseTests
             _getAvailableSlotsUseCase,
             _notificationServiceMock.Object,
             _backgroundJobServiceMock.Object,
-            _timeProviderMock.Object
+            _timeProviderMock.Object,
+            _customerRepositoryMock.Object
         );
     }
 

@@ -10,11 +10,13 @@ public sealed class HoraMarcadaDbContext(DbContextOptions<HoraMarcadaDbContext> 
     public DbSet<WeeklyHours> WeeklyHours => Set<WeeklyHours>();
     public DbSet<Service> Services => Set<Service>();
     public DbSet<ServiceProfessional> ServiceProfessionals => Set<ServiceProfessional>();
+    public DbSet<Customer> Customers => Set<Customer>();
     public DbSet<Appointment> Appointments => Set<Appointment>();
     public DbSet<TimeBlock> TimeBlocks => Set<TimeBlock>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.HasPostgresExtension("unaccent");
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(HoraMarcadaDbContext).Assembly);
     }
 }

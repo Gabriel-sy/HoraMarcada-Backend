@@ -10,9 +10,17 @@ public sealed class Appointment
     public Guid StoreId { get; private set; }
     public Guid ProfessionalId { get; private set; }
     public Guid ServiceId { get; private set; }
-    public string CustomerName { get; private set; } = string.Empty;
-    public PhoneNumber CustomerWhatsApp { get; private set; } = null!;
-    public Email CustomerEmail { get; private set; } = null!;
+    public Guid CustomerId { get; private set; }
+    public Customer Customer { get; private set; } = null!;
+
+    private string _customerName = string.Empty;
+    private PhoneNumber _customerWhatsApp = null!;
+    private Email _customerEmail = null!;
+
+    public string CustomerName => Customer?.Name ?? _customerName;
+    public PhoneNumber CustomerWhatsApp => Customer?.WhatsApp ?? _customerWhatsApp;
+    public Email CustomerEmail => Customer?.Email ?? _customerEmail;
+
     public DateTimeOffset StartTime { get; private set; }
     public DateTimeOffset EndTime { get; private set; }
     public AppointmentStatus Status { get; private set; }
@@ -34,7 +42,8 @@ public sealed class Appointment
         DateTimeOffset startTime,
         DateTimeOffset endTime,
         AppointmentStatus status = AppointmentStatus.Confirmed,
-        string? cancelToken = null)
+        string? cancelToken = null,
+        Guid? customerId = null)
     {
         if (storeId == Guid.Empty)
             throw new DomainValidationException("Store id is required.");
@@ -57,9 +66,10 @@ public sealed class Appointment
             StoreId = storeId,
             ProfessionalId = professionalId,
             ServiceId = serviceId,
-            CustomerName = customerName.Trim(),
-            CustomerWhatsApp = PhoneNumber.Create(customerWhatsApp),
-            CustomerEmail = Email.Create(customerEmail),
+            CustomerId = customerId ?? Guid.Empty,
+            _customerName = customerName.Trim(),
+            _customerWhatsApp = PhoneNumber.Create(customerWhatsApp),
+            _customerEmail = Email.Create(customerEmail),
             StartTime = startTime.ToUniversalTime(),
             EndTime = endTime.ToUniversalTime(),
             Status = status,

@@ -9,6 +9,7 @@ internal sealed class EfAppointmentRepository(HoraMarcadaDbContext context) : IA
     public async Task<Appointment?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await context.Appointments
+            .Include(a => a.Customer)
             .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
     }
 
@@ -29,6 +30,7 @@ internal sealed class EfAppointmentRepository(HoraMarcadaDbContext context) : IA
         var endUtc = end.ToUniversalTime();
 
         var query = context.Appointments
+            .Include(a => a.Customer)
             .Where(a => a.StoreId == storeId && a.StartTime >= startUtc && a.StartTime <= endUtc);
 
         if (professionalId.HasValue)
@@ -48,6 +50,7 @@ internal sealed class EfAppointmentRepository(HoraMarcadaDbContext context) : IA
         var endOfDay = startOfDay.AddDays(1);
 
         return await context.Appointments
+            .Include(a => a.Customer)
             .Where(a => a.ProfessionalId == professionalId &&
                         a.StartTime >= startOfDay &&
                         a.StartTime < endOfDay)
@@ -59,6 +62,7 @@ internal sealed class EfAppointmentRepository(HoraMarcadaDbContext context) : IA
         CancellationToken cancellationToken = default)
     {
         return await context.Appointments
+            .Include(a => a.Customer)
             .FirstOrDefaultAsync(a => a.CancelToken == cancelToken, cancellationToken);
     }
 
