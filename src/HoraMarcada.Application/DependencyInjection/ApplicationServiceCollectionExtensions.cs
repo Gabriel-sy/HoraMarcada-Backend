@@ -42,6 +42,7 @@ public static class ApplicationServiceCollectionExtensions
         services.AddScoped<ListTimeBlocksUseCase>();
 
         services.AddScoped<BookAppointmentUseCase>();
+        services.AddScoped<GetAppointmentByIdUseCase>();
         services.AddScoped<ListAppointmentsUseCase>();
         services.AddScoped<CancelAppointmentUseCase>();
         services.AddScoped<CancelAppointmentByTokenUseCase>();
