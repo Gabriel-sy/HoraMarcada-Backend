@@ -18,13 +18,6 @@ public interface INotificationService
         Professional professional,
         CancellationToken cancellationToken = default);
 
-    Task SendBookingNotificationToStoreAsync(
-        Appointment appointment,
-        Store store,
-        Service service,
-        Professional professional,
-        CancellationToken cancellationToken = default);
-
     Task SendCancellationNoticeToCustomerAsync(
         Appointment appointment,
         Store store,
@@ -33,13 +26,6 @@ public interface INotificationService
         CancellationToken cancellationToken = default);
 
     Task SendCancellationNotificationToProfessionalAsync(
-        Appointment appointment,
-        Store store,
-        Service service,
-        Professional professional,
-        CancellationToken cancellationToken = default);
-
-    Task SendCancellationNotificationToStoreAsync(
         Appointment appointment,
         Store store,
         Service service,

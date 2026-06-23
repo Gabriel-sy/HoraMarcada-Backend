@@ -17,6 +17,7 @@ public static class ApplicationServiceCollectionExtensions
     {
         services.AddScoped<ITimeProvider, SystemTimeProvider>();
         services.AddScoped<IStoreOwnershipPolicy, StoreOwnershipPolicy>();
+        services.AddScoped<IAppointmentNotificationService, AppointmentNotificationService>();
 
         services.AddScoped<CreateStoreUseCase>();
         services.AddScoped<GetStoreByUserIdUseCase>();

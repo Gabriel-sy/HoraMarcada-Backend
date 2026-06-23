@@ -48,17 +48,11 @@ public class NotificationQueueProcessor(
                     case NotificationJobType.BookingNotificationToProfessional:
                         await emailService.SendBookingNotificationToProfessionalAsync(job.Appointment, job.Store, job.Service, job.Professional, stoppingToken);
                         break;
-                    case NotificationJobType.BookingNotificationToStore:
-                        await emailService.SendBookingNotificationToStoreAsync(job.Appointment, job.Store, job.Service, job.Professional, stoppingToken);
-                        break;
                     case NotificationJobType.CancellationNoticeToCustomer:
                         await emailService.SendCancellationNoticeToCustomerAsync(job.Appointment, job.Store, job.Service, job.Professional, stoppingToken);
                         break;
                     case NotificationJobType.CancellationNotificationToProfessional:
                         await emailService.SendCancellationNotificationToProfessionalAsync(job.Appointment, job.Store, job.Service, job.Professional, stoppingToken);
-                        break;
-                    case NotificationJobType.CancellationNotificationToStore:
-                        await emailService.SendCancellationNotificationToStoreAsync(job.Appointment, job.Store, job.Service, job.Professional, stoppingToken);
                         break;
                     case NotificationJobType.BookingReminder24h:
                         await emailService.SendBookingReminder24hAsync(job.Appointment, job.Store, job.Service, job.Professional, stoppingToken);

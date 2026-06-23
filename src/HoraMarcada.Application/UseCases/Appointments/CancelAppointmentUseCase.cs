@@ -12,7 +12,7 @@ public class CancelAppointmentUseCase(
     IServiceRepository serviceRepository,
     IProfessionalRepository professionalRepository,
     IStoreOwnershipPolicy ownershipPolicy,
-    INotificationService notificationService)
+    IAppointmentNotificationService appointmentNotificationService)
 {
     public async Task ExecuteAsync(Guid userId, Guid appointmentId, CancelAppointmentInput input, CancellationToken cancellationToken = default)
     {
@@ -33,13 +33,7 @@ public class CancelAppointmentUseCase(
 
         if (store != null && service != null && professional != null)
         {
-            await notificationService.SendCancellationNoticeToCustomerAsync(appointment, store, service, professional, cancellationToken);
-            await notificationService.SendCancellationNotificationToStoreAsync(appointment, store, service, professional, cancellationToken);
-
-            if (professional.Email != null)
-            {
-                await notificationService.SendCancellationNotificationToProfessionalAsync(appointment, store, service, professional, cancellationToken);
-            }
+            await appointmentNotificationService.DispatchCancellationNotificationsAsync(appointment, store, service, professional, cancellationToken);
         }
     }
 }

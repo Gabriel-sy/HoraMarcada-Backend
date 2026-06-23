@@ -3,17 +3,22 @@ using Xunit;
 using HoraMarcada.Infrastructure.Notifications;
 using HoraMarcada.Domain.Entities;
 
+using HoraMarcada.Application.Common;
+
 namespace HoraMarcada.UnitTests.Infrastructure.Notifications;
 
 public class QueueNotificationServiceDecoratorTests
 {
     private readonly Mock<INotificationQueue> _queueMock;
+    private readonly Mock<IAppConfiguration> _configMock;
     private readonly QueueNotificationServiceDecorator _decorator;
 
     public QueueNotificationServiceDecoratorTests()
     {
         _queueMock = new Mock<INotificationQueue>();
-        _decorator = new QueueNotificationServiceDecorator(_queueMock.Object);
+        _configMock = new Mock<IAppConfiguration>();
+        _configMock.Setup(c => c.NotificationsEnabled).Returns(true);
+        _decorator = new QueueNotificationServiceDecorator(_queueMock.Object, _configMock.Object);
     }
 
     [Fact]
@@ -65,34 +70,6 @@ public class QueueNotificationServiceDecoratorTests
 
         _queueMock.Verify(q => q.QueueNotification(It.Is<NotificationJob>(j =>
             j.Type == NotificationJobType.BookingNotificationToProfessional &&
-            j.Appointment == appointment &&
-            j.Store == store &&
-            j.Service == service &&
-            j.Professional == professional
-        )), Times.Once);
-    }
-
-    [Fact]
-    public async Task SendBookingNotificationToStoreAsync_ShouldQueueJob()
-    {
-        var store = Store.Create(Guid.NewGuid(), "Store Name", "store-slug", "+5511999999999", "store@example.com");
-        var service = Service.Create(store.Id, "Haircut", 30);
-        var professional = Professional.Create(store.Id, "Jane Doe", email: "jane@example.com");
-        var appointment = Appointment.Create(
-            store.Id,
-            professional.Id,
-            service.Id,
-            "John Doe",
-            "+5511988888888",
-            "john@example.com",
-            DateTimeOffset.UtcNow,
-            DateTimeOffset.UtcNow.AddMinutes(30)
-        );
-
-        await _decorator.SendBookingNotificationToStoreAsync(appointment, store, service, professional);
-
-        _queueMock.Verify(q => q.QueueNotification(It.Is<NotificationJob>(j =>
-            j.Type == NotificationJobType.BookingNotificationToStore &&
             j.Appointment == appointment &&
             j.Store == store &&
             j.Service == service &&
@@ -157,8 +134,9 @@ public class QueueNotificationServiceDecoratorTests
     }
 
     [Fact]
-    public async Task SendCancellationNotificationToStoreAsync_ShouldQueueJob()
+    public async Task SendBookingConfirmationToCustomerAsync_WhenNotificationsDisabled_ShouldNotQueueJob()
     {
+        _configMock.Setup(c => c.NotificationsEnabled).Returns(false);
         var store = Store.Create(Guid.NewGuid(), "Store Name", "store-slug", "+5511999999999", "store@example.com");
         var service = Service.Create(store.Id, "Haircut", 30);
         var professional = Professional.Create(store.Id, "Jane Doe", email: "jane@example.com");
@@ -173,14 +151,8 @@ public class QueueNotificationServiceDecoratorTests
             DateTimeOffset.UtcNow.AddMinutes(30)
         );
 
-        await _decorator.SendCancellationNotificationToStoreAsync(appointment, store, service, professional);
+        await _decorator.SendBookingConfirmationToCustomerAsync(appointment, store, service, professional);
 
-        _queueMock.Verify(q => q.QueueNotification(It.Is<NotificationJob>(j =>
-            j.Type == NotificationJobType.CancellationNotificationToStore &&
-            j.Appointment == appointment &&
-            j.Store == store &&
-            j.Service == service &&
-            j.Professional == professional
-        )), Times.Once);
+        _queueMock.Verify(q => q.QueueNotification(It.IsAny<NotificationJob>()), Times.Never);
     }
 }

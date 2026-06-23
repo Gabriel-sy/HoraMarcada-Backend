@@ -140,43 +140,6 @@ public class ResendEmailNotificationServiceTests
     }
 
     [Fact]
-    public async Task SendBookingNotificationToStoreAsync_ShouldSendEmailToStore()
-    {
-        var storeId = Guid.NewGuid();
-        var professionalId = Guid.NewGuid();
-        var serviceId = Guid.NewGuid();
-        var store = Store.Create(storeId, "Store Name", "store-slug", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Haircut", 30);
-        var professional = Professional.Create(storeId, "Jane Doe", email: "jane@example.com");
-        var idField = typeof(Professional).GetProperty("Id");
-        idField?.SetValue(professional, professionalId);
-
-        var appointment = Appointment.Create(
-            storeId,
-            professionalId,
-            serviceId,
-            "John Doe",
-            "+5511988888888",
-            "john@example.com",
-            DateTimeOffset.UtcNow,
-            DateTimeOffset.UtcNow.AddMinutes(30)
-        );
-
-        _resendMock
-            .Setup(r => r.EmailSendAsync(It.IsAny<EmailMessage>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ResendResponse<Guid>(Guid.NewGuid(), null!));
-
-        await _service.SendBookingNotificationToStoreAsync(appointment, store, service, professional);
-
-        _resendMock.Verify(r => r.EmailSendAsync(It.Is<EmailMessage>(m =>
-            m.From.Email == "onboarding@resend.dev" &&
-            m.Subject.Contains("Novo Agendamento em Store Name") &&
-            m.To.Any(t => t.Email == "store@example.com") &&
-            m.HtmlBody.Contains("John Doe")
-        ), It.IsAny<CancellationToken>()), Times.Once);
-    }
-
-    [Fact]
     public async Task SendCancellationNoticeToCustomerAsync_ShouldSendCancellationNotice()
     {
         var storeId = Guid.NewGuid();
@@ -245,43 +208,6 @@ public class ResendEmailNotificationServiceTests
             m.From.Email == "onboarding@resend.dev" &&
             m.Subject.Contains("Agendamento Cancelado") &&
             m.To.Any(t => t.Email == "jane@example.com") &&
-            m.HtmlBody.Contains("John Doe")
-        ), It.IsAny<CancellationToken>()), Times.Once);
-    }
-
-    [Fact]
-    public async Task SendCancellationNotificationToStoreAsync_ShouldSendCancellationNotificationToStore()
-    {
-        var storeId = Guid.NewGuid();
-        var professionalId = Guid.NewGuid();
-        var serviceId = Guid.NewGuid();
-        var store = Store.Create(storeId, "Store Name", "store-slug", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Haircut", 30);
-        var professional = Professional.Create(storeId, "Jane Doe", email: "jane@example.com");
-        var idField = typeof(Professional).GetProperty("Id");
-        idField?.SetValue(professional, professionalId);
-
-        var appointment = Appointment.Create(
-            storeId,
-            professionalId,
-            serviceId,
-            "John Doe",
-            "+5511988888888",
-            "john@example.com",
-            DateTimeOffset.UtcNow,
-            DateTimeOffset.UtcNow.AddMinutes(30)
-        );
-
-        _resendMock
-            .Setup(r => r.EmailSendAsync(It.IsAny<EmailMessage>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ResendResponse<Guid>(Guid.NewGuid(), null!));
-
-        await _service.SendCancellationNotificationToStoreAsync(appointment, store, service, professional);
-
-        _resendMock.Verify(r => r.EmailSendAsync(It.Is<EmailMessage>(m =>
-            m.From.Email == "onboarding@resend.dev" &&
-            m.Subject.Contains("Agendamento Cancelado em Store Name") &&
-            m.To.Any(t => t.Email == "store@example.com") &&
             m.HtmlBody.Contains("John Doe")
         ), It.IsAny<CancellationToken>()), Times.Once);
     }

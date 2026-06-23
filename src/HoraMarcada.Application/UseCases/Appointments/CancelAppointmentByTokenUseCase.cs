@@ -10,9 +10,9 @@ public class CancelAppointmentByTokenUseCase(
     IStoreRepository storeRepository,
     IServiceRepository serviceRepository,
     IProfessionalRepository professionalRepository,
-    INotificationService notificationService)
+    IAppointmentNotificationService appointmentNotificationService)
 {
-    public async Task ExecuteAsync(string cancelToken, CancellationToken cancellationToken = default)
+    public async Task<string> ExecuteAsync(string cancelToken, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(cancelToken))
             throw new DomainValidationException("Cancel token is required.");
@@ -34,18 +34,19 @@ public class CancelAppointmentByTokenUseCase(
         await appointmentRepository.UpdateAsync(appointment, cancellationToken);
 
         var store = await storeRepository.GetByIdAsync(appointment.StoreId, cancellationToken);
+        if (store == null)
+        {
+            throw new NotFoundException("Store not found for this appointment.");
+        }
+
         var service = await serviceRepository.GetByIdAsync(appointment.ServiceId, cancellationToken);
         var professional = await professionalRepository.GetByIdAsync(appointment.ProfessionalId, cancellationToken);
 
-        if (store != null && service != null && professional != null)
+        if (service != null && professional != null)
         {
-            await notificationService.SendCancellationNoticeToCustomerAsync(appointment, store, service, professional, cancellationToken);
-            await notificationService.SendCancellationNotificationToStoreAsync(appointment, store, service, professional, cancellationToken);
-
-            if (professional.Email != null)
-            {
-                await notificationService.SendCancellationNotificationToProfessionalAsync(appointment, store, service, professional, cancellationToken);
-            }
+            await appointmentNotificationService.DispatchCancellationNotificationsAsync(appointment, store, service, professional, cancellationToken);
         }
+
+        return store.Slug.Value;
     }
 }

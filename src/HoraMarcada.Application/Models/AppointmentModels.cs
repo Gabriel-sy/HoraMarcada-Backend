@@ -23,6 +23,9 @@ public record CancelAppointmentInput(
 public record CancelAppointmentByTokenInput(
     [property: SwaggerExample("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")] string CancelToken);
 
+public record CancelAppointmentByTokenResponse(
+    [property: SwaggerExample("vintage-barber")] string StoreSlug);
+
 public record CompleteAppointmentInput(
     [property: SwaggerExample("3fa85f64-5717-4562-b3fc-2c963f66afa6")] Guid StoreId);
 

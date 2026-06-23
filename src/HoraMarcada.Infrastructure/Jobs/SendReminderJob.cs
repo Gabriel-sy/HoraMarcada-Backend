@@ -1,9 +1,9 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using HoraMarcada.Application.Common;
 using HoraMarcada.Application.Repositories;
 using HoraMarcada.Domain.Enums;
-using HoraMarcada.Infrastructure.Notifications;
 using Microsoft.Extensions.Logging;
 
 namespace HoraMarcada.Infrastructure.Jobs;
@@ -13,7 +13,7 @@ public class SendReminderJob(
     IStoreRepository storeRepository,
     IServiceRepository serviceRepository,
     IProfessionalRepository professionalRepository,
-    ResendEmailNotificationService emailNotificationService,
+    INotificationService notificationService,
     ILogger<SendReminderJob> logger)
 {
     public async Task ExecuteAsync(Guid appointmentId, CancellationToken cancellationToken)
@@ -41,6 +41,6 @@ public class SendReminderJob(
             return;
         }
 
-        await emailNotificationService.SendBookingReminder24hAsync(appointment, store, service, professional, cancellationToken);
+        await notificationService.SendBookingReminder24hAsync(appointment, store, service, professional, cancellationToken);
     }
 }

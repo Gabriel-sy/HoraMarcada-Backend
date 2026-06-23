@@ -16,7 +16,7 @@ public class CancelAppointmentByTokenUseCaseTests
     private readonly Mock<IStoreRepository> _storeRepositoryMock;
     private readonly Mock<IServiceRepository> _serviceRepositoryMock;
     private readonly Mock<IProfessionalRepository> _professionalRepositoryMock;
-    private readonly Mock<INotificationService> _notificationServiceMock;
+    private readonly Mock<IAppointmentNotificationService> _appointmentNotificationServiceMock;
     private readonly CancelAppointmentByTokenUseCase _useCase;
 
     public CancelAppointmentByTokenUseCaseTests()
@@ -25,14 +25,14 @@ public class CancelAppointmentByTokenUseCaseTests
         _storeRepositoryMock = new Mock<IStoreRepository>();
         _serviceRepositoryMock = new Mock<IServiceRepository>();
         _professionalRepositoryMock = new Mock<IProfessionalRepository>();
-        _notificationServiceMock = new Mock<INotificationService>();
+        _appointmentNotificationServiceMock = new Mock<IAppointmentNotificationService>();
 
         _useCase = new CancelAppointmentByTokenUseCase(
             _appointmentRepositoryMock.Object,
             _storeRepositoryMock.Object,
             _serviceRepositoryMock.Object,
             _professionalRepositoryMock.Object,
-            _notificationServiceMock.Object
+            _appointmentNotificationServiceMock.Object
         );
     }
 
@@ -128,8 +128,9 @@ public class CancelAppointmentByTokenUseCaseTests
             .Setup(r => r.GetByIdAsync(appointment.ProfessionalId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(professional);
 
-        await _useCase.ExecuteAsync(token);
+        var result = await _useCase.ExecuteAsync(token);
 
+        Assert.Equal("store", result);
         Assert.Equal(AppointmentStatus.Canceled, appointment.Status);
         Assert.True(appointment.CancelTokenUsed);
         
@@ -140,13 +141,7 @@ public class CancelAppointmentByTokenUseCaseTests
             a.CancelTokenUsed == true
         ), It.IsAny<CancellationToken>()), Times.Once);
 
-        _notificationServiceMock.Verify(n => n.SendCancellationNoticeToCustomerAsync(
-            appointment, store, service, professional, It.IsAny<CancellationToken>()), Times.Once);
-
-        _notificationServiceMock.Verify(n => n.SendCancellationNotificationToStoreAsync(
-            appointment, store, service, professional, It.IsAny<CancellationToken>()), Times.Once);
-
-        _notificationServiceMock.Verify(n => n.SendCancellationNotificationToProfessionalAsync(
+        _appointmentNotificationServiceMock.Verify(n => n.DispatchCancellationNotificationsAsync(
             appointment, store, service, professional, It.IsAny<CancellationToken>()), Times.Once);
     }
 }

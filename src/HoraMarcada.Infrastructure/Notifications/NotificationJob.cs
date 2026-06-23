@@ -6,10 +6,8 @@ public enum NotificationJobType
 {
     BookingConfirmationToCustomer,
     BookingNotificationToProfessional,
-    BookingNotificationToStore,
     CancellationNoticeToCustomer,
     CancellationNotificationToProfessional,
-    CancellationNotificationToStore,
     BookingReminder24h
 }
 

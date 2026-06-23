@@ -3,7 +3,7 @@ using HoraMarcada.Domain.Entities;
 
 namespace HoraMarcada.Infrastructure.Notifications;
 
-public class QueueNotificationServiceDecorator(INotificationQueue queue) : INotificationService
+public class QueueNotificationServiceDecorator(INotificationQueue queue, IAppConfiguration appConfiguration) : INotificationService
 {
     public Task SendBookingConfirmationToCustomerAsync(
         Appointment appointment,
@@ -12,6 +12,11 @@ public class QueueNotificationServiceDecorator(INotificationQueue queue) : INoti
         Professional professional,
         CancellationToken cancellationToken = default)
     {
+        if (!appConfiguration.NotificationsEnabled)
+        {
+            return Task.CompletedTask;
+        }
+
         queue.QueueNotification(new NotificationJob(
             NotificationJobType.BookingConfirmationToCustomer,
             appointment,
@@ -29,25 +34,13 @@ public class QueueNotificationServiceDecorator(INotificationQueue queue) : INoti
         Professional professional,
         CancellationToken cancellationToken = default)
     {
+        if (!appConfiguration.NotificationsEnabled)
+        {
+            return Task.CompletedTask;
+        }
+
         queue.QueueNotification(new NotificationJob(
             NotificationJobType.BookingNotificationToProfessional,
-            appointment,
-            store,
-            service,
-            professional
-        ));
-        return Task.CompletedTask;
-    }
-
-    public Task SendBookingNotificationToStoreAsync(
-        Appointment appointment,
-        Store store,
-        Service service,
-        Professional professional,
-        CancellationToken cancellationToken = default)
-    {
-        queue.QueueNotification(new NotificationJob(
-            NotificationJobType.BookingNotificationToStore,
             appointment,
             store,
             service,
@@ -63,6 +56,11 @@ public class QueueNotificationServiceDecorator(INotificationQueue queue) : INoti
         Professional professional,
         CancellationToken cancellationToken = default)
     {
+        if (!appConfiguration.NotificationsEnabled)
+        {
+            return Task.CompletedTask;
+        }
+
         queue.QueueNotification(new NotificationJob(
             NotificationJobType.CancellationNoticeToCustomer,
             appointment,
@@ -80,25 +78,13 @@ public class QueueNotificationServiceDecorator(INotificationQueue queue) : INoti
         Professional professional,
         CancellationToken cancellationToken = default)
     {
+        if (!appConfiguration.NotificationsEnabled)
+        {
+            return Task.CompletedTask;
+        }
+
         queue.QueueNotification(new NotificationJob(
             NotificationJobType.CancellationNotificationToProfessional,
-            appointment,
-            store,
-            service,
-            professional
-        ));
-        return Task.CompletedTask;
-    }
-
-    public Task SendCancellationNotificationToStoreAsync(
-        Appointment appointment,
-        Store store,
-        Service service,
-        Professional professional,
-        CancellationToken cancellationToken = default)
-    {
-        queue.QueueNotification(new NotificationJob(
-            NotificationJobType.CancellationNotificationToStore,
             appointment,
             store,
             service,
@@ -114,6 +100,11 @@ public class QueueNotificationServiceDecorator(INotificationQueue queue) : INoti
         Professional professional,
         CancellationToken cancellationToken = default)
     {
+        if (!appConfiguration.NotificationsEnabled)
+        {
+            return Task.CompletedTask;
+        }
+
         queue.QueueNotification(new NotificationJob(
             NotificationJobType.BookingReminder24h,
             appointment,

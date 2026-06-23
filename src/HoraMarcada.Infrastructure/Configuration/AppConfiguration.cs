@@ -13,4 +13,13 @@ public class AppConfiguration(IConfiguration configuration) : IAppConfiguration
             return int.TryParse(value, out var minutes) ? minutes : 0;
         }
     }
+
+    public bool NotificationsEnabled
+    {
+        get
+        {
+            var value = configuration["NOTIFICATIONS_ENABLED"];
+            return !bool.TryParse(value, out var enabled) || enabled;
+        }
+    }
 }

@@ -19,7 +19,7 @@ public class CancelAppointmentByTokenController(
         Description = "Cancels the appointment if the secure JWT token is valid and has not been used yet.",
         Tags = new[] { "Appointments" }
     )]
-    [SwaggerResponse(StatusCodes.Status204NoContent, "The appointment was successfully canceled via token.")]
+    [SwaggerResponse(StatusCodes.Status200OK, "The appointment was successfully canceled via token.", typeof(CancelAppointmentByTokenResponse))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "If validation fails or the token is invalid, expired, or already used.", typeof(IDictionary<string, string[]>))]
     public async Task<IActionResult> CancelAppointmentByToken(
         [FromBody] CancelAppointmentByTokenInput input,
@@ -31,7 +31,7 @@ public class CancelAppointmentByTokenController(
             return BadRequest(validationResult.ToDictionary());
         }
 
-        await useCase.ExecuteAsync(input.CancelToken, cancellationToken);
-        return NoContent();
+        var storeSlug = await useCase.ExecuteAsync(input.CancelToken, cancellationToken);
+        return Ok(new CancelAppointmentByTokenResponse(storeSlug));
     }
 }
