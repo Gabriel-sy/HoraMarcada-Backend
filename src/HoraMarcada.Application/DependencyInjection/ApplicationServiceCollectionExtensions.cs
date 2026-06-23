@@ -16,6 +16,7 @@ public static class ApplicationServiceCollectionExtensions
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddScoped<ITimeProvider, SystemTimeProvider>();
+        services.AddScoped<ICancelTokenGenerator, CancelTokenGenerator>();
         services.AddScoped<IStoreOwnershipPolicy, StoreOwnershipPolicy>();
         services.AddScoped<IAppointmentNotificationService, AppointmentNotificationService>();
 

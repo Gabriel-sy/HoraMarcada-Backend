@@ -15,11 +15,11 @@ public sealed class Appointment
 
     private string _customerName = string.Empty;
     private PhoneNumber _customerWhatsApp = null!;
-    private Email _customerEmail = null!;
+    private Email? _customerEmail;
 
     public string CustomerName => Customer?.Name ?? _customerName;
     public PhoneNumber CustomerWhatsApp => Customer?.WhatsApp ?? _customerWhatsApp;
-    public Email CustomerEmail => Customer?.Email ?? _customerEmail;
+    public Email? CustomerEmail => Customer?.Email ?? _customerEmail;
 
     public DateTimeOffset StartTime { get; private set; }
     public DateTimeOffset EndTime { get; private set; }
@@ -38,9 +38,9 @@ public sealed class Appointment
         Guid serviceId,
         string customerName,
         string customerWhatsApp,
-        string customerEmail,
         DateTimeOffset startTime,
         DateTimeOffset endTime,
+        string? customerEmail = null,
         AppointmentStatus status = AppointmentStatus.Confirmed,
         string? cancelToken = null,
         Guid? customerId = null)
@@ -69,7 +69,7 @@ public sealed class Appointment
             CustomerId = customerId ?? Guid.Empty,
             _customerName = customerName.Trim(),
             _customerWhatsApp = PhoneNumber.Create(customerWhatsApp),
-            _customerEmail = Email.Create(customerEmail),
+            _customerEmail = Email.CreateOptional(customerEmail),
             StartTime = startTime.ToUniversalTime(),
             EndTime = endTime.ToUniversalTime(),
             Status = status,

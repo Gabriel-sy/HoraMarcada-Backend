@@ -1,11 +1,15 @@
 using HoraMarcada.Application.Common;
 using HoraMarcada.Domain.Entities;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Resend;
 
 namespace HoraMarcada.Infrastructure.Notifications;
 
-public class ResendEmailNotificationService(IResend resend, IConfiguration configuration) : INotificationService
+public class ResendEmailNotificationService(
+    IResend resend,
+    IConfiguration configuration,
+    ILogger<ResendEmailNotificationService> logger) : INotificationDispatcher
 {
     private readonly string _fromEmail = configuration["Resend:FromEmail"] ?? "onboarding@resend.dev";
     private readonly string _frontendUrl = (configuration["FrontendUrl"] ?? "https://horamarcada.com").TrimEnd('/');
@@ -17,6 +21,12 @@ public class ResendEmailNotificationService(IResend resend, IConfiguration confi
         Professional professional,
         CancellationToken cancellationToken = default)
     {
+        if (appointment.CustomerEmail is null)
+        {
+            logger.LogWarning("Customer has no email. Skipping booking confirmation.");
+            return;
+        }
+
         var subject = $"Agendamento Confirmado - {store.Name}";
         var htmlBody = $"""
             <!DOCTYPE html>
@@ -77,7 +87,7 @@ public class ResendEmailNotificationService(IResend resend, IConfiguration confi
                                 </tr>
                                 <tr>
                                     <td style="padding: 8px 0 32px 0;">
-                                        <a href="https://horamarcada.com/cancel/{appointment.CancelToken}" style="display: inline-block; padding: 12px 20px; background-color: #ffffff; border: 1px solid #ef4444; color: #ef4444; font-size: 14px; font-weight: 500; text-decoration: none; border-radius: 6px;">Cancelar Agendamento</a>
+                                        <a href="{AppointmentNotificationUrls.BuildCancelUrl(_frontendUrl, appointment.CancelToken!)}" style="display: inline-block; padding: 12px 20px; background-color: #ffffff; border: 1px solid #ef4444; color: #ef4444; font-size: 14px; font-weight: 500; text-decoration: none; border-radius: 6px;">Cancelar Agendamento</a>
                                     </td>
                                 </tr>
                                 {EmailLayout.Footer}
@@ -107,6 +117,11 @@ public class ResendEmailNotificationService(IResend resend, IConfiguration confi
         Professional professional,
         CancellationToken cancellationToken = default)
     {
+        if (professional.Email is null)
+        {
+            return;
+        }
+
         var subject = $"Novo Agendamento - {store.Name}";
         var htmlBody = $"""
             <!DOCTYPE html>
@@ -173,7 +188,7 @@ public class ResendEmailNotificationService(IResend resend, IConfiguration confi
                                 </tr>
                                 <tr>
                                     <td style="padding: 8px 0 32px 0;">
-                                        <a href="https://horamarcada.com/cancel/{appointment.CancelToken}" style="display: inline-block; padding: 12px 20px; background-color: #ffffff; border: 1px solid #ef4444; color: #ef4444; font-size: 14px; font-weight: 500; text-decoration: none; border-radius: 6px;">Cancelar Agendamento</a>
+                                        <a href="{AppointmentNotificationUrls.BuildCancelUrl(_frontendUrl, appointment.CancelToken!)}" style="display: inline-block; padding: 12px 20px; background-color: #ffffff; border: 1px solid #ef4444; color: #ef4444; font-size: 14px; font-weight: 500; text-decoration: none; border-radius: 6px;">Cancelar Agendamento</a>
                                     </td>
                                 </tr>
                                 {EmailLayout.Footer}
@@ -203,6 +218,12 @@ public class ResendEmailNotificationService(IResend resend, IConfiguration confi
         Professional professional,
         CancellationToken cancellationToken = default)
     {
+        if (appointment.CustomerEmail is null)
+        {
+            logger.LogWarning("Customer has no email. Skipping cancellation notice.");
+            return;
+        }
+
         var subject = $"Agendamento Cancelado - {store.Name}";
         var htmlBody = $"""
             <!DOCTYPE html>
@@ -288,6 +309,11 @@ public class ResendEmailNotificationService(IResend resend, IConfiguration confi
         Professional professional,
         CancellationToken cancellationToken = default)
     {
+        if (professional.Email is null)
+        {
+            return;
+        }
+
         var subject = $"Agendamento Cancelado - {store.Name}";
         var htmlBody = $"""
             <!DOCTYPE html>
@@ -379,9 +405,15 @@ public class ResendEmailNotificationService(IResend resend, IConfiguration confi
         Professional professional,
         CancellationToken cancellationToken = default)
     {
+        if (appointment.CustomerEmail is null)
+        {
+            logger.LogWarning("Customer has no email. Skipping booking reminder.");
+            return;
+        }
+
         var subject = $"Lembrete de Agendamento - {store.Name}";
-        var confirmUrl = $"{_frontendUrl}/confirm/{appointment.CancelToken}";
-        var rescheduleUrl = $"{_frontendUrl}/{store.Slug.Value}?reschedule={appointment.CancelToken}";
+        var confirmUrl = AppointmentNotificationUrls.BuildConfirmUrl(_frontendUrl, appointment.CancelToken!);
+        var rescheduleUrl = AppointmentNotificationUrls.BuildRescheduleUrl(_frontendUrl, appointment.CancelToken!);
 
         var htmlBody = $"""
             <!DOCTYPE html>

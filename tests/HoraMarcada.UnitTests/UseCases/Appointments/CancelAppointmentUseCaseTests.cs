@@ -106,9 +106,9 @@ public class CancelAppointmentUseCaseTests
             Guid.NewGuid(),
             "Customer",
             "+5511999999999",
-            "customer@example.com",
             DateTimeOffset.UtcNow.AddHours(1),
-            DateTimeOffset.UtcNow.AddHours(2)
+            DateTimeOffset.UtcNow.AddHours(2),
+            customerEmail: "customer@example.com"
         );
 
         _appointmentRepositoryMock
@@ -142,9 +142,9 @@ public class CancelAppointmentUseCaseTests
             Guid.NewGuid(),
             "Customer",
             "+5511999999999",
-            "customer@example.com",
             DateTimeOffset.UtcNow.AddHours(1),
-            DateTimeOffset.UtcNow.AddHours(2)
+            DateTimeOffset.UtcNow.AddHours(2),
+            customerEmail: "customer@example.com"
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");

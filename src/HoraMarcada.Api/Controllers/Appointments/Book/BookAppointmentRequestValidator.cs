@@ -23,10 +23,6 @@ public class BookAppointmentRequestValidator : AbstractValidator<BookAppointment
             .NotEmpty().WithMessage("Phone number is required.")
             .Matches(@"^\+?[1-9]\d{7,14}$").WithMessage("Phone number must be E.164-friendly (optional +, digits only, 8-15 digits).");
 
-        RuleFor(x => x.CustomerEmail)
-            .NotEmpty().WithMessage("Email is required.")
-            .EmailAddress().WithMessage("Invalid email format.");
-
         RuleFor(x => x.StartTime)
             .NotEmpty().WithMessage("Start time is required.");
     }

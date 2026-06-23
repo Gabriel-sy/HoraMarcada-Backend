@@ -38,27 +38,32 @@ public class NotificationQueueProcessor(
             try
             {
                 using var scope = scopeFactory.CreateScope();
-                var emailService = scope.ServiceProvider.GetRequiredService<ResendEmailNotificationService>();
+                var notificationService = scope.ServiceProvider.GetRequiredService<INotificationDispatcher>();
 
                 switch (job.Type)
                 {
                     case NotificationJobType.BookingConfirmationToCustomer:
-                        await emailService.SendBookingConfirmationToCustomerAsync(job.Appointment, job.Store, job.Service, job.Professional, stoppingToken);
+                        await notificationService.SendBookingConfirmationToCustomerAsync(job.Appointment, job.Store, job.Service, job.Professional, stoppingToken);
                         break;
                     case NotificationJobType.BookingNotificationToProfessional:
-                        await emailService.SendBookingNotificationToProfessionalAsync(job.Appointment, job.Store, job.Service, job.Professional, stoppingToken);
+                        await notificationService.SendBookingNotificationToProfessionalAsync(job.Appointment, job.Store, job.Service, job.Professional, stoppingToken);
                         break;
                     case NotificationJobType.CancellationNoticeToCustomer:
-                        await emailService.SendCancellationNoticeToCustomerAsync(job.Appointment, job.Store, job.Service, job.Professional, stoppingToken);
+                        await notificationService.SendCancellationNoticeToCustomerAsync(job.Appointment, job.Store, job.Service, job.Professional, stoppingToken);
                         break;
                     case NotificationJobType.CancellationNotificationToProfessional:
-                        await emailService.SendCancellationNotificationToProfessionalAsync(job.Appointment, job.Store, job.Service, job.Professional, stoppingToken);
+                        await notificationService.SendCancellationNotificationToProfessionalAsync(job.Appointment, job.Store, job.Service, job.Professional, stoppingToken);
                         break;
                     case NotificationJobType.BookingReminder24h:
-                        await emailService.SendBookingReminder24hAsync(job.Appointment, job.Store, job.Service, job.Professional, stoppingToken);
+                        await notificationService.SendBookingReminder24hAsync(job.Appointment, job.Store, job.Service, job.Professional, stoppingToken);
                         break;
                 }
 
+                return;
+            }
+            catch (NotificationNonRetryableException ex)
+            {
+                logger.LogError(ex, "Non-retryable notification failure.");
                 return;
             }
             catch (Exception ex) when (attempt < maxRetries && !stoppingToken.IsCancellationRequested)

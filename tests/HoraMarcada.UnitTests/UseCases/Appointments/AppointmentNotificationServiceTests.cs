@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
 using HoraMarcada.Application.Common;
@@ -13,6 +14,7 @@ public class AppointmentNotificationServiceTests
     private readonly Mock<INotificationService> _notificationServiceMock;
     private readonly Mock<IBackgroundJobService> _backgroundJobServiceMock;
     private readonly Mock<ITimeProvider> _timeProviderMock;
+    private readonly Mock<IAppConfiguration> _appConfigurationMock;
     private readonly AppointmentNotificationService _service;
 
     public AppointmentNotificationServiceTests()
@@ -20,11 +22,14 @@ public class AppointmentNotificationServiceTests
         _notificationServiceMock = new Mock<INotificationService>();
         _backgroundJobServiceMock = new Mock<IBackgroundJobService>();
         _timeProviderMock = new Mock<ITimeProvider>();
+        _appConfigurationMock = new Mock<IAppConfiguration>();
+        _appConfigurationMock.Setup(c => c.NotificationChannel).Returns(NotificationChannel.Email);
 
         _service = new AppointmentNotificationService(
             _notificationServiceMock.Object,
             _backgroundJobServiceMock.Object,
-            _timeProviderMock.Object
+            _timeProviderMock.Object,
+            _appConfigurationMock.Object
         );
     }
 
@@ -38,9 +43,9 @@ public class AppointmentNotificationServiceTests
             Guid.NewGuid(),
             "Customer",
             "+5511999999999",
-            "customer@example.com",
             DateTimeOffset.UtcNow.AddDays(2),
-            DateTimeOffset.UtcNow.AddDays(2).AddMinutes(30)
+            DateTimeOffset.UtcNow.AddDays(2).AddMinutes(30),
+            customerEmail: "customer@example.com"
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
@@ -68,9 +73,9 @@ public class AppointmentNotificationServiceTests
             Guid.NewGuid(),
             "Customer",
             "+5511999999999",
-            "customer@example.com",
             DateTimeOffset.UtcNow.AddDays(2),
-            DateTimeOffset.UtcNow.AddDays(2).AddMinutes(30)
+            DateTimeOffset.UtcNow.AddDays(2).AddMinutes(30),
+            customerEmail: "customer@example.com"
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
@@ -98,9 +103,9 @@ public class AppointmentNotificationServiceTests
             Guid.NewGuid(),
             "Customer",
             "+5511999999999",
-            "customer@example.com",
             new DateTimeOffset(2026, 5, 21, 10, 0, 0, TimeSpan.FromHours(-3)),
-            new DateTimeOffset(2026, 5, 21, 10, 30, 0, TimeSpan.FromHours(-3))
+            new DateTimeOffset(2026, 5, 21, 10, 30, 0, TimeSpan.FromHours(-3)),
+            customerEmail: "customer@example.com"
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
@@ -124,9 +129,9 @@ public class AppointmentNotificationServiceTests
             Guid.NewGuid(),
             "Customer",
             "+5511999999999",
-            "customer@example.com",
             new DateTimeOffset(2026, 5, 21, 10, 0, 0, TimeSpan.FromHours(-3)),
-            new DateTimeOffset(2026, 5, 21, 10, 30, 0, TimeSpan.FromHours(-3))
+            new DateTimeOffset(2026, 5, 21, 10, 30, 0, TimeSpan.FromHours(-3)),
+            customerEmail: "customer@example.com"
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
@@ -150,9 +155,9 @@ public class AppointmentNotificationServiceTests
             Guid.NewGuid(),
             "Customer",
             "+5511999999999",
-            "customer@example.com",
             new DateTimeOffset(2026, 5, 21, 6, 0, 0, TimeSpan.FromHours(-3)),
-            new DateTimeOffset(2026, 5, 21, 6, 30, 0, TimeSpan.FromHours(-3))
+            new DateTimeOffset(2026, 5, 21, 6, 30, 0, TimeSpan.FromHours(-3)),
+            customerEmail: "customer@example.com"
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
@@ -177,9 +182,9 @@ public class AppointmentNotificationServiceTests
             Guid.NewGuid(),
             "Customer",
             "+5511999999999",
-            "customer@example.com",
             new DateTimeOffset(2026, 5, 21, 22, 30, 0, TimeSpan.FromHours(-3)),
-            new DateTimeOffset(2026, 5, 21, 23, 0, 0, TimeSpan.FromHours(-3))
+            new DateTimeOffset(2026, 5, 21, 23, 0, 0, TimeSpan.FromHours(-3)),
+            customerEmail: "customer@example.com"
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
@@ -204,9 +209,9 @@ public class AppointmentNotificationServiceTests
             Guid.NewGuid(),
             "Customer",
             "+5511999999999",
-            "customer@example.com",
             new DateTimeOffset(2026, 5, 21, 6, 0, 0, TimeSpan.FromHours(-3)),
-            new DateTimeOffset(2026, 5, 21, 6, 30, 0, TimeSpan.FromHours(-3))
+            new DateTimeOffset(2026, 5, 21, 6, 30, 0, TimeSpan.FromHours(-3)),
+            customerEmail: "customer@example.com"
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
@@ -230,9 +235,9 @@ public class AppointmentNotificationServiceTests
             Guid.NewGuid(),
             "Customer",
             "+5511999999999",
-            "customer@example.com",
             new DateTimeOffset(2026, 6, 1, 17, 0, 0, TimeSpan.FromHours(-3)),
-            new DateTimeOffset(2026, 6, 1, 17, 30, 0, TimeSpan.FromHours(-3))
+            new DateTimeOffset(2026, 6, 1, 17, 30, 0, TimeSpan.FromHours(-3)),
+            customerEmail: "customer@example.com"
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
@@ -257,9 +262,9 @@ public class AppointmentNotificationServiceTests
             Guid.NewGuid(),
             "Customer",
             "+5511999999999",
-            "customer@example.com",
             new DateTimeOffset(2026, 6, 1, 10, 0, 0, TimeSpan.FromHours(-3)),
-            new DateTimeOffset(2026, 6, 1, 10, 30, 0, TimeSpan.FromHours(-3))
+            new DateTimeOffset(2026, 6, 1, 10, 30, 0, TimeSpan.FromHours(-3)),
+            customerEmail: "customer@example.com"
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
@@ -283,9 +288,9 @@ public class AppointmentNotificationServiceTests
             Guid.NewGuid(),
             "Customer",
             "+5511999999999",
-            "customer@example.com",
             new DateTimeOffset(2026, 6, 1, 14, 0, 0, TimeSpan.FromHours(-3)),
-            new DateTimeOffset(2026, 6, 1, 14, 30, 0, TimeSpan.FromHours(-3))
+            new DateTimeOffset(2026, 6, 1, 14, 30, 0, TimeSpan.FromHours(-3)),
+            customerEmail: "customer@example.com"
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
@@ -300,6 +305,64 @@ public class AppointmentNotificationServiceTests
     }
 
     [Fact]
+    public async Task DispatchBookingNotificationsAsync_WhenWhatsAppChannelAndProfessionalHasWhatsApp_ShouldNotifyProfessional()
+    {
+        _appConfigurationMock.Setup(c => c.NotificationChannel).Returns(NotificationChannel.WhatsApp);
+
+        var storeId = Guid.NewGuid();
+        var appointment = Appointment.Create(
+            storeId,
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            "Customer",
+            "+5511999999999",
+            DateTimeOffset.UtcNow.AddDays(2),
+            DateTimeOffset.UtcNow.AddDays(2).AddMinutes(30),
+            customerEmail: "customer@example.com"
+        );
+
+        var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
+        var service = Service.Create(storeId, "Service", 30);
+        var professional = Professional.Create(storeId, "Jane Doe", whatsApp: "+5511888888888", email: null);
+
+        _timeProviderMock.Setup(t => t.UtcNow).Returns(appointment.StartTime.AddDays(-2));
+
+        await _service.DispatchBookingNotificationsAsync(appointment, store, service, professional);
+
+        _notificationServiceMock.Verify(n => n.SendBookingNotificationToProfessionalAsync(
+            appointment, store, service, professional, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task DispatchBookingNotificationsAsync_WhenWhatsAppChannelAndProfessionalHasNoWhatsApp_ShouldNotNotifyProfessional()
+    {
+        _appConfigurationMock.Setup(c => c.NotificationChannel).Returns(NotificationChannel.WhatsApp);
+
+        var storeId = Guid.NewGuid();
+        var appointment = Appointment.Create(
+            storeId,
+            Guid.NewGuid(),
+            Guid.NewGuid(),
+            "Customer",
+            "+5511999999999",
+            DateTimeOffset.UtcNow.AddDays(2),
+            DateTimeOffset.UtcNow.AddDays(2).AddMinutes(30),
+            customerEmail: "customer@example.com"
+        );
+
+        var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
+        var service = Service.Create(storeId, "Service", 30);
+        var professional = Professional.Create(storeId, "Jane Doe", email: "professional@example.com");
+
+        _timeProviderMock.Setup(t => t.UtcNow).Returns(appointment.StartTime.AddDays(-2));
+
+        await _service.DispatchBookingNotificationsAsync(appointment, store, service, professional);
+
+        _notificationServiceMock.Verify(n => n.SendBookingNotificationToProfessionalAsync(
+            It.IsAny<Appointment>(), It.IsAny<Store>(), It.IsAny<Service>(), It.IsAny<Professional>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
     public async Task DispatchCancellationNotificationsAsync_ShouldNotifyCustomerAndProfessionalAndNotNotifyStore()
     {
         var storeId = Guid.NewGuid();
@@ -309,9 +372,9 @@ public class AppointmentNotificationServiceTests
             Guid.NewGuid(),
             "Customer",
             "+5511999999999",
-            "customer@example.com",
             DateTimeOffset.UtcNow.AddDays(2),
-            DateTimeOffset.UtcNow.AddDays(2).AddMinutes(30)
+            DateTimeOffset.UtcNow.AddDays(2).AddMinutes(30),
+            customerEmail: "customer@example.com"
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
@@ -337,9 +400,9 @@ public class AppointmentNotificationServiceTests
             Guid.NewGuid(),
             "Customer",
             "+5511999999999",
-            "customer@example.com",
             DateTimeOffset.UtcNow.AddDays(2),
-            DateTimeOffset.UtcNow.AddDays(2).AddMinutes(30)
+            DateTimeOffset.UtcNow.AddDays(2).AddMinutes(30),
+            customerEmail: "customer@example.com"
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");

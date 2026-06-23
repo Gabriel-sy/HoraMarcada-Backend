@@ -5,6 +5,7 @@ using HoraMarcada.Domain.Entities;
 using HoraMarcada.Domain.ValueObjects;
 using Resend;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace HoraMarcada.UnitTests.Infrastructure.Notifications;
 
@@ -19,7 +20,10 @@ public class ResendEmailNotificationServiceTests
         _resendMock = new Mock<IResend>();
         _configurationMock = new Mock<IConfiguration>();
         _configurationMock.Setup(c => c["Resend:FromEmail"]).Returns("onboarding@resend.dev");
-        _service = new ResendEmailNotificationService(_resendMock.Object, _configurationMock.Object);
+        _service = new ResendEmailNotificationService(
+            _resendMock.Object,
+            _configurationMock.Object,
+            NullLogger<ResendEmailNotificationService>.Instance);
     }
 
     [Fact]
@@ -40,9 +44,9 @@ public class ResendEmailNotificationServiceTests
             serviceId,
             "John Doe",
             "+5511988888888",
-            "john@example.com",
             DateTimeOffset.UtcNow,
             DateTimeOffset.UtcNow.AddMinutes(30),
+            customerEmail: "john@example.com",
             cancelToken: "cancel123"
         );
 
@@ -59,7 +63,7 @@ public class ResendEmailNotificationServiceTests
             m.HtmlBody.Contains("Haircut") &&
             m.HtmlBody.Contains("Jane Doe") &&
             m.To.Any(t => t.Email == "john@example.com") &&
-            m.HtmlBody.Contains("/cancel/cancel123")
+            m.HtmlBody.Contains("/c/cancel123")
         ), It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -82,9 +86,9 @@ public class ResendEmailNotificationServiceTests
             serviceId,
             "John Doe",
             "+5511988888888",
-            "john@example.com",
             startTimeUtc,
             startTimeUtc.AddMinutes(30),
+            customerEmail: "john@example.com",
             cancelToken: "cancel123"
         );
 
@@ -117,9 +121,9 @@ public class ResendEmailNotificationServiceTests
             serviceId,
             "John Doe",
             "+5511988888888",
-            "john@example.com",
             DateTimeOffset.UtcNow,
             DateTimeOffset.UtcNow.AddMinutes(30),
+            customerEmail: "john@example.com",
             cancelToken: "cancel123"
         );
 
@@ -135,7 +139,7 @@ public class ResendEmailNotificationServiceTests
             m.HtmlBody.Contains("Jane Doe") &&
             m.To.Any(t => t.Email == "jane@example.com") &&
             m.HtmlBody.Contains("John Doe") &&
-            m.HtmlBody.Contains("/cancel/cancel123")
+            m.HtmlBody.Contains("/c/cancel123")
         ), It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -157,9 +161,9 @@ public class ResendEmailNotificationServiceTests
             serviceId,
             "John Doe",
             "+5511988888888",
-            "john@example.com",
             DateTimeOffset.UtcNow,
-            DateTimeOffset.UtcNow.AddMinutes(30)
+            DateTimeOffset.UtcNow.AddMinutes(30),
+            customerEmail: "john@example.com"
         );
 
         _resendMock
@@ -193,9 +197,9 @@ public class ResendEmailNotificationServiceTests
             serviceId,
             "John Doe",
             "+5511988888888",
-            "john@example.com",
             DateTimeOffset.UtcNow,
-            DateTimeOffset.UtcNow.AddMinutes(30)
+            DateTimeOffset.UtcNow.AddMinutes(30),
+            customerEmail: "john@example.com"
         );
 
         _resendMock
@@ -210,5 +214,31 @@ public class ResendEmailNotificationServiceTests
             m.To.Any(t => t.Email == "jane@example.com") &&
             m.HtmlBody.Contains("John Doe")
         ), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task SendBookingConfirmationToCustomerAsync_WhenCustomerHasNoEmail_ShouldSkipSend()
+    {
+        var storeId = Guid.NewGuid();
+        var professionalId = Guid.NewGuid();
+        var serviceId = Guid.NewGuid();
+        var store = Store.Create(storeId, "Store Name", "store-slug", "+5511999999999", "store@example.com");
+        var service = Service.Create(storeId, "Haircut", 30);
+        var professional = Professional.Create(storeId, "Jane Doe", email: "jane@example.com");
+
+        var appointment = Appointment.Create(
+            storeId,
+            professionalId,
+            serviceId,
+            "John Doe",
+            "+5511988888888",
+            DateTimeOffset.UtcNow,
+            DateTimeOffset.UtcNow.AddMinutes(30));
+
+        await _service.SendBookingConfirmationToCustomerAsync(appointment, store, service, professional);
+
+        _resendMock.Verify(r => r.EmailSendAsync(
+            It.IsAny<EmailMessage>(),
+            It.IsAny<CancellationToken>()), Times.Never);
     }
 }

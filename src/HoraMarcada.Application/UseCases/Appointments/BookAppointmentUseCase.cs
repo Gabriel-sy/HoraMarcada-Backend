@@ -16,7 +16,8 @@ public class BookAppointmentUseCase(
     GetAvailableSlotsUseCase getAvailableSlotsUseCase,
     IAppointmentNotificationService appointmentNotificationService,
     ITimeProvider timeProvider,
-    ICustomerRepository customerRepository)
+    ICustomerRepository customerRepository,
+    ICancelTokenGenerator cancelTokenGenerator)
 {
     public async Task<Appointment> ExecuteAsync(BookAppointmentInput input, CancellationToken cancellationToken = default)
     {
@@ -60,12 +61,12 @@ public class BookAppointmentUseCase(
         }
 
         var endTime = input.StartTime.AddMinutes(service.DurationMinutes);
-        var cancelToken = Guid.NewGuid().ToString("N");
+        var cancelToken = await cancelTokenGenerator.GenerateUniqueAsync(appointmentRepository, cancellationToken);
 
         var customer = await customerRepository.GetByWhatsAppAsync(input.StoreId, input.CustomerWhatsApp, cancellationToken);
         if (customer == null)
         {
-            customer = Customer.Create(input.StoreId, input.CustomerName, input.CustomerWhatsApp, input.CustomerEmail);
+            customer = Customer.Create(input.StoreId, input.CustomerName, input.CustomerWhatsApp);
             await customerRepository.AddAsync(customer, cancellationToken);
         }
 
@@ -78,7 +79,6 @@ public class BookAppointmentUseCase(
             input.ServiceId,
             customerName,
             input.CustomerWhatsApp,
-            input.CustomerEmail,
             input.StartTime,
             endTime,
             cancelToken: cancelToken,

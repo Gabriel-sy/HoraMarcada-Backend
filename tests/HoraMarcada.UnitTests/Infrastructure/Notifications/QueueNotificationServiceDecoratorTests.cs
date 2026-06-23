@@ -33,9 +33,9 @@ public class QueueNotificationServiceDecoratorTests
             service.Id,
             "John Doe",
             "+5511988888888",
-            "john@example.com",
             DateTimeOffset.UtcNow,
-            DateTimeOffset.UtcNow.AddMinutes(30)
+            DateTimeOffset.UtcNow.AddMinutes(30),
+            customerEmail: "john@example.com"
         );
 
         await _decorator.SendBookingConfirmationToCustomerAsync(appointment, store, service, professional);
@@ -61,9 +61,9 @@ public class QueueNotificationServiceDecoratorTests
             service.Id,
             "John Doe",
             "+5511988888888",
-            "john@example.com",
             DateTimeOffset.UtcNow,
-            DateTimeOffset.UtcNow.AddMinutes(30)
+            DateTimeOffset.UtcNow.AddMinutes(30),
+            customerEmail: "john@example.com"
         );
 
         await _decorator.SendBookingNotificationToProfessionalAsync(appointment, store, service, professional);
@@ -89,9 +89,9 @@ public class QueueNotificationServiceDecoratorTests
             service.Id,
             "John Doe",
             "+5511988888888",
-            "john@example.com",
             DateTimeOffset.UtcNow,
-            DateTimeOffset.UtcNow.AddMinutes(30)
+            DateTimeOffset.UtcNow.AddMinutes(30),
+            customerEmail: "john@example.com"
         );
 
         await _decorator.SendCancellationNoticeToCustomerAsync(appointment, store, service, professional);
@@ -117,9 +117,9 @@ public class QueueNotificationServiceDecoratorTests
             service.Id,
             "John Doe",
             "+5511988888888",
-            "john@example.com",
             DateTimeOffset.UtcNow,
-            DateTimeOffset.UtcNow.AddMinutes(30)
+            DateTimeOffset.UtcNow.AddMinutes(30),
+            customerEmail: "john@example.com"
         );
 
         await _decorator.SendCancellationNotificationToProfessionalAsync(appointment, store, service, professional);
@@ -146,9 +146,9 @@ public class QueueNotificationServiceDecoratorTests
             service.Id,
             "John Doe",
             "+5511988888888",
-            "john@example.com",
             DateTimeOffset.UtcNow,
-            DateTimeOffset.UtcNow.AddMinutes(30)
+            DateTimeOffset.UtcNow.AddMinutes(30),
+            customerEmail: "john@example.com"
         );
 
         await _decorator.SendBookingConfirmationToCustomerAsync(appointment, store, service, professional);

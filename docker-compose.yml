@@ -7,3 +7,22 @@ services:
     ports:
       - "5213:5213"
     restart: always
+    environment:
+      NOTIFICATION_CHANNEL: whatsapp
+      Waha__BaseUrl: http://waha:3000
+      Waha__ApiKey: ${WAHA_API_KEY}
+    depends_on:
+      - waha
+
+  waha:
+    image: devlikeapro/waha:latest
+    environment:
+      WAHA_API_KEY: ${WAHA_API_KEY}
+      WHATSAPP_DEFAULT_ENGINE: WEBJS
+    ports:
+      - "127.0.0.1:3000:3000"
+    volumes:
+      - waha-sessions:/app/.sessions
+
+volumes:
+  waha-sessions:

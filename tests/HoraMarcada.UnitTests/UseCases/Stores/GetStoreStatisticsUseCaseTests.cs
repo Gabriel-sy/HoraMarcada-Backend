@@ -75,10 +75,10 @@ public class GetStoreStatisticsUseCaseTests
             service.Id,
             "Cliente A",
             "+5511999999999",
-            "a@example.com",
             localTime.AddDays(-2),
             localTime.AddDays(-2).AddMinutes(30),
-            AppointmentStatus.Completed
+            customerEmail: "a@example.com",
+            status: AppointmentStatus.Completed
         );
 
         var app2 = Appointment.Create(
@@ -87,10 +87,10 @@ public class GetStoreStatisticsUseCaseTests
             service.Id,
             "Cliente B",
             "+5511999999999",
-            "b@example.com",
             localTime.AddDays(-1),
             localTime.AddDays(-1).AddMinutes(30),
-            AppointmentStatus.Confirmed
+            customerEmail: "b@example.com",
+            status: AppointmentStatus.Confirmed
         );
 
         var appCanceled = Appointment.Create(
@@ -99,10 +99,10 @@ public class GetStoreStatisticsUseCaseTests
             service.Id,
             "Cliente C",
             "+5511999999999",
-            "c@example.com",
             localTime.AddDays(-3),
             localTime.AddDays(-3).AddMinutes(30),
-            AppointmentStatus.Canceled
+            customerEmail: "c@example.com",
+            status: AppointmentStatus.Canceled
         );
 
         var appointmentsList = new List<Appointment> { app1, app2, appCanceled };

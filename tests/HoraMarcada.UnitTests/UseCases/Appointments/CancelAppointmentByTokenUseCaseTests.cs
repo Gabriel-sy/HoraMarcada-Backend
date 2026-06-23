@@ -74,9 +74,9 @@ public class CancelAppointmentByTokenUseCaseTests
             Guid.NewGuid(),
             "Customer",
             "+5511999999999",
-            "customer@example.com",
             DateTimeOffset.UtcNow.AddHours(1),
             DateTimeOffset.UtcNow.AddHours(2),
+            customerEmail: "customer@example.com",
             cancelToken: token
         );
         appointment.MarkCancelTokenUsed();
@@ -102,9 +102,9 @@ public class CancelAppointmentByTokenUseCaseTests
             Guid.NewGuid(),
             "Customer",
             "+5511999999999",
-            "customer@example.com",
             DateTimeOffset.UtcNow.AddHours(1),
             DateTimeOffset.UtcNow.AddHours(2),
+            customerEmail: "customer@example.com",
             cancelToken: token
         );
 

@@ -8,7 +8,6 @@ public record BookAppointmentInput(
     [property: SwaggerExample("10022a1d-1bf4-4903-8d07-ee6456f9ee5c")] Guid ServiceId,
     [property: SwaggerExample("John Doe")] string CustomerName,
     [property: SwaggerExample("+5511988888888")] string CustomerWhatsApp,
-    [property: SwaggerExample("john.doe@example.com")] string CustomerEmail,
     [property: SwaggerExample("2026-06-01T10:00:00Z")] DateTimeOffset StartTime);
 
 public record ListAppointmentsInput(

@@ -92,9 +92,9 @@ public class CompleteAppointmentUseCaseTests
             Guid.NewGuid(),
             "Customer",
             "+5511999999999",
-            "customer@example.com",
             DateTimeOffset.UtcNow.AddHours(1),
-            DateTimeOffset.UtcNow.AddHours(2)
+            DateTimeOffset.UtcNow.AddHours(2),
+            customerEmail: "customer@example.com"
         );
 
         _appointmentRepositoryMock
@@ -128,9 +128,9 @@ public class CompleteAppointmentUseCaseTests
             Guid.NewGuid(),
             "Customer",
             "+5511999999999",
-            "customer@example.com",
             DateTimeOffset.UtcNow.AddHours(1),
-            DateTimeOffset.UtcNow.AddHours(2)
+            DateTimeOffset.UtcNow.AddHours(2),
+            customerEmail: "customer@example.com"
         );
 
         _appointmentRepositoryMock

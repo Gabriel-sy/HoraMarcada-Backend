@@ -66,9 +66,9 @@ public class ListAppointmentsUseCaseTests
             Guid.NewGuid(),
             "Customer 1",
             "+5511999999999",
-            "customer1@example.com",
             start.AddHours(2),
-            start.AddHours(3)
+            start.AddHours(3),
+            customerEmail: "customer1@example.com"
         );
 
         var app2 = Appointment.Create(
@@ -77,9 +77,9 @@ public class ListAppointmentsUseCaseTests
             Guid.NewGuid(),
             "Customer 2",
             "+5511999999999",
-            "customer2@example.com",
             start.AddHours(1),
-            start.AddHours(2)
+            start.AddHours(2),
+            customerEmail: "customer2@example.com"
         );
 
         var list = new List<Appointment> { app1, app2 }.AsReadOnly();

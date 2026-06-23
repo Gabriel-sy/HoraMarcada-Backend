@@ -22,4 +22,15 @@ public class AppConfiguration(IConfiguration configuration) : IAppConfiguration
             return !bool.TryParse(value, out var enabled) || enabled;
         }
     }
+
+    public NotificationChannel NotificationChannel
+    {
+        get
+        {
+            var value = configuration["NOTIFICATION_CHANNEL"] ?? "whatsapp";
+            return value.Equals("email", StringComparison.OrdinalIgnoreCase)
+                ? NotificationChannel.Email
+                : NotificationChannel.WhatsApp;
+        }
+    }
 }

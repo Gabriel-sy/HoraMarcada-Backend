@@ -2,6 +2,7 @@ using HoraMarcada.Application.Common;
 using HoraMarcada.Application.Repositories;
 using HoraMarcada.Infrastructure.Configuration;
 using HoraMarcada.Infrastructure.Notifications;
+using HoraMarcada.Infrastructure.Notifications.Waha;
 using HoraMarcada.Infrastructure.Persistence;
 using HoraMarcada.Infrastructure.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -48,6 +49,26 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<INotificationQueue, ChannelNotificationQueue>();
         services.AddHostedService<NotificationQueueProcessor>();
         services.AddScoped<ResendEmailNotificationService>();
+        services.AddScoped<WahaWhatsAppNotificationService>();
+
+        var notificationChannel = configuration["NOTIFICATION_CHANNEL"] ?? "whatsapp";
+        if (notificationChannel.Equals("whatsapp", StringComparison.OrdinalIgnoreCase))
+        {
+            services.AddScoped<INotificationDispatcher, WahaWhatsAppNotificationService>();
+            services.Configure<WahaOptions>(configuration.GetSection(WahaOptions.SectionName));
+            services.AddSingleton<IWhatsAppHumanBehavior, WhatsAppHumanBehavior>();
+            services.AddHttpClient<IWahaClient, WahaClient>((sp, client) =>
+            {
+                var options = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<WahaOptions>>().Value;
+                client.BaseAddress = new Uri(options.BaseUrl.TrimEnd('/') + "/");
+                client.DefaultRequestHeaders.Add("X-Api-Key", options.ApiKey);
+            });
+        }
+        else
+        {
+            services.AddScoped<INotificationDispatcher, ResendEmailNotificationService>();
+        }
+
         services.AddScoped<INotificationService, QueueNotificationServiceDecorator>();
 
         services.AddHangfire(config => config

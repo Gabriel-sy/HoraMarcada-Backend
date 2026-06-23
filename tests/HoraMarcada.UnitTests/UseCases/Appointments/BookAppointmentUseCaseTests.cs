@@ -22,6 +22,7 @@ public class BookAppointmentUseCaseTests
     private readonly Mock<IAppointmentNotificationService> _appointmentNotificationServiceMock;
     private readonly Mock<IAppConfiguration> _appConfigurationMock;
     private readonly Mock<ICustomerRepository> _customerRepositoryMock;
+    private readonly CancelTokenGenerator _cancelTokenGenerator;
     private readonly GetAvailableSlotsUseCase _getAvailableSlotsUseCase;
     private readonly BookAppointmentUseCase _useCase;
 
@@ -36,6 +37,7 @@ public class BookAppointmentUseCaseTests
         _appointmentNotificationServiceMock = new Mock<IAppointmentNotificationService>();
         _appConfigurationMock = new Mock<IAppConfiguration>();
         _customerRepositoryMock = new Mock<ICustomerRepository>();
+        _cancelTokenGenerator = new CancelTokenGenerator();
 
         _appConfigurationMock.Setup(c => c.MinimumSlotLeadTimeMinutes).Returns(0);
 
@@ -53,6 +55,10 @@ public class BookAppointmentUseCaseTests
             _appConfigurationMock.Object
         );
 
+        _appointmentRepositoryMock
+            .Setup(r => r.GetByCancelTokenAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Appointment?)null);
+
         _useCase = new BookAppointmentUseCase(
             _appointmentRepositoryMock.Object,
             _storeRepositoryMock.Object,
@@ -61,7 +67,8 @@ public class BookAppointmentUseCaseTests
             _getAvailableSlotsUseCase,
             _appointmentNotificationServiceMock.Object,
             _timeProviderMock.Object,
-            _customerRepositoryMock.Object
+            _customerRepositoryMock.Object,
+            _cancelTokenGenerator
         );
     }
 
@@ -74,7 +81,6 @@ public class BookAppointmentUseCaseTests
             ServiceId: Guid.NewGuid(),
             CustomerName: "Customer",
             CustomerWhatsApp: "+5511999999999",
-            CustomerEmail: "customer@example.com",
             StartTime: new DateTimeOffset(2000, 5, 21, 10, 0, 0, TimeSpan.FromHours(-3))
         );
 
@@ -100,7 +106,6 @@ public class BookAppointmentUseCaseTests
             ServiceId: Guid.NewGuid(),
             CustomerName: "Customer",
             CustomerWhatsApp: "+5511999999999",
-            CustomerEmail: "customer@example.com",
             StartTime: new DateTimeOffset(2026, 5, 21, 10, 0, 0, TimeSpan.FromHours(-3))
         );
 
@@ -130,7 +135,6 @@ public class BookAppointmentUseCaseTests
             ServiceId: Guid.NewGuid(),
             CustomerName: "Customer",
             CustomerWhatsApp: "+5511999999999",
-            CustomerEmail: "customer@example.com",
             StartTime: new DateTimeOffset(2026, 5, 21, 10, 0, 0, TimeSpan.FromHours(-3))
         );
 
@@ -161,7 +165,6 @@ public class BookAppointmentUseCaseTests
             ServiceId: Guid.NewGuid(),
             CustomerName: "Customer",
             CustomerWhatsApp: "+5511999999999",
-            CustomerEmail: "customer@example.com",
             StartTime: new DateTimeOffset(2026, 5, 21, 10, 0, 0, TimeSpan.FromHours(-3))
         );
 
@@ -200,7 +203,6 @@ public class BookAppointmentUseCaseTests
             ServiceId: serviceId,
             CustomerName: "Customer",
             CustomerWhatsApp: "+5511999999999",
-            CustomerEmail: "customer@example.com",
             StartTime: new DateTimeOffset(2026, 5, 21, 10, 0, 0, TimeSpan.FromHours(-3))
         );
 
@@ -240,7 +242,6 @@ public class BookAppointmentUseCaseTests
             ServiceId: serviceId,
             CustomerName: "Customer",
             CustomerWhatsApp: "+5511999999999",
-            CustomerEmail: "customer@example.com",
             StartTime: new DateTimeOffset(2026, 5, 21, 10, 0, 0, TimeSpan.FromHours(-3))
         );
 
@@ -283,7 +284,6 @@ public class BookAppointmentUseCaseTests
             ServiceId: serviceId,
             CustomerName: "Customer",
             CustomerWhatsApp: "+5511999999999",
-            CustomerEmail: "customer@example.com",
             StartTime: new DateTimeOffset(2026, 5, 21, 10, 0, 0, TimeSpan.FromHours(-3))
         );
 
@@ -318,6 +318,7 @@ public class BookAppointmentUseCaseTests
         Assert.Equal(input.StartTime, result.StartTime);
         Assert.Equal(input.StartTime.AddMinutes(30), result.EndTime);
         Assert.NotNull(result.CancelToken);
+        Assert.Equal(6, result.CancelToken.Length);
 
         _timeProviderMock.Verify(t => t.UtcNow, Times.AtLeastOnce());
         _storeRepositoryMock.Verify(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>()), Times.Exactly(2));
@@ -332,7 +333,7 @@ public class BookAppointmentUseCaseTests
             a.ServiceId == serviceId &&
             a.CustomerName == input.CustomerName &&
             a.CustomerWhatsApp.Value == input.CustomerWhatsApp &&
-            a.CustomerEmail.Value == input.CustomerEmail &&
+            
             a.StartTime == input.StartTime &&
             a.EndTime == input.StartTime.AddMinutes(30) &&
             a.CancelToken == result.CancelToken

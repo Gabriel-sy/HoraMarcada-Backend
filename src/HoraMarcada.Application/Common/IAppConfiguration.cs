@@ -4,4 +4,5 @@ public interface IAppConfiguration
 {
     int MinimumSlotLeadTimeMinutes { get; }
     bool NotificationsEnabled { get; }
+    NotificationChannel NotificationChannel { get; }
 }
