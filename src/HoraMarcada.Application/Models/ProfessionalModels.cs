@@ -14,12 +14,10 @@ public record AddProfessionalInput(
     [property: SwaggerExample("Jane Doe")] string Name,
     [property: SwaggerExample("https://example.com/jane.png")] string? PhotoUrl = null,
     [property: SwaggerExample("+5511988888888")] string? WhatsApp = null,
-    [property: SwaggerExample("jane.doe@example.com")] string? Email = null,
     List<WeeklyHoursInput>? WeeklyHours = null);
 
 public record UpdateProfessionalInput(
     [property: SwaggerExample("Jane Smith")] string Name,
     [property: SwaggerExample("https://example.com/janesmith.png")] string? PhotoUrl = null,
     [property: SwaggerExample("+5511988888888")] string? WhatsApp = null,
-    [property: SwaggerExample("jane.smith@example.com")] string? Email = null,
     List<WeeklyHoursInput>? WeeklyHours = null);

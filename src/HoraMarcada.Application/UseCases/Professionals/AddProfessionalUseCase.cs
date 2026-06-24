@@ -17,8 +17,7 @@ public class AddProfessionalUseCase(
             storeId,
             input.Name,
             input.PhotoUrl,
-            input.WhatsApp,
-            input.Email);
+            input.WhatsApp);
 
         if (input.WeeklyHours != null)
         {

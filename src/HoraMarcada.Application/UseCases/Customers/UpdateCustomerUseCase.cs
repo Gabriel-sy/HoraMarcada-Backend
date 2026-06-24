@@ -31,7 +31,7 @@ public class UpdateCustomerUseCase(
             throw new ConflictException($"A customer with WhatsApp {input.WhatsApp} already exists in this store.");
         }
 
-        customer.Update(input.Name, input.WhatsApp, input.Email);
+        customer.Update(input.Name, input.WhatsApp);
         await customerRepository.UpdateAsync(customer, cancellationToken);
 
         return customer;

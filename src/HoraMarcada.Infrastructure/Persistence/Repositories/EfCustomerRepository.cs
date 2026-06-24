@@ -55,7 +55,6 @@ internal sealed class EfCustomerRepository(HoraMarcadaDbContext context) : ICust
                 c.StoreId,
                 c.Name,
                 c.WhatsApp.Value,
-                c.Email == null ? null : c.Email.Value,
                 context.Appointments.Count(a => a.CustomerId == c.Id && a.StartTime < todayStart && a.Status != Domain.Enums.AppointmentStatus.Canceled),
                 context.Appointments
                     .Where(a => a.CustomerId == c.Id && a.StartTime < todayStart && a.Status != Domain.Enums.AppointmentStatus.Canceled)
@@ -101,7 +100,6 @@ internal sealed class EfCustomerRepository(HoraMarcadaDbContext context) : ICust
             customer.StoreId,
             customer.Name,
             customer.WhatsApp.Value,
-            customer.Email == null ? null : customer.Email.Value,
             customer.CreatedAt,
             appointments
         );

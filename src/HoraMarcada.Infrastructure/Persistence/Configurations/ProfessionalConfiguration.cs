@@ -19,9 +19,6 @@ internal sealed class ProfessionalConfiguration : IEntityTypeConfiguration<Profe
         builder.Property(p => p.WhatsApp)
             .HasColumnName("whatsapp")
             .HasConversion(ValueObjectConverters.NullablePhoneNumberConverter);
-        builder.Property(p => p.Email)
-            .HasColumnName("email")
-            .HasConversion(ValueObjectConverters.NullableEmailConverter);
         builder.Property(p => p.Active).HasColumnName("active").IsRequired();
         builder.Property(p => p.CreatedAt).HasColumnName("created_at").IsRequired();
 

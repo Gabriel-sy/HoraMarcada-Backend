@@ -21,7 +21,6 @@ internal sealed class AppointmentConfiguration : IEntityTypeConfiguration<Appoin
         builder.Property(a => a.ServiceId).HasColumnName("service_id").IsRequired();
         builder.Ignore(a => a.CustomerName);
         builder.Ignore(a => a.CustomerWhatsApp);
-        builder.Ignore(a => a.CustomerEmail);
         builder.Property(a => a.StartTime).HasColumnName("start_time").IsRequired();
         builder.Property(a => a.EndTime).HasColumnName("end_time").IsRequired();
         builder.Property(a => a.Status)

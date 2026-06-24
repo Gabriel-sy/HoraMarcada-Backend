@@ -8,8 +8,7 @@ namespace HoraMarcada.Application.Common;
 public class AppointmentNotificationService(
     INotificationService notificationService,
     IBackgroundJobService backgroundJobService,
-    ITimeProvider timeProvider,
-    IAppConfiguration appConfiguration) : IAppointmentNotificationService
+    ITimeProvider timeProvider) : IAppointmentNotificationService
 {
     public async Task DispatchBookingNotificationsAsync(
         Appointment appointment,
@@ -77,8 +76,6 @@ public class AppointmentNotificationService(
 
     private bool HasProfessionalContact(Professional professional)
     {
-        return appConfiguration.NotificationChannel == NotificationChannel.WhatsApp
-            ? professional.WhatsApp != null
-            : professional.Email != null;
+        return professional.WhatsApp != null;
     }
 }

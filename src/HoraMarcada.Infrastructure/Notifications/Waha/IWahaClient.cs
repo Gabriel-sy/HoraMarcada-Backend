@@ -17,7 +17,6 @@ public interface IWahaClient
         string chatId,
         double latitude,
         double longitude,
-        string title,
         CancellationToken cancellationToken = default);
 }
 

@@ -12,7 +12,6 @@ public sealed class Professional
     public string Name { get; private set; } = string.Empty;
     public string? PhotoUrl { get; private set; }
     public PhoneNumber? WhatsApp { get; private set; }
-    public Email? Email { get; private set; }
     public bool Active { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
     public IReadOnlyCollection<WeeklyHours> WeeklySchedules => _weeklyHours.AsReadOnly();
@@ -26,7 +25,6 @@ public sealed class Professional
         string name,
         string? photoUrl = null,
         string? whatsApp = null,
-        string? email = null,
         bool active = true)
     {
         if (storeId == Guid.Empty)
@@ -42,7 +40,6 @@ public sealed class Professional
             Name = name.Trim(),
             PhotoUrl = string.IsNullOrWhiteSpace(photoUrl) ? null : photoUrl.Trim(),
             WhatsApp = PhoneNumber.CreateOptional(whatsApp),
-            Email = Email.CreateOptional(email),
             Active = active,
             CreatedAt = DateTimeOffset.UtcNow
         };
@@ -66,7 +63,7 @@ public sealed class Professional
         Active = false;
     }
 
-    public void Update(string name, string? photoUrl, string? whatsApp, string? email)
+    public void Update(string name, string? photoUrl, string? whatsApp)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new DomainValidationException("Professional name is required.");
@@ -74,7 +71,6 @@ public sealed class Professional
         Name = name.Trim();
         PhotoUrl = string.IsNullOrWhiteSpace(photoUrl) ? null : photoUrl.Trim();
         WhatsApp = PhoneNumber.CreateOptional(whatsApp);
-        Email = Email.CreateOptional(email);
     }
 
     public void ClearWeeklyHours()

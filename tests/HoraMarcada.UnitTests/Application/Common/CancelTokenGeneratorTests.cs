@@ -15,7 +15,7 @@ public class CancelTokenGeneratorTests
     {
         var token = _generator.Generate();
 
-        Assert.Equal(6, token.Length);
+        Assert.Equal(5, token.Length);
     }
 
     [Fact]
@@ -53,7 +53,7 @@ public class CancelTokenGeneratorTests
 
         var token = await _generator.GenerateUniqueAsync(repositoryMock.Object);
 
-        Assert.Equal(6, token.Length);
+        Assert.Equal(5, token.Length);
         repositoryMock.Verify(
             r => r.GetByCancelTokenAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()),
             Times.Exactly(2));

@@ -9,7 +9,6 @@ public sealed class Customer
     public Guid StoreId { get; private set; }
     public string Name { get; private set; } = string.Empty;
     public PhoneNumber WhatsApp { get; private set; } = null!;
-    public Email? Email { get; private set; }
     public DateTimeOffset CreatedAt { get; private set; }
 
     private Customer()
@@ -19,8 +18,7 @@ public sealed class Customer
     public static Customer Create(
         Guid storeId,
         string name,
-        string whatsApp,
-        string? email = null)
+        string whatsApp)
     {
         if (storeId == Guid.Empty)
             throw new DomainValidationException("Store id is required.");
@@ -34,18 +32,16 @@ public sealed class Customer
             StoreId = storeId,
             Name = name.Trim(),
             WhatsApp = PhoneNumber.Create(whatsApp),
-            Email = Email.CreateOptional(email),
             CreatedAt = DateTimeOffset.UtcNow
         };
     }
 
-    public void Update(string name, string whatsApp, string? email)
+    public void Update(string name, string whatsApp)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new DomainValidationException("Customer name is required.");
 
         Name = name.Trim();
         WhatsApp = PhoneNumber.Create(whatsApp);
-        Email = Email.CreateOptional(email);
     }
 }

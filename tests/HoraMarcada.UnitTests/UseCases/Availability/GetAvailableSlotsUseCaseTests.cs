@@ -210,8 +210,7 @@ public class GetAvailableSlotsUseCaseTests
             "Customer",
             "+5511999999999",
             new DateTimeOffset(2026, 5, 21, 9, 30, 0, TimeSpan.FromHours(-3)),
-            new DateTimeOffset(2026, 5, 21, 10, 0, 0, TimeSpan.FromHours(-3)),
-            customerEmail: "customer@example.com"
+            new DateTimeOffset(2026, 5, 21, 10, 0, 0, TimeSpan.FromHours(-3))
         );
 
         _storeRepositoryMock.Setup(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>())).ReturnsAsync(store);

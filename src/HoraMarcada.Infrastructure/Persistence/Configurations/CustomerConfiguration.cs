@@ -19,9 +19,6 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
             .HasColumnName("whatsapp")
             .HasConversion(ValueObjectConverters.PhoneNumberConverter)
             .IsRequired();
-        builder.Property(c => c.Email)
-            .HasColumnName("email")
-            .HasConversion(ValueObjectConverters.NullableEmailConverter);
         builder.Property(c => c.CreatedAt).HasColumnName("created_at").IsRequired();
 
         builder.HasIndex(c => c.StoreId).HasDatabaseName("idx_customers_store");

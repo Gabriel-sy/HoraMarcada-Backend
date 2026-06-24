@@ -20,7 +20,7 @@ public class UpdateProfessionalUseCase(
             throw new NotFoundException($"Professional with ID {professionalId} not found in store {storeId}.");
         }
 
-        professional.Update(input.Name, input.PhotoUrl, input.WhatsApp, input.Email);
+        professional.Update(input.Name, input.PhotoUrl, input.WhatsApp);
 
         professional.ClearWeeklyHours();
         if (input.WeeklyHours != null)

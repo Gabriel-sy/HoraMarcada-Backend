@@ -15,10 +15,6 @@ public class AddProfessionalRequestValidator : AbstractValidator<AddProfessional
             .When(x => !string.IsNullOrEmpty(x.WhatsApp))
             .WithMessage("Phone number must be E.164-friendly (optional +, digits only, 8-15 digits).");
 
-        RuleFor(x => x.Email)
-            .EmailAddress().WithMessage("Invalid email format.")
-            .When(x => !string.IsNullOrEmpty(x.Email));
-
         RuleForEach(x => x.WeeklyHours)
             .SetValidator(new WeeklyHoursInputValidator())
             .When(x => x.WeeklyHours != null);

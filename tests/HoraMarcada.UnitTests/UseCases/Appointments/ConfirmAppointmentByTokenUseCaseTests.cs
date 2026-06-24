@@ -63,7 +63,6 @@ public class ConfirmAppointmentByTokenUseCaseTests
             "+5511999999999",
             DateTimeOffset.UtcNow.AddHours(1),
             DateTimeOffset.UtcNow.AddHours(2),
-            customerEmail: "customer@example.com",
             cancelToken: token
         );
         appointment.MarkCancelTokenUsed();
@@ -90,7 +89,6 @@ public class ConfirmAppointmentByTokenUseCaseTests
             "+5511999999999",
             DateTimeOffset.UtcNow.AddHours(1),
             DateTimeOffset.UtcNow.AddHours(2),
-            customerEmail: "customer@example.com",
             cancelToken: token
         );
 
@@ -121,7 +119,6 @@ public class ConfirmAppointmentByTokenUseCaseTests
             "+5511999999999",
             DateTimeOffset.UtcNow.AddHours(1),
             DateTimeOffset.UtcNow.AddHours(2),
-            customerEmail: "customer@example.com",
             cancelToken: token
         );
         appointment.Cancel();

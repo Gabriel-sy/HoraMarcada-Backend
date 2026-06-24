@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Resend;
 using Hangfire;
 using Hangfire.PostgreSql;
 using HoraMarcada.Infrastructure.Services;
@@ -41,33 +40,19 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddScoped<ICustomerRepository, EfCustomerRepository>();
         services.AddScoped<IAppConfiguration, AppConfiguration>();
 
-        services.AddResend(options =>
-        {
-            options.ApiToken = configuration["Resend:ApiKey"]!;
-        });
-
         services.AddSingleton<INotificationQueue, ChannelNotificationQueue>();
         services.AddHostedService<NotificationQueueProcessor>();
-        services.AddScoped<ResendEmailNotificationService>();
         services.AddScoped<WahaWhatsAppNotificationService>();
 
-        var notificationChannel = configuration["NOTIFICATION_CHANNEL"] ?? "whatsapp";
-        if (notificationChannel.Equals("whatsapp", StringComparison.OrdinalIgnoreCase))
+        services.AddScoped<INotificationDispatcher, WahaWhatsAppNotificationService>();
+        services.Configure<WahaOptions>(configuration.GetSection(WahaOptions.SectionName));
+        services.AddSingleton<IWhatsAppHumanBehavior, WhatsAppHumanBehavior>();
+        services.AddHttpClient<IWahaClient, WahaClient>((sp, client) =>
         {
-            services.AddScoped<INotificationDispatcher, WahaWhatsAppNotificationService>();
-            services.Configure<WahaOptions>(configuration.GetSection(WahaOptions.SectionName));
-            services.AddSingleton<IWhatsAppHumanBehavior, WhatsAppHumanBehavior>();
-            services.AddHttpClient<IWahaClient, WahaClient>((sp, client) =>
-            {
-                var options = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<WahaOptions>>().Value;
-                client.BaseAddress = new Uri(options.BaseUrl.TrimEnd('/') + "/");
-                client.DefaultRequestHeaders.Add("X-Api-Key", options.ApiKey);
-            });
-        }
-        else
-        {
-            services.AddScoped<INotificationDispatcher, ResendEmailNotificationService>();
-        }
+            var options = sp.GetRequiredService<Microsoft.Extensions.Options.IOptions<WahaOptions>>().Value;
+            client.BaseAddress = new Uri(options.BaseUrl.TrimEnd('/') + "/");
+            client.DefaultRequestHeaders.Add("X-Api-Key", options.ApiKey);
+        });
 
         services.AddScoped<INotificationService, QueueNotificationServiceDecorator>();
 

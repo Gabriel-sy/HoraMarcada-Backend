@@ -5,7 +5,6 @@ public record CustomerListDto(
     Guid StoreId,
     string Name,
     string WhatsApp,
-    string? Email,
     int TotalAppointments,
     DateTimeOffset? LastVisit,
     DateTimeOffset CreatedAt);
@@ -15,7 +14,6 @@ public record CustomerDetailDto(
     Guid StoreId,
     string Name,
     string WhatsApp,
-    string? Email,
     DateTimeOffset CreatedAt,
     IReadOnlyList<CustomerAppointmentHistoryDto> AppointmentHistory);
 
@@ -29,5 +27,4 @@ public record CustomerAppointmentHistoryDto(
 
 public record UpdateCustomerInput(
     string Name,
-    string WhatsApp,
-    string? Email);
+    string WhatsApp);

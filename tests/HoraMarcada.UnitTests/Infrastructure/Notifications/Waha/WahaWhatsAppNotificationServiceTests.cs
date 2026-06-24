@@ -69,7 +69,6 @@ public class WahaWhatsAppNotificationServiceTests
             It.IsAny<string>(),
             It.IsAny<double>(),
             It.IsAny<double>(),
-            It.IsAny<string>(),
             It.IsAny<CancellationToken>()), Times.Never);
         _wahaClientMock.Verify(c => c.SendTextAsync(
             "5511988887777@c.us",
@@ -117,7 +116,6 @@ public class WahaWhatsAppNotificationServiceTests
             "5511988887777@c.us",
             -23.5505,
             -46.6333,
-            "Barbearia",
             It.IsAny<CancellationToken>()), Times.Once);
     }
 

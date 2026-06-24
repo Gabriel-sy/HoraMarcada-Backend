@@ -36,7 +36,7 @@ public class CustomerUseCasesTests
 
         var items = new List<CustomerListDto>
         {
-            new(Guid.NewGuid(), storeId, "Name", "+5511999999999", "email@example.com", 2, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow)
+            new(Guid.NewGuid(), storeId, "Name", "+5511999999999", 2, DateTimeOffset.UtcNow, DateTimeOffset.UtcNow)
         };
 
         _customerRepositoryMock
@@ -60,7 +60,7 @@ public class CustomerUseCasesTests
         var storeId = Guid.NewGuid();
         var customerId = Guid.NewGuid();
 
-        var detail = new CustomerDetailDto(customerId, storeId, "Name", "+5511999999999", "email@example.com", DateTimeOffset.UtcNow, new List<CustomerAppointmentHistoryDto>());
+        var detail = new CustomerDetailDto(customerId, storeId, "Name", "+5511999999999", DateTimeOffset.UtcNow, new List<CustomerAppointmentHistoryDto>());
 
         _customerRepositoryMock
             .Setup(r => r.GetDetailByIdAsync(storeId, customerId, It.IsAny<CancellationToken>()))
@@ -96,7 +96,7 @@ public class CustomerUseCasesTests
         var userId = Guid.NewGuid();
         var storeId = Guid.NewGuid();
         var customerId = Guid.NewGuid();
-        var input = new UpdateCustomerInput("New Name", "+5511999999998", "new@example.com");
+        var input = new UpdateCustomerInput("New Name", "+5511999999998");
 
         var customer = Customer.Create(storeId, "Old Name", "+5511999999999");
         var idField = typeof(Customer).GetProperty("Id");
@@ -117,7 +117,6 @@ public class CustomerUseCasesTests
         Assert.NotNull(result);
         Assert.Equal("New Name", result.Name);
         Assert.Equal("+5511999999998", result.WhatsApp.Value);
-        Assert.Equal("new@example.com", result.Email?.Value);
         _customerRepositoryMock.Verify(r => r.UpdateAsync(customer, It.IsAny<CancellationToken>()), Times.Once);
     }
 
@@ -128,7 +127,7 @@ public class CustomerUseCasesTests
         var storeId = Guid.NewGuid();
         var customerId = Guid.NewGuid();
         var otherCustomerId = Guid.NewGuid();
-        var input = new UpdateCustomerInput("New Name", "+5511999999998", "new@example.com");
+        var input = new UpdateCustomerInput("New Name", "+5511999999998");
 
         var customer = Customer.Create(storeId, "Old Name", "+5511999999999");
         var idField = typeof(Customer).GetProperty("Id");

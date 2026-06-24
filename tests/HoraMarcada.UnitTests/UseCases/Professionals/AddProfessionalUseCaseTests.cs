@@ -55,8 +55,7 @@ public class AddProfessionalUseCaseTests
         var input = new AddProfessionalInput(
             Name: "Jane Doe",
             PhotoUrl: "http://photo.com/jane",
-            WhatsApp: "+5511999999999",
-            Email: "jane.doe@example.com"
+            WhatsApp: "+5511999999999"
         );
 
         _ownershipPolicyMock
@@ -71,7 +70,6 @@ public class AddProfessionalUseCaseTests
         Assert.Equal(input.Name, result.Name);
         Assert.Equal(input.PhotoUrl, result.PhotoUrl);
         Assert.Equal(input.WhatsApp, result.WhatsApp?.Value);
-        Assert.Equal(input.Email, result.Email?.Value);
         Assert.Empty(result.WeeklySchedules);
 
         _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()), Times.Once);
@@ -81,8 +79,7 @@ public class AddProfessionalUseCaseTests
                 p.StoreId == storeId &&
                 p.Name == input.Name &&
                 p.PhotoUrl == input.PhotoUrl &&
-                p.WhatsApp.Value == input.WhatsApp &&
-                p.Email != null && p.Email.Value == input.Email
+                p.WhatsApp.Value == input.WhatsApp
             ), It.IsAny<CancellationToken>()),
             Times.Once
         );

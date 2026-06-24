@@ -76,7 +76,6 @@ public class CancelAppointmentByTokenUseCaseTests
             "+5511999999999",
             DateTimeOffset.UtcNow.AddHours(1),
             DateTimeOffset.UtcNow.AddHours(2),
-            customerEmail: "customer@example.com",
             cancelToken: token
         );
         appointment.MarkCancelTokenUsed();
@@ -104,13 +103,12 @@ public class CancelAppointmentByTokenUseCaseTests
             "+5511999999999",
             DateTimeOffset.UtcNow.AddHours(1),
             DateTimeOffset.UtcNow.AddHours(2),
-            customerEmail: "customer@example.com",
             cancelToken: token
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
         var service = Service.Create(storeId, "Service", 30);
-        var professional = Professional.Create(storeId, "Professional", email: "professional@example.com");
+        var professional = Professional.Create(storeId, "Professional");
 
         _appointmentRepositoryMock
             .Setup(r => r.GetByCancelTokenAsync(token, It.IsAny<CancellationToken>()))

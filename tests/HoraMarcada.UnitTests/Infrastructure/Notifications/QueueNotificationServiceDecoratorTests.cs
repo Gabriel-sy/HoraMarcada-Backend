@@ -26,7 +26,7 @@ public class QueueNotificationServiceDecoratorTests
     {
         var store = Store.Create(Guid.NewGuid(), "Store Name", "store-slug", "+5511999999999", "store@example.com");
         var service = Service.Create(store.Id, "Haircut", 30);
-        var professional = Professional.Create(store.Id, "Jane Doe", email: "jane@example.com");
+        var professional = Professional.Create(store.Id, "Jane Doe");
         var appointment = Appointment.Create(
             store.Id,
             professional.Id,
@@ -34,8 +34,7 @@ public class QueueNotificationServiceDecoratorTests
             "John Doe",
             "+5511988888888",
             DateTimeOffset.UtcNow,
-            DateTimeOffset.UtcNow.AddMinutes(30),
-            customerEmail: "john@example.com"
+            DateTimeOffset.UtcNow.AddMinutes(30)
         );
 
         await _decorator.SendBookingConfirmationToCustomerAsync(appointment, store, service, professional);
@@ -54,7 +53,7 @@ public class QueueNotificationServiceDecoratorTests
     {
         var store = Store.Create(Guid.NewGuid(), "Store Name", "store-slug", "+5511999999999", "store@example.com");
         var service = Service.Create(store.Id, "Haircut", 30);
-        var professional = Professional.Create(store.Id, "Jane Doe", email: "jane@example.com");
+        var professional = Professional.Create(store.Id, "Jane Doe");
         var appointment = Appointment.Create(
             store.Id,
             professional.Id,
@@ -62,8 +61,7 @@ public class QueueNotificationServiceDecoratorTests
             "John Doe",
             "+5511988888888",
             DateTimeOffset.UtcNow,
-            DateTimeOffset.UtcNow.AddMinutes(30),
-            customerEmail: "john@example.com"
+            DateTimeOffset.UtcNow.AddMinutes(30)
         );
 
         await _decorator.SendBookingNotificationToProfessionalAsync(appointment, store, service, professional);
@@ -82,7 +80,7 @@ public class QueueNotificationServiceDecoratorTests
     {
         var store = Store.Create(Guid.NewGuid(), "Store Name", "store-slug", "+5511999999999", "store@example.com");
         var service = Service.Create(store.Id, "Haircut", 30);
-        var professional = Professional.Create(store.Id, "Jane Doe", email: "jane@example.com");
+        var professional = Professional.Create(store.Id, "Jane Doe");
         var appointment = Appointment.Create(
             store.Id,
             professional.Id,
@@ -90,8 +88,7 @@ public class QueueNotificationServiceDecoratorTests
             "John Doe",
             "+5511988888888",
             DateTimeOffset.UtcNow,
-            DateTimeOffset.UtcNow.AddMinutes(30),
-            customerEmail: "john@example.com"
+            DateTimeOffset.UtcNow.AddMinutes(30)
         );
 
         await _decorator.SendCancellationNoticeToCustomerAsync(appointment, store, service, professional);
@@ -110,7 +107,7 @@ public class QueueNotificationServiceDecoratorTests
     {
         var store = Store.Create(Guid.NewGuid(), "Store Name", "store-slug", "+5511999999999", "store@example.com");
         var service = Service.Create(store.Id, "Haircut", 30);
-        var professional = Professional.Create(store.Id, "Jane Doe", email: "jane@example.com");
+        var professional = Professional.Create(store.Id, "Jane Doe");
         var appointment = Appointment.Create(
             store.Id,
             professional.Id,
@@ -118,8 +115,7 @@ public class QueueNotificationServiceDecoratorTests
             "John Doe",
             "+5511988888888",
             DateTimeOffset.UtcNow,
-            DateTimeOffset.UtcNow.AddMinutes(30),
-            customerEmail: "john@example.com"
+            DateTimeOffset.UtcNow.AddMinutes(30)
         );
 
         await _decorator.SendCancellationNotificationToProfessionalAsync(appointment, store, service, professional);
@@ -139,7 +135,7 @@ public class QueueNotificationServiceDecoratorTests
         _configMock.Setup(c => c.NotificationsEnabled).Returns(false);
         var store = Store.Create(Guid.NewGuid(), "Store Name", "store-slug", "+5511999999999", "store@example.com");
         var service = Service.Create(store.Id, "Haircut", 30);
-        var professional = Professional.Create(store.Id, "Jane Doe", email: "jane@example.com");
+        var professional = Professional.Create(store.Id, "Jane Doe");
         var appointment = Appointment.Create(
             store.Id,
             professional.Id,
@@ -147,8 +143,7 @@ public class QueueNotificationServiceDecoratorTests
             "John Doe",
             "+5511988888888",
             DateTimeOffset.UtcNow,
-            DateTimeOffset.UtcNow.AddMinutes(30),
-            customerEmail: "john@example.com"
+            DateTimeOffset.UtcNow.AddMinutes(30)
         );
 
         await _decorator.SendBookingConfirmationToCustomerAsync(appointment, store, service, professional);

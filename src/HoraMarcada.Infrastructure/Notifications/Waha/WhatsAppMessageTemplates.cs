@@ -22,7 +22,7 @@ public static class WhatsAppMessageTemplates
 
             {WhatsAppMessageLinkFormatter.Format("Cancelar agendamento:", cancelUrl)}
 
-            📍 Veja a localização abaixo.
+            📍 Veja a localização do estabelecimento abaixo.
             """;
     }
 
@@ -33,7 +33,8 @@ public static class WhatsAppMessageTemplates
         string cancelUrl)
     {
         return $"""
-            Olá {professional.Name.Split(' ')[0]}, você tem um novo agendamento!
+            Olá {professional.Name.Split(' ')[0]}! 
+            Você tem um novo agendamento:
 
             👤 Cliente: {appointment.CustomerName.Split(' ')[0]} ({appointment.CustomerWhatsApp.Value})
             📌 Serviço: {service.Name}
@@ -68,7 +69,8 @@ public static class WhatsAppMessageTemplates
         string professionalName)
     {
         return $"""
-            Olá {professionalName}, {appointment.CustomerName.Split(' ')[0]} cancelou este agendamento:
+            Olá {professionalName}! 
+            {appointment.CustomerName.Split(' ')[0]} cancelou este agendamento:
 
             📌 Serviço: {service.Name}
             📅 Data: {FormatDate(appointment.StartTime)}
@@ -84,7 +86,8 @@ public static class WhatsAppMessageTemplates
         string rescheduleUrl)
     {
         return $"""
-            Olá {appointment.CustomerName.Split(' ')[0]}! Lembrete do seu agendamento amanhã:
+            Olá {appointment.CustomerName.Split(' ')[0]}! 
+            Lembrete do seu agendamento amanhã:
 
             📌 Serviço: {service.Name} com {professional.Name}
             📅 Data: {FormatDate(appointment.StartTime)}

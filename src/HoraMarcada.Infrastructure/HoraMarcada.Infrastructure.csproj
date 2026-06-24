@@ -27,7 +27,6 @@
     <PackageReference Include="Hangfire.Core" />
     <PackageReference Include="Hangfire.AspNetCore" />
     <PackageReference Include="Hangfire.PostgreSql" />
-    <PackageReference Include="Resend" />
   </ItemGroup>
 
   <ItemGroup>

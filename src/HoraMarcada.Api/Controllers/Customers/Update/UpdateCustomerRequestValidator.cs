@@ -14,9 +14,5 @@ public class UpdateCustomerRequestValidator : AbstractValidator<UpdateCustomerIn
         RuleFor(x => x.WhatsApp)
             .NotEmpty().WithMessage("WhatsApp is required.")
             .Matches(@"^\+?[1-9]\d{7,14}$").WithMessage("Phone number must be E.164-friendly.");
-
-        RuleFor(x => x.Email)
-            .EmailAddress().WithMessage("Invalid email format.")
-            .When(x => !string.IsNullOrEmpty(x.Email));
     }
 }

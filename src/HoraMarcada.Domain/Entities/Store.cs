@@ -66,10 +66,9 @@ public sealed class Store
         string name,
         string? photoUrl = null,
         string? whatsApp = null,
-        string? email = null,
         bool active = true)
     {
-        var professional = Professional.Create(Id, name, photoUrl, whatsApp, email, active);
+        var professional = Professional.Create(Id, name, photoUrl, whatsApp, active);
         _professionals.Add(professional);
         return professional;
     }

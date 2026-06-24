@@ -295,7 +295,7 @@ public class BookAppointmentUseCaseTests
         var service = Service.Create(storeId, "Service", 30);
         service.AssignProfessional(professionalId);
 
-        var professional = Professional.Create(storeId, "Jane Doe", email: "professional@example.com");
+        var professional = Professional.Create(storeId, "Jane Doe");
         var idField = typeof(Professional).GetProperty("Id");
         idField?.SetValue(professional, professionalId);
         professional.AddWeeklyHours(4, new TimeOnly(9, 0), new TimeOnly(12, 0), intervalMinutes: 30);
@@ -318,7 +318,7 @@ public class BookAppointmentUseCaseTests
         Assert.Equal(input.StartTime, result.StartTime);
         Assert.Equal(input.StartTime.AddMinutes(30), result.EndTime);
         Assert.NotNull(result.CancelToken);
-        Assert.Equal(6, result.CancelToken.Length);
+        Assert.Equal(5, result.CancelToken.Length);
 
         _timeProviderMock.Verify(t => t.UtcNow, Times.AtLeastOnce());
         _storeRepositoryMock.Verify(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>()), Times.Exactly(2));

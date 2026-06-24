@@ -77,7 +77,6 @@ public class GetStoreStatisticsUseCaseTests
             "+5511999999999",
             localTime.AddDays(-2),
             localTime.AddDays(-2).AddMinutes(30),
-            customerEmail: "a@example.com",
             status: AppointmentStatus.Completed
         );
 
@@ -89,7 +88,6 @@ public class GetStoreStatisticsUseCaseTests
             "+5511999999999",
             localTime.AddDays(-1),
             localTime.AddDays(-1).AddMinutes(30),
-            customerEmail: "b@example.com",
             status: AppointmentStatus.Confirmed
         );
 
@@ -101,7 +99,6 @@ public class GetStoreStatisticsUseCaseTests
             "+5511999999999",
             localTime.AddDays(-3),
             localTime.AddDays(-3).AddMinutes(30),
-            customerEmail: "c@example.com",
             status: AppointmentStatus.Canceled
         );
 

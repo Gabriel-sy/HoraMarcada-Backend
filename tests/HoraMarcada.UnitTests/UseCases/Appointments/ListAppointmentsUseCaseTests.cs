@@ -67,8 +67,7 @@ public class ListAppointmentsUseCaseTests
             "Customer 1",
             "+5511999999999",
             start.AddHours(2),
-            start.AddHours(3),
-            customerEmail: "customer1@example.com"
+            start.AddHours(3)
         );
 
         var app2 = Appointment.Create(
@@ -78,8 +77,7 @@ public class ListAppointmentsUseCaseTests
             "Customer 2",
             "+5511999999999",
             start.AddHours(1),
-            start.AddHours(2),
-            customerEmail: "customer2@example.com"
+            start.AddHours(2)
         );
 
         var list = new List<Appointment> { app1, app2 }.AsReadOnly();

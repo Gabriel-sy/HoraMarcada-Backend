@@ -138,7 +138,6 @@ public class WahaWhatsAppNotificationService(
                 checkResult.ChatId,
                 location.Latitude,
                 location.Longitude,
-                location.Title,
                 cancellationToken);
         }
 
@@ -169,7 +168,6 @@ public class WahaWhatsAppNotificationService(
 
         return new WhatsAppLocationShare(
             (double)store.AddressLat.Value,
-            (double)store.AddressLng.Value,
-            store.Name);
+            (double)store.AddressLng.Value);
     }
 }

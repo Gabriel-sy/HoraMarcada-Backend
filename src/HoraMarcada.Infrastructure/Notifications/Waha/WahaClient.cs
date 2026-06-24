@@ -80,15 +80,13 @@ public class WahaClient(
         string chatId,
         double latitude,
         double longitude,
-        string title,
         CancellationToken cancellationToken = default)
     {
         var payload = new WahaSendLocationRequest(
             _options.SessionName,
             chatId,
             latitude,
-            longitude,
-            title);
+            longitude);
 
         var response = await SendWithRateLimitRetryAsync(
             () => httpClient.PostAsJsonAsync("api/sendLocation", payload, cancellationToken),
@@ -172,8 +170,7 @@ public class WahaClient(
         string Session,
         string ChatId,
         double Latitude,
-        double Longitude,
-        string Title);
+        double Longitude);
 
     private sealed class WahaSessionResponse
     {

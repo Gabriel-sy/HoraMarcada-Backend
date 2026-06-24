@@ -93,8 +93,7 @@ public class CompleteAppointmentUseCaseTests
             "Customer",
             "+5511999999999",
             DateTimeOffset.UtcNow.AddHours(1),
-            DateTimeOffset.UtcNow.AddHours(2),
-            customerEmail: "customer@example.com"
+            DateTimeOffset.UtcNow.AddHours(2)
         );
 
         _appointmentRepositoryMock
@@ -129,8 +128,7 @@ public class CompleteAppointmentUseCaseTests
             "Customer",
             "+5511999999999",
             DateTimeOffset.UtcNow.AddHours(1),
-            DateTimeOffset.UtcNow.AddHours(2),
-            customerEmail: "customer@example.com"
+            DateTimeOffset.UtcNow.AddHours(2)
         );
 
         _appointmentRepositoryMock

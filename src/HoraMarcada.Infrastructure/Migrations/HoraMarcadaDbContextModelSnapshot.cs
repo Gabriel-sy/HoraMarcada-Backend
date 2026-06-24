@@ -103,10 +103,6 @@ namespace HoraMarcada.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<string>("Email")
-                        .HasColumnType("text")
-                        .HasColumnName("email");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
@@ -147,10 +143,6 @@ namespace HoraMarcada.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
-
-                    b.Property<string>("Email")
-                        .HasColumnType("text")
-                        .HasColumnName("email");
 
                     b.Property<string>("Name")
                         .IsRequired()

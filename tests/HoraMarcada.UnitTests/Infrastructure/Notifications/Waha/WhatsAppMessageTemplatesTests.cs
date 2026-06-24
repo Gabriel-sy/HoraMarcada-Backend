@@ -35,7 +35,7 @@ public class WhatsAppMessageTemplatesTests
         Assert.Contains("João", message);
         Assert.Contains("10/06/2026", message);
         Assert.Contains("14:00", message);
-        Assert.Contains("*Cancelar agendamento*", message);
+        Assert.Contains("*Cancelar agendamento:*", message);
         Assert.Contains("horamarcada.com/c/abc123", message);
         Assert.DoesNotContain("https://", message);
     }
@@ -64,9 +64,9 @@ public class WhatsAppMessageTemplatesTests
             "https://horamarcada.com/c/abc123",
             "https://horamarcada.com/r/abc123");
 
-        Assert.Contains("*Cancelar agendamento*", message);
+        Assert.Contains("*Cancelar agendamento:*", message);
         Assert.Contains("horamarcada.com/c/abc123", message);
-        Assert.Contains("*Reagendar*", message);
+        Assert.Contains("*Reagendar:*", message);
         Assert.Contains("horamarcada.com/r/abc123", message);
     }
 }
