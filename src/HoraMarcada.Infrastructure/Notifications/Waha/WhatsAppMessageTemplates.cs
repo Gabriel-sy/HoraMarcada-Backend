@@ -12,17 +12,19 @@ public static class WhatsAppMessageTemplates
         string cancelUrl)
     {
         return $"""
-            Olá {appointment.CustomerName.Split(' ')[0]}!
-            Seu agendamento na {store.Name} foi confirmado:
+            Olá, {appointment.CustomerName.Split(' ')[0]}!
 
-            📌 Serviço: {service.Name}
-            👤 Profissional: {professional.Name}
-            📅 Data: {FormatDate(appointment.StartTime)}
-            🕐 Horário: {FormatTime(appointment.StartTime)}
+            Seu agendamento na {store.Name} foi confirmado com sucesso. 🎉
 
-            {WhatsAppMessageLinkFormatter.Format("Cancelar agendamento:", cancelUrl)}
+            Aqui estão os detalhes do seu compromisso:
+            👉 {service.Name} com {professional.Name}
+            👉 Dia {FormatDate(appointment.StartTime)} às {FormatTime(appointment.StartTime)}h
 
-            📍 Veja a localização do estabelecimento abaixo.
+            📍 A localização do estabelecimento está logo abaixo.
+            Caso não consiga comparecer, utilize o link a seguir para cancelar o agendamento:
+            {WhatsAppMessageLinkFormatter.ToDisplayUrl(cancelUrl)}
+
+            Muito obrigado!
             """;
     }
 
@@ -33,15 +35,16 @@ public static class WhatsAppMessageTemplates
         string cancelUrl)
     {
         return $"""
-            Olá {professional.Name.Split(' ')[0]}! 
+            Olá, {professional.Name.Split(' ')[0]}!
+
             Você tem um novo agendamento:
 
             👤 Cliente: {appointment.CustomerName.Split(' ')[0]} ({appointment.CustomerWhatsApp.Value})
             📌 Serviço: {service.Name}
-            📅 Data: {FormatDate(appointment.StartTime)}
-            🕐 Horário: {FormatTime(appointment.StartTime)}
+            📅 Data: {FormatDate(appointment.StartTime)} às {FormatTime(appointment.StartTime)}h
 
-            {WhatsAppMessageLinkFormatter.Format("Cancelar agendamento:", cancelUrl)}
+            Caso precise realizar o cancelamento, utilize o link a seguir:
+            {WhatsAppMessageLinkFormatter.ToDisplayUrl(cancelUrl)}
             """;
     }
 
@@ -52,14 +55,15 @@ public static class WhatsAppMessageTemplates
         string storeUrl)
     {
         return $"""
-            Olá {appointment.CustomerName.Split(' ')[0]},
+            Olá, {appointment.CustomerName.Split(' ')[0]}!
+
             Seu agendamento foi cancelado:
 
             📌 Serviço: {service.Name} com {professional.Name}
-            📅 Data: {FormatDate(appointment.StartTime)}
-            🕐 Horário: {FormatTime(appointment.StartTime)}
+            📅 Data: {FormatDate(appointment.StartTime)} às {FormatTime(appointment.StartTime)}h
 
-            {WhatsAppMessageLinkFormatter.Format("Reagendar:", storeUrl)}
+            Para realizar um novo agendamento, utilize o link a seguir:
+            {WhatsAppMessageLinkFormatter.ToDisplayUrl(storeUrl)}
             """;
     }
 
@@ -69,12 +73,12 @@ public static class WhatsAppMessageTemplates
         string professionalName)
     {
         return $"""
-            Olá {professionalName}! 
-            {appointment.CustomerName.Split(' ')[0]} cancelou este agendamento:
+            Olá, {professionalName.Split(' ')[0]}!
+
+            O agendamento do(a) cliente {appointment.CustomerName.Split(' ')[0]} foi cancelado:
 
             📌 Serviço: {service.Name}
-            📅 Data: {FormatDate(appointment.StartTime)}
-            🕐 Horário: {FormatTime(appointment.StartTime)}
+            📅 Data: {FormatDate(appointment.StartTime)} às {FormatTime(appointment.StartTime)}h
             """;
     }
 
@@ -82,20 +86,23 @@ public static class WhatsAppMessageTemplates
         Appointment appointment,
         Service service,
         Professional professional,
+        string storeName,
         string cancelUrl,
         string rescheduleUrl)
     {
         return $"""
-            Olá {appointment.CustomerName.Split(' ')[0]}! 
-            Lembrete do seu agendamento amanhã:
+            Olá, {appointment.CustomerName.Split(' ')[0]}!
+
+            Este é um lembrete do seu agendamento na {storeName}.
 
             📌 Serviço: {service.Name} com {professional.Name}
-            📅 Data: {FormatDate(appointment.StartTime)}
-            🕐 Horário: {FormatTime(appointment.StartTime)}
+            📅 Data: {FormatDate(appointment.StartTime)} às {FormatTime(appointment.StartTime)}h
 
-            {WhatsAppMessageLinkFormatter.Format("Cancelar agendamento:", cancelUrl)}
+            Caso precise alterar ou cancelar o seu horário, utilize os links abaixo:
+            Reagendar: {WhatsAppMessageLinkFormatter.ToDisplayUrl(rescheduleUrl)}
+            Cancelar: {WhatsAppMessageLinkFormatter.ToDisplayUrl(cancelUrl)}
 
-            {WhatsAppMessageLinkFormatter.Format("Reagendar:", rescheduleUrl)}
+            Agradecemos a preferência!
             """;
     }
 
@@ -109,3 +116,4 @@ public static class WhatsAppMessageTemplates
         return dateTime.ToOffset(TimeSpan.FromHours(-3)).ToString("HH:mm");
     }
 }
+

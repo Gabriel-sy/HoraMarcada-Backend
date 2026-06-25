@@ -98,10 +98,11 @@ public class WahaWhatsAppNotificationService(
             appointment,
             service,
             professional,
+            store.Name,
             BuildCancelUrl(appointment),
             BuildRescheduleUrl(appointment));
 
-        return SendToPhoneAsync(appointment.CustomerWhatsApp, text, ResolveLocation(store), cancellationToken);
+        return SendToPhoneAsync(appointment.CustomerWhatsApp, text, cancellationToken: cancellationToken);
     }
 
     private async Task SendToPhoneAsync(
