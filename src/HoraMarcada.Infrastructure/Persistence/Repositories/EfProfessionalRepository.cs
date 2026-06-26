@@ -23,6 +23,14 @@ internal sealed class EfProfessionalRepository(HoraMarcadaDbContext context) : I
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<IReadOnlyList<Professional>> ListAllActiveAsync(CancellationToken cancellationToken = default)
+    {
+        return await context.Professionals
+            .Include(p => p.WeeklySchedules)
+            .Where(p => p.Active && context.Stores.Any(s => s.Id == p.StoreId && s.Active))
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task AddAsync(Professional professional, CancellationToken cancellationToken = default)
     {
         await context.Professionals.AddAsync(professional, cancellationToken);

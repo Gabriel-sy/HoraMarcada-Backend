@@ -1,4 +1,6 @@
-namespace HoraMarcada.Infrastructure.Notifications.Waha;
+using HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp.Simulation;
+
+namespace HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp.Client;
 
 public class WahaOptions
 {

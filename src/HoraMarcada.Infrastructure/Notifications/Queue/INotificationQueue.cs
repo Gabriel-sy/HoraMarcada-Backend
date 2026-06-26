@@ -1,6 +1,6 @@
 using System.Threading.Channels;
 
-namespace HoraMarcada.Infrastructure.Notifications;
+namespace HoraMarcada.Infrastructure.Notifications.Queue;
 
 public interface INotificationQueue
 {

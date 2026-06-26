@@ -1,7 +1,9 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace HoraMarcada.Infrastructure.Notifications.Waha;
+using HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp.Client;
+
+namespace HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp.Simulation;
 
 public class WhatsAppHumanBehavior(
     IOptions<WahaOptions> options,

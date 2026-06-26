@@ -1,9 +1,16 @@
+using System.Collections.Generic;
 using HoraMarcada.Domain.Entities;
 using HoraMarcada.Domain.ValueObjects;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace HoraMarcada.Infrastructure.Notifications.Waha;
+using HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp.Client;
+using HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp.Simulation;
+using HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp.Formatting;
+using HoraMarcada.Infrastructure.Notifications.Common;
+using HoraMarcada.Infrastructure.Notifications.Exceptions;
+
+namespace HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp;
 
 public class WahaWhatsAppNotificationService(
     IWahaClient wahaClient,
@@ -103,6 +110,28 @@ public class WahaWhatsAppNotificationService(
             BuildRescheduleUrl(appointment));
 
         return SendToPhoneAsync(appointment.CustomerWhatsApp, text, cancellationToken: cancellationToken);
+    }
+
+    public Task SendDailySummaryToProfessionalAsync(
+        Professional professional,
+        Store store,
+        IReadOnlyList<Appointment> appointments,
+        IReadOnlyList<Service> services,
+        CancellationToken cancellationToken = default)
+    {
+        if (professional.WhatsApp is null)
+        {
+            return Task.CompletedTask;
+        }
+
+        var text = WhatsAppMessageTemplates.DailySummaryToProfessional(
+            professional,
+            appointments,
+            services,
+            DateTimeOffset.UtcNow.ToOffset(TimeSpan.FromHours(-3)),
+            BuildCancelUrl);
+
+        return SendToPhoneAsync(professional.WhatsApp, text, cancellationToken: cancellationToken);
     }
 
     private async Task SendToPhoneAsync(

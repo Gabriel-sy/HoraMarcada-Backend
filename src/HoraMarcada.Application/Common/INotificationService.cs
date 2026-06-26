@@ -38,4 +38,11 @@ public interface INotificationService
         Service service,
         Professional professional,
         CancellationToken cancellationToken = default);
+
+    Task SendDailySummaryToProfessionalAsync(
+        Professional professional,
+        Store store,
+        IReadOnlyList<Appointment> appointments,
+        IReadOnlyList<Service> services,
+        CancellationToken cancellationToken = default);
 }

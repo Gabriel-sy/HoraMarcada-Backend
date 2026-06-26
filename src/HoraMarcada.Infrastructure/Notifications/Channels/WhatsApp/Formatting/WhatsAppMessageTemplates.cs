@@ -1,6 +1,9 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using HoraMarcada.Domain.Entities;
 
-namespace HoraMarcada.Infrastructure.Notifications.Waha;
+namespace HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp.Formatting;
 
 public static class WhatsAppMessageTemplates
 {
@@ -103,6 +106,56 @@ public static class WhatsAppMessageTemplates
             Cancelar: {WhatsAppMessageLinkFormatter.ToDisplayUrl(cancelUrl)}
 
             Agradecemos a preferência!
+            """;
+    }
+
+    public static string DailySummaryToProfessional(
+        Professional professional,
+        IReadOnlyList<Appointment> appointments,
+        IReadOnlyList<Service> services,
+        DateTimeOffset date,
+        Func<Appointment, string> cancelUrlBuilder)
+    {
+        var formattedDate = FormatDate(date);
+
+        if (appointments.Count == 0)
+        {
+            return $"""
+                Olá, {professional.Name.Split(' ')[0]}! 🗓️
+
+                Você não tem agendamentos para hoje ({formattedDate}).
+
+                Tenha um ótimo dia! 🚀
+                """;
+        }
+
+        var appointmentsText = new StringBuilder();
+        var servicesMap = services.ToDictionary(s => s.Id);
+
+        foreach (var appt in appointments.OrderBy(a => a.StartTime))
+        {
+            var serviceName = servicesMap.TryGetValue(appt.ServiceId, out var svc) ? svc.Name : "Serviço Desconhecido";
+            var cancelUrl = cancelUrlBuilder(appt);
+
+            appointmentsText.AppendLine($"⏰ {FormatTime(appt.StartTime)}h - {serviceName}");
+            appointmentsText.AppendLine($"👤 {appt.CustomerName.Split(" ")[0]} ({appt.CustomerWhatsApp.Value})");
+            appointmentsText.AppendLine($"❌ Para cancelar, acesse:");
+            appointmentsText.AppendLine($"{WhatsAppMessageLinkFormatter.ToDisplayUrl(cancelUrl)}");
+            appointmentsText.AppendLine();
+        }
+
+        var appointmentsList = appointmentsText.ToString().TrimEnd();
+        var totalText = appointments.Count == 1 ? "1 agendamento" : $"{appointments.Count} agendamentos";
+
+        return $"""
+            Olá, {professional.Name.Split(' ')[0]}!
+
+            Aqui está a sua agenda para hoje ({formattedDate}):
+
+            {appointmentsList}
+
+            Total: {totalText}
+            Tenha um ótimo dia de trabalho! 🚀
             """;
     }
 

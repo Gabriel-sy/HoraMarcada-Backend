@@ -1,7 +1,7 @@
-using HoraMarcada.Infrastructure.Notifications.Waha;
+using HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp.Simulation;
 using Xunit;
 
-namespace HoraMarcada.UnitTests.Infrastructure.Notifications.Waha;
+namespace HoraMarcada.UnitTests.Infrastructure.Notifications.Channels.WhatsApp;
 
 public class WhatsAppTypingDurationCalculatorTests
 {

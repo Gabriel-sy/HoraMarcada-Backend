@@ -4,7 +4,9 @@ using System.Text.Json.Serialization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace HoraMarcada.Infrastructure.Notifications.Waha;
+using HoraMarcada.Infrastructure.Notifications.Exceptions;
+
+namespace HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp.Client;
 
 public class WahaClient(
     HttpClient httpClient,

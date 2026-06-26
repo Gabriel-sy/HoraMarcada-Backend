@@ -3,6 +3,7 @@ using Hangfire;
 using HoraMarcada.Api.Filters;
 using HoraMarcada.Application.DependencyInjection;
 using HoraMarcada.Infrastructure.DependencyInjection;
+using HoraMarcada.Infrastructure.Jobs;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -81,6 +82,15 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseHangfireDashboard("/hangfire");
+
+RecurringJob.AddOrUpdate<SendDailySummaryJob>(
+    "SendDailySummaryJob",
+    job => job.ExecuteAsync(CancellationToken.None),
+    "0 8 * * *",
+    new RecurringJobOptions
+    {
+        TimeZone = TimeZoneInfo.FindSystemTimeZoneById("America/Sao_Paulo")
+    });
 
 app.MapControllers();
 

@@ -1,8 +1,9 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using HoraMarcada.Infrastructure.Notifications.Exceptions;
 
-namespace HoraMarcada.Infrastructure.Notifications;
+namespace HoraMarcada.Infrastructure.Notifications.Queue;
 
 public class NotificationQueueProcessor(
     INotificationQueue queue,

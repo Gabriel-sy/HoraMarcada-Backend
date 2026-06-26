@@ -1,9 +1,14 @@
+using System.Collections.Generic;
 using HoraMarcada.Application.Common;
 using HoraMarcada.Domain.Entities;
+using HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp;
 
-namespace HoraMarcada.Infrastructure.Notifications;
+namespace HoraMarcada.Infrastructure.Notifications.Queue;
 
-public class QueueNotificationServiceDecorator(INotificationQueue queue, IAppConfiguration appConfiguration) : INotificationService
+public class QueueNotificationServiceDecorator(
+    INotificationQueue queue,
+    IAppConfiguration appConfiguration,
+    WahaWhatsAppNotificationService dispatcher) : INotificationService
 {
     public Task SendBookingConfirmationToCustomerAsync(
         Appointment appointment,
@@ -113,5 +118,25 @@ public class QueueNotificationServiceDecorator(INotificationQueue queue, IAppCon
             professional
         ));
         return Task.CompletedTask;
+    }
+
+    public Task SendDailySummaryToProfessionalAsync(
+        Professional professional,
+        Store store,
+        IReadOnlyList<Appointment> appointments,
+        IReadOnlyList<Service> services,
+        CancellationToken cancellationToken = default)
+    {
+        if (!appConfiguration.NotificationsEnabled)
+        {
+            return Task.CompletedTask;
+        }
+
+        return dispatcher.SendDailySummaryToProfessionalAsync(
+            professional,
+            store,
+            appointments,
+            services,
+            cancellationToken);
     }
 }

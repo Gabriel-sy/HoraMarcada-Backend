@@ -1,6 +1,6 @@
 using HoraMarcada.Domain.Entities;
 
-namespace HoraMarcada.Infrastructure.Notifications;
+namespace HoraMarcada.Infrastructure.Notifications.Queue;
 
 public enum NotificationJobType
 {

@@ -1,6 +1,6 @@
 using HoraMarcada.Domain.ValueObjects;
 
-namespace HoraMarcada.Infrastructure.Notifications.Waha;
+namespace HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp.Formatting;
 
 public static class WhatsAppChatIdFormatter
 {

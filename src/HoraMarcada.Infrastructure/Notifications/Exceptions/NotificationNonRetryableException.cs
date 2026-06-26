@@ -1,4 +1,4 @@
-namespace HoraMarcada.Infrastructure.Notifications;
+namespace HoraMarcada.Infrastructure.Notifications.Exceptions;
 
 public class NotificationNonRetryableException : Exception
 {

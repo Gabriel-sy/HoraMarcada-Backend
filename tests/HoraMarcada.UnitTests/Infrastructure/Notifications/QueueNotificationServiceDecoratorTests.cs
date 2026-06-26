@@ -1,9 +1,14 @@
 using Moq;
 using Xunit;
 using HoraMarcada.Infrastructure.Notifications;
+using HoraMarcada.Infrastructure.Notifications.Queue;
 using HoraMarcada.Domain.Entities;
-
 using HoraMarcada.Application.Common;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp;
+using HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp.Client;
+using HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp.Simulation;
 
 namespace HoraMarcada.UnitTests.Infrastructure.Notifications;
 
@@ -18,7 +23,13 @@ public class QueueNotificationServiceDecoratorTests
         _queueMock = new Mock<INotificationQueue>();
         _configMock = new Mock<IAppConfiguration>();
         _configMock.Setup(c => c.NotificationsEnabled).Returns(true);
-        _decorator = new QueueNotificationServiceDecorator(_queueMock.Object, _configMock.Object);
+        var config = new ConfigurationBuilder().Build();
+        var dispatcher = new WahaWhatsAppNotificationService(
+            new Mock<IWahaClient>().Object,
+            new Mock<IWhatsAppHumanBehavior>().Object,
+            config,
+            new Mock<ILogger<WahaWhatsAppNotificationService>>().Object);
+        _decorator = new QueueNotificationServiceDecorator(_queueMock.Object, _configMock.Object, dispatcher);
     }
 
     [Fact]

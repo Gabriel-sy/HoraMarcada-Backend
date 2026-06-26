@@ -1,4 +1,4 @@
-using HoraMarcada.Infrastructure.Notifications;
+using HoraMarcada.Infrastructure.Notifications.Common;
 using Xunit;
 
 namespace HoraMarcada.UnitTests.Infrastructure.Notifications;

@@ -1,4 +1,4 @@
-namespace HoraMarcada.Infrastructure.Notifications;
+namespace HoraMarcada.Infrastructure.Notifications.Common;
 
 public static class AppointmentNotificationUrls
 {

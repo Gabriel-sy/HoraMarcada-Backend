@@ -1,4 +1,6 @@
-namespace HoraMarcada.Infrastructure.Notifications.Waha;
+using HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp.Client;
+
+namespace HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp.Simulation;
 
 public interface IWhatsAppHumanBehavior
 {

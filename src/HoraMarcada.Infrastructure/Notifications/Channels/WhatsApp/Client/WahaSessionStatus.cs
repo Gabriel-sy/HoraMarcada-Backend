@@ -1,4 +1,4 @@
-namespace HoraMarcada.Infrastructure.Notifications.Waha;
+namespace HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp.Client;
 
 public enum WahaSessionStatus
 {
