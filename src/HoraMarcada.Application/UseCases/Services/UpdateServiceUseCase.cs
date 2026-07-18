@@ -2,7 +2,6 @@ using HoraMarcada.Application.Exceptions;
 using HoraMarcada.Application.Models;
 using HoraMarcada.Application.Policies;
 using HoraMarcada.Application.Repositories;
-using HoraMarcada.Domain.Entities;
 using HoraMarcada.Domain.Exceptions;
 
 namespace HoraMarcada.Application.UseCases.Services;
@@ -12,7 +11,7 @@ public class UpdateServiceUseCase(
     IProfessionalRepository professionalRepository,
     IStoreOwnershipPolicy ownershipPolicy)
 {
-    public async Task<Service> ExecuteAsync(Guid userId, Guid storeId, Guid serviceId, UpdateServiceInput input, CancellationToken cancellationToken = default)
+    public async Task<ServiceDto> ExecuteAsync(Guid userId, Guid storeId, Guid serviceId, UpdateServiceInput input, CancellationToken cancellationToken = default)
     {
         await ownershipPolicy.EnsureUserOwnsStoreAsync(userId, storeId, cancellationToken);
 
@@ -46,6 +45,6 @@ public class UpdateServiceUseCase(
         }
 
         await serviceRepository.UpdateAsync(service, cancellationToken);
-        return service;
+        return ServiceDto.FromDomain(service);
     }
 }

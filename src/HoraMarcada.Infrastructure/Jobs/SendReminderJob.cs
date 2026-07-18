@@ -1,7 +1,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using HoraMarcada.Application.Common;
+using HoraMarcada.Application.Common.Interfaces;
 using HoraMarcada.Application.Repositories;
 using HoraMarcada.Domain.Enums;
 using Microsoft.Extensions.Logging;

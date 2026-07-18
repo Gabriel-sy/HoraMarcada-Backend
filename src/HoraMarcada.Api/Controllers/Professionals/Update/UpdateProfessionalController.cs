@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using HoraMarcada.Application.UseCases.Professionals;
 using HoraMarcada.Application.Models;
-using HoraMarcada.Domain.Entities;
 using HoraMarcada.Api.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -23,7 +22,7 @@ public class UpdateProfessionalController(
         Description = "Modifies professional info and working hours. Entrepreneur authorization required.",
         Tags = new[] { "Professionals" }
     )]
-    [SwaggerResponse(StatusCodes.Status200OK, "Returns the updated professional details.", typeof(Professional))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Returns the updated professional details.", typeof(ProfessionalDto))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "If validation fails or request contains invalid properties.", typeof(IDictionary<string, string[]>))]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "If the user is not authenticated.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status403Forbidden, "If the user is not authorized to update professionals in this store.", typeof(ProblemDetails))]

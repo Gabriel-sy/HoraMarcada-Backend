@@ -144,7 +144,7 @@ public class AddServiceUseCaseTests
         Assert.NotNull(result);
         Assert.Equal(input.Name, result.Name);
         Assert.Equal(input.DurationMinutes, result.DurationMinutes);
-        Assert.Equal(input.Price, result.Price?.Amount);
+        Assert.Equal(input.Price, result.Price);
         Assert.Contains(professionalId, result.ProfessionalIds);
 
         _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()), Times.Once);

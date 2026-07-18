@@ -1,7 +1,7 @@
 using HoraMarcada.Application.Exceptions;
+using HoraMarcada.Application.Models;
 using HoraMarcada.Application.Policies;
 using HoraMarcada.Application.Repositories;
-using HoraMarcada.Domain.Entities;
 
 namespace HoraMarcada.Application.UseCases.TimeBlocks;
 
@@ -10,7 +10,7 @@ public class ListTimeBlocksUseCase(
     IProfessionalRepository professionalRepository,
     IStoreOwnershipPolicy ownershipPolicy)
 {
-    public async Task<IReadOnlyList<TimeBlock>> ExecuteAsync(
+    public async Task<IReadOnlyList<TimeBlockDto>> ExecuteAsync(
         Guid userId,
         Guid storeId,
         Guid professionalId,
@@ -26,6 +26,7 @@ public class ListTimeBlocksUseCase(
             throw new NotFoundException($"Professional with ID {professionalId} not found in store {storeId}.");
         }
 
-        return await timeBlockRepository.ListByProfessionalAndRangeAsync(professionalId, start, end, cancellationToken);
+        var timeBlocks = await timeBlockRepository.ListByProfessionalAndRangeAsync(professionalId, start, end, cancellationToken);
+        return timeBlocks.Select(TimeBlockDto.FromDomain).ToList();
     }
 }

@@ -1,6 +1,49 @@
 using HoraMarcada.Application.Common;
+using HoraMarcada.Domain.Entities;
 
 namespace HoraMarcada.Application.Models;
+
+public record WeeklyHoursDto(
+    Guid Id,
+    Guid ProfessionalId,
+    int DayOfWeek,
+    TimeOnly StartTime,
+    TimeOnly EndTime,
+    TimeOnly? LunchStart,
+    TimeOnly? LunchEnd,
+    short IntervalMinutes)
+{
+    public static WeeklyHoursDto FromDomain(WeeklyHours hours) => new(
+        hours.Id,
+        hours.ProfessionalId,
+        hours.DayOfWeek,
+        hours.StartTime,
+        hours.EndTime,
+        hours.LunchStart,
+        hours.LunchEnd,
+        hours.IntervalMinutes);
+}
+
+public record ProfessionalDto(
+    Guid Id,
+    Guid StoreId,
+    string Name,
+    string? PhotoUrl,
+    string? WhatsApp,
+    bool Active,
+    DateTimeOffset CreatedAt,
+    IReadOnlyList<WeeklyHoursDto> WeeklySchedules)
+{
+    public static ProfessionalDto FromDomain(Professional professional) => new(
+        professional.Id,
+        professional.StoreId,
+        professional.Name,
+        professional.PhotoUrl,
+        professional.WhatsApp?.Value,
+        professional.Active,
+        professional.CreatedAt,
+        professional.WeeklySchedules.Select(WeeklyHoursDto.FromDomain).ToList());
+}
 
 public record WeeklyHoursInput(
     [property: SwaggerExample("1")] int DayOfWeek,

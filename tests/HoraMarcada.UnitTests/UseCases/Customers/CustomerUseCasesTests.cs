@@ -116,7 +116,7 @@ public class CustomerUseCasesTests
 
         Assert.NotNull(result);
         Assert.Equal("New Name", result.Name);
-        Assert.Equal("+5511999999998", result.WhatsApp.Value);
+        Assert.Equal("+5511999999998", result.WhatsApp);
         _customerRepositoryMock.Verify(r => r.UpdateAsync(customer, It.IsAny<CancellationToken>()), Times.Once);
     }
 

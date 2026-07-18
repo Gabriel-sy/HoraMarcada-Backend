@@ -1,8 +1,9 @@
 using System.Security.Cryptography;
 using System.Text;
+using HoraMarcada.Application.Common.Interfaces;
 using HoraMarcada.Application.Repositories;
 
-namespace HoraMarcada.Application.Common;
+namespace HoraMarcada.Application.Common.Services;
 
 public class CancelTokenGenerator : ICancelTokenGenerator
 {

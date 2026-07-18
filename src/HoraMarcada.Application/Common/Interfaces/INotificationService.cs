@@ -1,6 +1,6 @@
 using HoraMarcada.Domain.Entities;
 
-namespace HoraMarcada.Application.Common;
+namespace HoraMarcada.Application.Common.Interfaces;
 
 public interface INotificationService
 {

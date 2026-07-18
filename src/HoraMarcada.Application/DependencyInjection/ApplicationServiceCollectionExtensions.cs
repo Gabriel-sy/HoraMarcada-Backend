@@ -1,4 +1,5 @@
-using HoraMarcada.Application.Common;
+using HoraMarcada.Application.Common.Interfaces;
+using HoraMarcada.Application.Common.Services;
 using HoraMarcada.Application.Policies;
 using HoraMarcada.Application.UseCases.Appointments;
 using HoraMarcada.Application.UseCases.Availability;
@@ -19,6 +20,7 @@ public static class ApplicationServiceCollectionExtensions
         services.AddScoped<ICancelTokenGenerator, CancelTokenGenerator>();
         services.AddScoped<IStoreOwnershipPolicy, StoreOwnershipPolicy>();
         services.AddScoped<IAppointmentNotificationService, AppointmentNotificationService>();
+        services.AddScoped<IAvailabilityService, AvailabilityService>();
 
         services.AddScoped<CreateStoreUseCase>();
         services.AddScoped<GetStoreByUserIdUseCase>();

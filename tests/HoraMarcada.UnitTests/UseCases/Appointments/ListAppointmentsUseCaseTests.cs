@@ -93,8 +93,8 @@ public class ListAppointmentsUseCaseTests
         Assert.NotNull(result);
         Assert.Equal(2, result.Count);
         // Should be sorted by StartTime (app2 has earlier start time than app1)
-        Assert.Equal(app2, result[0]);
-        Assert.Equal(app1, result[1]);
+        Assert.Equal(app2.Id, result[0].Id);
+        Assert.Equal(app1.Id, result[1].Id);
 
         _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()), Times.Once);
         _appointmentRepositoryMock.Verify(r => r.ListByStoreAsync(storeId, start, end, professionalId, It.IsAny<CancellationToken>()), Times.Once);

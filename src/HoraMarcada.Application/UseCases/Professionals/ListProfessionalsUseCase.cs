@@ -1,17 +1,17 @@
+using HoraMarcada.Application.Models;
 using HoraMarcada.Application.Repositories;
-using HoraMarcada.Domain.Entities;
 
 namespace HoraMarcada.Application.UseCases.Professionals;
 
 public class ListProfessionalsUseCase(IProfessionalRepository professionalRepository)
 {
-    public async Task<IReadOnlyList<Professional>> ExecuteAsync(Guid storeId, bool activeOnly, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<ProfessionalDto>> ExecuteAsync(Guid storeId, bool activeOnly, CancellationToken cancellationToken = default)
     {
         var list = await professionalRepository.ListByStoreIdAsync(storeId, cancellationToken);
         if (activeOnly)
         {
-            return list.Where(p => p.Active).ToList();
+            return list.Where(p => p.Active).Select(ProfessionalDto.FromDomain).OrderBy(p => p.Name).ToList();
         }
-        return list;
+        return list.Select(ProfessionalDto.FromDomain).OrderBy(p => p.Name).ToList();
     }
 }

@@ -1,10 +1,8 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using HoraMarcada.Application.UseCases.TimeBlocks;
 using HoraMarcada.Application.Models;
-using HoraMarcada.Domain.Entities;
 using HoraMarcada.Api.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -23,7 +21,7 @@ public class CreateTimeBlockController(
         Description = "Blocks a time range to prevent customers from scheduling appointments. Entrepreneur authorization required.",
         Tags = new[] { "TimeBlocks" }
     )]
-    [SwaggerResponse(StatusCodes.Status200OK, "Returns the newly created time block details.", typeof(TimeBlock))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Returns the newly created time block details.", typeof(TimeBlockDto))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "If validation fails or range is invalid.", typeof(IDictionary<string, string[]>))]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "If the user is not authenticated.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status403Forbidden, "If the user does not own this store.", typeof(ProblemDetails))]

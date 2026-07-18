@@ -197,7 +197,7 @@ public class UpdateServiceUseCaseTests
         Assert.NotNull(result);
         Assert.Equal(input.Name, result.Name);
         Assert.Equal(input.DurationMinutes, result.DurationMinutes);
-        Assert.Equal(input.Price, result.Price?.Amount);
+        Assert.Equal(input.Price, result.Price);
         Assert.Equal(input.Active, result.Active);
         Assert.Single(result.ProfessionalIds);
         Assert.Contains(professionalId, result.ProfessionalIds);

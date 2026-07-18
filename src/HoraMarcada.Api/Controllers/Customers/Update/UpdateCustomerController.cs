@@ -1,10 +1,8 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using HoraMarcada.Application.UseCases.Customers;
 using HoraMarcada.Application.Models;
-using HoraMarcada.Domain.Entities;
 using HoraMarcada.Api.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -23,7 +21,7 @@ public class UpdateCustomerController(
         Description = "Updates a customer's basic contact details.",
         Tags = new[] { "Customers" }
     )]
-    [SwaggerResponse(StatusCodes.Status200OK, "Returns the updated customer.", typeof(Customer))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Returns the updated customer.", typeof(CustomerDto))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "If validation fails.", typeof(IDictionary<string, string[]>))]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "If the user is not authenticated.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status403Forbidden, "If the user does not own this store.", typeof(ProblemDetails))]

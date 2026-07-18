@@ -1,9 +1,7 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+using HoraMarcada.Application.Common.Interfaces;
 using HoraMarcada.Domain.Entities;
 
-namespace HoraMarcada.Application.Common;
+namespace HoraMarcada.Application.Common.Services;
 
 public class AppointmentNotificationService(
     INotificationService notificationService,
@@ -74,7 +72,7 @@ public class AppointmentNotificationService(
         }
     }
 
-    private bool HasProfessionalContact(Professional professional)
+    private static bool HasProfessionalContact(Professional professional)
     {
         return professional.WhatsApp != null;
     }

@@ -1,17 +1,17 @@
+using HoraMarcada.Application.Models;
 using HoraMarcada.Application.Repositories;
-using HoraMarcada.Domain.Entities;
 
 namespace HoraMarcada.Application.UseCases.Services;
 
 public class ListServicesUseCase(IServiceRepository serviceRepository)
 {
-    public async Task<IReadOnlyList<Service>> ExecuteAsync(Guid storeId, bool activeOnly, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<ServiceDto>> ExecuteAsync(Guid storeId, bool activeOnly, CancellationToken cancellationToken = default)
     {
         var services = await serviceRepository.ListByStoreIdAsync(storeId, cancellationToken);
         if (activeOnly)
         {
-            return services.Where(s => s.Active).ToList();
+            return services.Where(s => s.Active).Select(ServiceDto.FromDomain).ToList();
         }
-        return services;
+        return services.Select(ServiceDto.FromDomain).ToList();
     }
 }

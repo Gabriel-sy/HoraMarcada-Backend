@@ -11,7 +11,7 @@ public class AddServiceUseCase(
     IProfessionalRepository professionalRepository,
     IStoreOwnershipPolicy ownershipPolicy)
 {
-    public async Task<Service> ExecuteAsync(Guid userId, Guid storeId, AddServiceInput input, CancellationToken cancellationToken = default)
+    public async Task<ServiceDto> ExecuteAsync(Guid userId, Guid storeId, AddServiceInput input, CancellationToken cancellationToken = default)
     {
         await ownershipPolicy.EnsureUserOwnsStoreAsync(userId, storeId, cancellationToken);
 
@@ -42,6 +42,6 @@ public class AddServiceUseCase(
         }
 
         await serviceRepository.AddAsync(service, cancellationToken);
-        return service;
+        return ServiceDto.FromDomain(service);
     }
 }

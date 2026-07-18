@@ -1,6 +1,6 @@
 using HoraMarcada.Application.Repositories;
 
-namespace HoraMarcada.Application.Common;
+namespace HoraMarcada.Application.Common.Interfaces;
 
 public interface ICancelTokenGenerator
 {

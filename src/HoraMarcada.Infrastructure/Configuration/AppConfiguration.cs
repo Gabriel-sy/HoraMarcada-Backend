@@ -1,4 +1,4 @@
-using HoraMarcada.Application.Common;
+using HoraMarcada.Application.Common.Interfaces;
 using Microsoft.Extensions.Configuration;
 
 namespace HoraMarcada.Infrastructure.Configuration;

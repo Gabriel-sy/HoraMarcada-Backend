@@ -36,8 +36,8 @@ public class ListProfessionalsUseCaseTests
         // Assert
         Assert.NotNull(result);
         Assert.Equal(2, result.Count);
-        Assert.Contains(prof1, result);
-        Assert.Contains(prof2, result);
+        Assert.Contains(result, r => r.Id == prof1.Id);
+        Assert.Contains(result, r => r.Id == prof2.Id);
 
         _professionalRepositoryMock.Verify(r => r.ListByStoreIdAsync(storeId, It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -61,7 +61,7 @@ public class ListProfessionalsUseCaseTests
         // Assert
         Assert.NotNull(result);
         var singleProf = Assert.Single(result);
-        Assert.Equal(prof1, singleProf);
+        Assert.Equal(prof1.Id, singleProf.Id);
 
         _professionalRepositoryMock.Verify(r => r.ListByStoreIdAsync(storeId, It.IsAny<CancellationToken>()), Times.Once);
     }

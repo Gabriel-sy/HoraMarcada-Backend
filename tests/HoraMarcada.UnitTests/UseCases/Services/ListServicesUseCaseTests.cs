@@ -36,8 +36,8 @@ public class ListServicesUseCaseTests
         // Assert
         Assert.NotNull(result);
         Assert.Equal(2, result.Count);
-        Assert.Contains(service1, result);
-        Assert.Contains(service2, result);
+        Assert.Contains(result, r => r.Id == service1.Id);
+        Assert.Contains(result, r => r.Id == service2.Id);
 
         _serviceRepositoryMock.Verify(r => r.ListByStoreIdAsync(storeId, It.IsAny<CancellationToken>()), Times.Once);
     }
@@ -61,7 +61,7 @@ public class ListServicesUseCaseTests
         // Assert
         Assert.NotNull(result);
         var singleService = Assert.Single(result);
-        Assert.Equal(service1, singleService);
+        Assert.Equal(service1.Id, singleService.Id);
 
         _serviceRepositoryMock.Verify(r => r.ListByStoreIdAsync(storeId, It.IsAny<CancellationToken>()), Times.Once);
     }

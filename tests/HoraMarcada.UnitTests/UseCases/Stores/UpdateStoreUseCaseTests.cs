@@ -160,9 +160,9 @@ public class UpdateStoreUseCaseTests
         // Assert
         Assert.NotNull(result);
         Assert.Equal(input.Name, result.Name);
-        Assert.Equal(input.Slug, result.Slug.Value);
-        Assert.Equal(input.WhatsApp, result.WhatsApp.Value);
-        Assert.Equal(input.Email, result.Email.Value);
+        Assert.Equal(input.Slug, result.Slug);
+        Assert.Equal(input.WhatsApp, result.WhatsApp);
+        Assert.Equal(input.Email, result.Email);
         Assert.Equal(input.LogoUrl, result.LogoUrl);
         Assert.Equal(input.Address, result.Address);
         Assert.Equal(input.AddressLat, result.AddressLat);
@@ -206,8 +206,8 @@ public class UpdateStoreUseCaseTests
         // Assert
         Assert.NotNull(result);
         Assert.Equal(input.Name, result.Name);
-        Assert.Equal(input.Slug, result.Slug.Value);
-        Assert.Equal(input.WhatsApp, result.WhatsApp.Value);
+        Assert.Equal(input.Slug, result.Slug);
+        Assert.Equal(input.WhatsApp, result.WhatsApp);
 
         _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()), Times.Once);
         _storeRepositoryMock.Verify(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>()), Times.Once);

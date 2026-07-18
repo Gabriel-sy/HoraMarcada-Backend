@@ -2,7 +2,6 @@ using HoraMarcada.Application.Exceptions;
 using HoraMarcada.Application.Models;
 using HoraMarcada.Application.Policies;
 using HoraMarcada.Application.Repositories;
-using HoraMarcada.Domain.Entities;
 using HoraMarcada.Domain.ValueObjects;
 
 namespace HoraMarcada.Application.UseCases.Stores;
@@ -11,7 +10,7 @@ public class UpdateStoreUseCase(
     IStoreRepository storeRepository,
     IStoreOwnershipPolicy ownershipPolicy)
 {
-    public async Task<Store> ExecuteAsync(Guid userId, Guid storeId, UpdateStoreInput input, CancellationToken cancellationToken = default)
+    public async Task<StoreDto> ExecuteAsync(Guid userId, Guid storeId, UpdateStoreInput input, CancellationToken cancellationToken = default)
     {
         await ownershipPolicy.EnsureUserOwnsStoreAsync(userId, storeId, cancellationToken);
 
@@ -21,7 +20,6 @@ public class UpdateStoreUseCase(
             throw new NotFoundException($"Store with ID {storeId} not found.");
         }
 
-        // Check for slug uniqueness if changed
         var inputSlug = Slug.Create(input.Slug);
         if (store.Slug != inputSlug)
         {
@@ -44,6 +42,6 @@ public class UpdateStoreUseCase(
             store.Active);
 
         await storeRepository.UpdateAsync(store, cancellationToken);
-        return store;
+        return StoreDto.FromDomain(store);
     }
 }

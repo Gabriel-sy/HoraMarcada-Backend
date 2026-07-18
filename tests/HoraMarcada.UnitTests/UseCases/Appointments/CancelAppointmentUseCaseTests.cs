@@ -5,7 +5,7 @@ using HoraMarcada.Application.Repositories;
 using HoraMarcada.Application.Policies;
 using HoraMarcada.Application.Models;
 using HoraMarcada.Application.Exceptions;
-using HoraMarcada.Application.Common;
+using HoraMarcada.Application.Common.Interfaces;
 using HoraMarcada.Domain.Entities;
 using HoraMarcada.Domain.Enums;
 

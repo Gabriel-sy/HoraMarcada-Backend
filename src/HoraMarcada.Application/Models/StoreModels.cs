@@ -1,6 +1,36 @@
 using HoraMarcada.Application.Common;
+using HoraMarcada.Domain.Entities;
 
 namespace HoraMarcada.Application.Models;
+
+public record StoreDto(
+    Guid Id,
+    Guid UserId,
+    string Name,
+    string Slug,
+    string? LogoUrl,
+    string? Address,
+    decimal? AddressLat,
+    decimal? AddressLng,
+    string WhatsApp,
+    string Email,
+    bool Active,
+    DateTimeOffset CreatedAt)
+{
+    public static StoreDto FromDomain(Store store) => new(
+        store.Id,
+        store.UserId,
+        store.Name,
+        store.Slug.Value,
+        store.LogoUrl,
+        store.Address,
+        store.AddressLat,
+        store.AddressLng,
+        store.WhatsApp.Value,
+        store.Email.Value,
+        store.Active,
+        store.CreatedAt);
+}
 
 public record CreateStoreInput(
     [property: SwaggerExample("Vintage Barbershop")] string Name,

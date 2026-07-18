@@ -1,10 +1,8 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using HoraMarcada.Application.UseCases.Appointments;
 using HoraMarcada.Application.Models;
-using HoraMarcada.Domain.Entities;
 using HoraMarcada.Api.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -23,7 +21,7 @@ public class ListAppointmentsController(
         Description = "Retrieves a list of appointments matching the requested date range and filters. Authorized entrepreneur only.",
         Tags = new[] { "Appointments" }
     )]
-    [SwaggerResponse(StatusCodes.Status200OK, "Returns the list of appointments.", typeof(IReadOnlyList<Appointment>))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Returns the list of appointments.", typeof(IReadOnlyList<AppointmentDto>))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "If validation fails or request contains invalid properties.", typeof(IDictionary<string, string[]>))]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "If the user is not authenticated.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status403Forbidden, "If the user is not authorized to view appointments for this store.", typeof(ProblemDetails))]

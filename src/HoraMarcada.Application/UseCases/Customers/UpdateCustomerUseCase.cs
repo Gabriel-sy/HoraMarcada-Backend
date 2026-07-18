@@ -2,7 +2,6 @@ using HoraMarcada.Application.Exceptions;
 using HoraMarcada.Application.Models;
 using HoraMarcada.Application.Policies;
 using HoraMarcada.Application.Repositories;
-using HoraMarcada.Domain.Entities;
 
 namespace HoraMarcada.Application.UseCases.Customers;
 
@@ -10,7 +9,7 @@ public class UpdateCustomerUseCase(
     ICustomerRepository customerRepository,
     IStoreOwnershipPolicy ownershipPolicy)
 {
-    public async Task<Customer> ExecuteAsync(
+    public async Task<CustomerDto> ExecuteAsync(
         Guid userId,
         Guid storeId,
         Guid customerId,
@@ -34,6 +33,6 @@ public class UpdateCustomerUseCase(
         customer.Update(input.Name, input.WhatsApp);
         await customerRepository.UpdateAsync(customer, cancellationToken);
 
-        return customer;
+        return CustomerDto.FromDomain(customer);
     }
 }

@@ -1,9 +1,8 @@
 using Moq;
 using Xunit;
-using HoraMarcada.Infrastructure.Notifications;
 using HoraMarcada.Infrastructure.Notifications.Queue;
 using HoraMarcada.Domain.Entities;
-using HoraMarcada.Application.Common;
+using HoraMarcada.Application.Common.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp;

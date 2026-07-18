@@ -1,6 +1,39 @@
 using HoraMarcada.Application.Common;
+using HoraMarcada.Domain.Entities;
+using HoraMarcada.Domain.Enums;
 
 namespace HoraMarcada.Application.Models;
+
+public record AppointmentDto(
+    Guid Id,
+    Guid StoreId,
+    Guid ProfessionalId,
+    Guid ServiceId,
+    Guid CustomerId,
+    string CustomerName,
+    string CustomerWhatsApp,
+    DateTimeOffset StartTime,
+    DateTimeOffset EndTime,
+    AppointmentStatus Status,
+    string? CancelToken,
+    bool CancelTokenUsed,
+    DateTimeOffset CreatedAt)
+{
+    public static AppointmentDto FromDomain(Appointment appointment) => new(
+        appointment.Id,
+        appointment.StoreId,
+        appointment.ProfessionalId,
+        appointment.ServiceId,
+        appointment.CustomerId,
+        appointment.CustomerName,
+        appointment.CustomerWhatsApp.Value,
+        appointment.StartTime,
+        appointment.EndTime,
+        appointment.Status,
+        appointment.CancelToken,
+        appointment.CancelTokenUsed,
+        appointment.CreatedAt);
+}
 
 public record BookAppointmentInput(
     [property: SwaggerExample("3fa85f64-5717-4562-b3fc-2c963f66afa6")] Guid StoreId,

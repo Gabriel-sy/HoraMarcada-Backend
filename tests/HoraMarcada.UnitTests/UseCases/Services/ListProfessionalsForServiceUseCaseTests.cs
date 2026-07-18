@@ -96,4 +96,50 @@ public class ListProfessionalsForServiceUseCaseTests
         _professionalRepositoryMock.Verify(r => r.GetByIdAsync(inactiveProfId, It.IsAny<CancellationToken>()), Times.Once);
         _professionalRepositoryMock.Verify(r => r.GetByIdAsync(nonExistentProfId, It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenServiceExists_ShouldReturnProfessionalsOrderedByName()
+    {
+        var storeId = Guid.NewGuid();
+        var serviceId = Guid.NewGuid();
+        var profAId = Guid.NewGuid();
+        var profBId = Guid.NewGuid();
+        var profCId = Guid.NewGuid();
+
+        var service = Service.Create(storeId, "Service Name", 30);
+        typeof(Service).GetProperty("Id")?.SetValue(service, serviceId);
+
+        service.AssignProfessional(profCId);
+        service.AssignProfessional(profAId);
+        service.AssignProfessional(profBId);
+
+        var profA = Professional.Create(storeId, "Ana", active: true);
+        typeof(Professional).GetProperty("Id")?.SetValue(profA, profAId);
+
+        var profB = Professional.Create(storeId, "Bruno", active: true);
+        typeof(Professional).GetProperty("Id")?.SetValue(profB, profBId);
+
+        var profC = Professional.Create(storeId, "Carlos", active: true);
+        typeof(Professional).GetProperty("Id")?.SetValue(profC, profCId);
+
+        _serviceRepositoryMock
+            .Setup(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(service);
+
+        _professionalRepositoryMock
+            .Setup(r => r.GetByIdAsync(profAId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(profA);
+
+        _professionalRepositoryMock
+            .Setup(r => r.GetByIdAsync(profBId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(profB);
+
+        _professionalRepositoryMock
+            .Setup(r => r.GetByIdAsync(profCId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(profC);
+
+        var result = await _useCase.ExecuteAsync(serviceId);
+
+        Assert.Equal(new[] { "Ana", "Bruno", "Carlos" }, result.Select(p => p.Name));
+    }
 }

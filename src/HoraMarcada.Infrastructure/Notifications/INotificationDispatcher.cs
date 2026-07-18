@@ -1,5 +1,4 @@
-using HoraMarcada.Application.Common;
-using HoraMarcada.Domain.Entities;
+using HoraMarcada.Application.Common.Interfaces;
 
 namespace HoraMarcada.Infrastructure.Notifications;
 

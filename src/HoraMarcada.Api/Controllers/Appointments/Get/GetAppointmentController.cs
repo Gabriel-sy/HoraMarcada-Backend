@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using HoraMarcada.Application.UseCases.Appointments;
 using HoraMarcada.Application.Exceptions;
-using HoraMarcada.Domain.Entities;
+using HoraMarcada.Application.Models;
 using HoraMarcada.Api.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -20,7 +20,7 @@ public class GetAppointmentController(GetAppointmentByIdUseCase useCase) : Contr
         Description = "Retrieves the full appointment details including customer data. Only the store owner is authorized.",
         Tags = new[] { "Appointments" }
     )]
-    [SwaggerResponse(StatusCodes.Status200OK, "Returns the appointment.", typeof(Appointment))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Returns the appointment.", typeof(AppointmentDto))]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "If the user is not authenticated.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status403Forbidden, "If the user is not authorized.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "If the appointment is not found.", typeof(ProblemDetails))]

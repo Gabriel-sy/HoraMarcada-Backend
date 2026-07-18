@@ -1,4 +1,4 @@
-using HoraMarcada.Application.Common;
+using HoraMarcada.Application.Common.Interfaces;
 using HoraMarcada.Application.Repositories;
 using HoraMarcada.Infrastructure.Configuration;
 using HoraMarcada.Infrastructure.Notifications;

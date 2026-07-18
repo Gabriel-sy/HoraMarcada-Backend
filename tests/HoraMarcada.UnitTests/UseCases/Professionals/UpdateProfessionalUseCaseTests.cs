@@ -148,7 +148,7 @@ public class UpdateProfessionalUseCaseTests
         Assert.NotNull(result);
         Assert.Equal(input.Name, result.Name);
         Assert.Equal(input.PhotoUrl, result.PhotoUrl);
-        Assert.Equal(input.WhatsApp, result.WhatsApp?.Value);
+        Assert.Equal(input.WhatsApp, result.WhatsApp);
         
         var singleSchedule = Assert.Single(result.WeeklySchedules);
         Assert.Equal(2, singleSchedule.DayOfWeek);

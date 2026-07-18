@@ -1,10 +1,8 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using HoraMarcada.Application.UseCases.Stores;
 using HoraMarcada.Application.Models;
-using HoraMarcada.Domain.Entities;
 using HoraMarcada.Api.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -23,7 +21,7 @@ public class UpdateStoreController(
         Description = "Updates the store details. Only the authorized entrepreneur owner can perform this action.",
         Tags = new[] { "Stores" }
     )]
-    [SwaggerResponse(StatusCodes.Status200OK, "Returns the updated store details.", typeof(Store))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Returns the updated store details.", typeof(StoreDto))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "If validation fails or request contains invalid properties.", typeof(IDictionary<string, string[]>))]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "If the user is not authenticated.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status403Forbidden, "If the user is not authorized to update this store.", typeof(ProblemDetails))]

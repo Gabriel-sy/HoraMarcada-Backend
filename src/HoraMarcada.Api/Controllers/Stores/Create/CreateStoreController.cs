@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using HoraMarcada.Application.UseCases.Stores;
 using HoraMarcada.Application.Models;
-using HoraMarcada.Domain.Entities;
 using HoraMarcada.Api.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -23,7 +22,7 @@ public class CreateStoreController(
         Description = "Creates a new store linked to the entrepreneur user. The store slug must be unique.",
         Tags = new[] { "Stores" }
     )]
-    [SwaggerResponse(StatusCodes.Status200OK, "Returns the newly created store details.", typeof(Store))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Returns the newly created store details.", typeof(StoreDto))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "If validation fails or request contains invalid properties.", typeof(IDictionary<string, string[]>))]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "If the user is not authenticated.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status409Conflict, "If the store slug is already taken.", typeof(ProblemDetails))]
@@ -31,7 +30,6 @@ public class CreateStoreController(
         [FromBody] CreateStoreInput input,
         CancellationToken cancellationToken)
     {
-        Console.WriteLine("Here");
         var validationResult = await validator.ValidateAsync(input, cancellationToken);
         if (!validationResult.IsValid)
         {

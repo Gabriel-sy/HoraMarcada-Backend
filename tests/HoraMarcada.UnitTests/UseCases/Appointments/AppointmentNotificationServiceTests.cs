@@ -1,10 +1,7 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using Xunit;
-using HoraMarcada.Application.Common;
+using HoraMarcada.Application.Common.Interfaces;
+using HoraMarcada.Application.Common.Services;
 using HoraMarcada.Domain.Entities;
 
 namespace HoraMarcada.UnitTests.UseCases.Appointments;

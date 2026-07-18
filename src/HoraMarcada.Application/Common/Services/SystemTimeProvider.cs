@@ -1,4 +1,6 @@
-namespace HoraMarcada.Application.Common;
+using HoraMarcada.Application.Common.Interfaces;
+
+namespace HoraMarcada.Application.Common.Services;
 
 public class SystemTimeProvider : ITimeProvider
 {

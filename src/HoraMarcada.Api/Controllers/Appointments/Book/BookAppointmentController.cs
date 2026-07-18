@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using HoraMarcada.Application.UseCases.Appointments;
 using HoraMarcada.Application.Models;
-using HoraMarcada.Domain.Entities;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace HoraMarcada.Api.Controllers.Appointments.Book;
@@ -20,7 +19,7 @@ public class BookAppointmentController(
         Description = "Allows public scheduling of appointments. Prevents double bookings.",
         Tags = new[] { "Appointments" }
     )]
-    [SwaggerResponse(StatusCodes.Status200OK, "Returns the successfully booked appointment.", typeof(Appointment))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Returns the successfully booked appointment.", typeof(AppointmentDto))]
     [SwaggerResponse(StatusCodes.Status400BadRequest, "If validation fails or request contains invalid properties.", typeof(IDictionary<string, string[]>))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "If the store, professional, or service is not found.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status409Conflict, "If there is a scheduling conflict (slot collision).", typeof(ProblemDetails))]

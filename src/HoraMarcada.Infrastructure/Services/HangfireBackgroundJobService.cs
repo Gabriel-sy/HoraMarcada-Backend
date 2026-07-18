@@ -1,7 +1,5 @@
-using System;
-using System.Threading;
 using Hangfire;
-using HoraMarcada.Application.Common;
+using HoraMarcada.Application.Common.Interfaces;
 using HoraMarcada.Infrastructure.Jobs;
 
 namespace HoraMarcada.Infrastructure.Services;

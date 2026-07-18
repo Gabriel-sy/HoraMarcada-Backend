@@ -69,7 +69,7 @@ public class AddProfessionalUseCaseTests
         Assert.NotNull(result);
         Assert.Equal(input.Name, result.Name);
         Assert.Equal(input.PhotoUrl, result.PhotoUrl);
-        Assert.Equal(input.WhatsApp, result.WhatsApp?.Value);
+        Assert.Equal(input.WhatsApp, result.WhatsApp);
         Assert.Empty(result.WeeklySchedules);
 
         _ownershipPolicyMock.Verify(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()), Times.Once);

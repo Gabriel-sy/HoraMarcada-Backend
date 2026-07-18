@@ -1,8 +1,6 @@
-using System.Threading;
-using System.Threading.Tasks;
 using HoraMarcada.Domain.Entities;
 
-namespace HoraMarcada.Application.Common;
+namespace HoraMarcada.Application.Common.Interfaces;
 
 public interface IAppointmentNotificationService
 {

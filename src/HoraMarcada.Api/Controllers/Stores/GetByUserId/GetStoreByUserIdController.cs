@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using HoraMarcada.Application.UseCases.Stores;
-using HoraMarcada.Domain.Entities;
+using HoraMarcada.Application.Models;
 using HoraMarcada.Api.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -19,7 +18,7 @@ public class GetStoreByUserIdController(GetStoreByUserIdUseCase useCase) : Contr
         Description = "Retrieves the store owned by the entrepreneur matching the provided user ID.",
         Tags = new[] { "Stores" }
     )]
-    [SwaggerResponse(StatusCodes.Status200OK, "Returns the store details.", typeof(Store))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Returns the store details.", typeof(StoreDto))]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "If the user is not authenticated.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status403Forbidden, "If the authenticated user ID does not match the requested user ID.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "If no store is found for the given User ID.", typeof(ProblemDetails))]

@@ -1,4 +1,21 @@
+using HoraMarcada.Domain.Entities;
+
 namespace HoraMarcada.Application.Models;
+
+public record CustomerDto(
+    Guid Id,
+    Guid StoreId,
+    string Name,
+    string WhatsApp,
+    DateTimeOffset CreatedAt)
+{
+    public static CustomerDto FromDomain(Customer customer) => new(
+        customer.Id,
+        customer.StoreId,
+        customer.Name,
+        customer.WhatsApp.Value,
+        customer.CreatedAt);
+}
 
 public record CustomerListDto(
     Guid Id,

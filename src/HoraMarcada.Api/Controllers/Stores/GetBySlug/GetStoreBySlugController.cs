@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using HoraMarcada.Application.UseCases.Stores;
-using HoraMarcada.Domain.Entities;
+using HoraMarcada.Application.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace HoraMarcada.Api.Controllers.Stores.GetBySlug;
@@ -16,7 +16,7 @@ public class GetStoreBySlugController(GetStoreBySlugUseCase useCase) : Controlle
         Description = "Retrieves store details for the public page matching the provided slug.",
         Tags = new[] { "Stores" }
     )]
-    [SwaggerResponse(StatusCodes.Status200OK, "Returns the store details.", typeof(Store))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Returns the store details.", typeof(StoreDto))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "If no store is found for the given Slug.", typeof(ProblemDetails))]
     public async Task<IActionResult> GetStoreBySlug(
         [FromRoute] string slug,

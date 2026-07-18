@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using HoraMarcada.Application.Common;
+using HoraMarcada.Application.Common.Interfaces;
 using HoraMarcada.Application.Repositories;
-using HoraMarcada.Domain.Entities;
 using HoraMarcada.Domain.Enums;
 using Microsoft.Extensions.Logging;
 

@@ -1,4 +1,4 @@
-using HoraMarcada.Application.Common;
+using HoraMarcada.Application.Common.Services;
 using HoraMarcada.Application.Repositories;
 using HoraMarcada.Domain.Entities;
 using Moq;

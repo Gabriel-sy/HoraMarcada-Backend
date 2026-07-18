@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using HoraMarcada.Application.UseCases.TimeBlocks;
-using HoraMarcada.Domain.Entities;
+using HoraMarcada.Application.Models;
 using HoraMarcada.Api.Extensions;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -19,7 +19,7 @@ public class ListTimeBlocksController(ListTimeBlocksUseCase useCase) : Controlle
         Description = "Retrieves all administrative time blocks for a specific professional in the store. Entrepreneur authorization required.",
         Tags = new[] { "TimeBlocks" }
     )]
-    [SwaggerResponse(StatusCodes.Status200OK, "Returns the list of time blocks.", typeof(IReadOnlyList<TimeBlock>))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Returns the list of time blocks.", typeof(IReadOnlyList<TimeBlockDto>))]
     [SwaggerResponse(StatusCodes.Status401Unauthorized, "If the user is not authenticated.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status403Forbidden, "If the user does not own this store.", typeof(ProblemDetails))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "If the store or professional is not found.", typeof(ProblemDetails))]

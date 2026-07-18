@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using HoraMarcada.Application.UseCases.Professionals;
-using HoraMarcada.Domain.Entities;
+using HoraMarcada.Application.Models;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace HoraMarcada.Api.Controllers.Professionals.List;
@@ -16,7 +15,7 @@ public class ListProfessionalsController(ListProfessionalsUseCase useCase) : Con
         Description = "Retrieves a list of all registered professionals in the specified store.",
         Tags = new[] { "Professionals" }
     )]
-    [SwaggerResponse(StatusCodes.Status200OK, "Returns the list of professionals.", typeof(IReadOnlyList<Professional>))]
+    [SwaggerResponse(StatusCodes.Status200OK, "Returns the list of professionals.", typeof(IReadOnlyList<ProfessionalDto>))]
     [SwaggerResponse(StatusCodes.Status404NotFound, "If the store is not found.", typeof(ProblemDetails))]
     public async Task<IActionResult> ListProfessionals(
         [FromRoute] Guid storeId,

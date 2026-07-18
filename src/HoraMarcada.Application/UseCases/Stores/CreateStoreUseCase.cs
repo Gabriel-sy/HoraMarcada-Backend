@@ -8,7 +8,7 @@ namespace HoraMarcada.Application.UseCases.Stores;
 
 public class CreateStoreUseCase(IStoreRepository storeRepository)
 {
-    public async Task<Store> ExecuteAsync(Guid userId, CreateStoreInput input, CancellationToken cancellationToken = default)
+    public async Task<StoreDto> ExecuteAsync(Guid userId, CreateStoreInput input, CancellationToken cancellationToken = default)
     {
         var existingStore = await storeRepository.GetBySlugAsync(Slug.Create(input.Slug), cancellationToken);
         if (existingStore != null)
@@ -28,6 +28,6 @@ public class CreateStoreUseCase(IStoreRepository storeRepository)
             input.AddressLng);
 
         await storeRepository.AddAsync(store, cancellationToken);
-        return store;
+        return StoreDto.FromDomain(store);
     }
 }

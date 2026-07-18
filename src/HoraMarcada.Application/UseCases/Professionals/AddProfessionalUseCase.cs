@@ -9,7 +9,7 @@ public class AddProfessionalUseCase(
     IProfessionalRepository professionalRepository,
     IStoreOwnershipPolicy ownershipPolicy)
 {
-    public async Task<Professional> ExecuteAsync(Guid userId, Guid storeId, AddProfessionalInput input, CancellationToken cancellationToken = default)
+    public async Task<ProfessionalDto> ExecuteAsync(Guid userId, Guid storeId, AddProfessionalInput input, CancellationToken cancellationToken = default)
     {
         await ownershipPolicy.EnsureUserOwnsStoreAsync(userId, storeId, cancellationToken);
 
@@ -34,6 +34,6 @@ public class AddProfessionalUseCase(
         }
 
         await professionalRepository.AddAsync(professional, cancellationToken);
-        return professional;
+        return ProfessionalDto.FromDomain(professional);
     }
 }

@@ -1,9 +1,9 @@
 using Moq;
 using Xunit;
 using HoraMarcada.Application.UseCases.Appointments;
-using HoraMarcada.Application.UseCases.Availability;
 using HoraMarcada.Application.Repositories;
-using HoraMarcada.Application.Common;
+using HoraMarcada.Application.Common.Interfaces;
+using HoraMarcada.Application.Common.Services;
 using HoraMarcada.Application.Models;
 using HoraMarcada.Application.Exceptions;
 using HoraMarcada.Domain.Entities;
@@ -17,13 +17,11 @@ public class BookAppointmentUseCaseTests
     private readonly Mock<IStoreRepository> _storeRepositoryMock;
     private readonly Mock<IServiceRepository> _serviceRepositoryMock;
     private readonly Mock<IProfessionalRepository> _professionalRepositoryMock;
-    private readonly Mock<ITimeBlockRepository> _timeBlockRepositoryMock;
+    private readonly Mock<IAvailabilityService> _availabilityServiceMock;
     private readonly Mock<ITimeProvider> _timeProviderMock;
     private readonly Mock<IAppointmentNotificationService> _appointmentNotificationServiceMock;
-    private readonly Mock<IAppConfiguration> _appConfigurationMock;
     private readonly Mock<ICustomerRepository> _customerRepositoryMock;
     private readonly CancelTokenGenerator _cancelTokenGenerator;
-    private readonly GetAvailableSlotsUseCase _getAvailableSlotsUseCase;
     private readonly BookAppointmentUseCase _useCase;
 
     public BookAppointmentUseCaseTests()
@@ -32,28 +30,24 @@ public class BookAppointmentUseCaseTests
         _storeRepositoryMock = new Mock<IStoreRepository>();
         _serviceRepositoryMock = new Mock<IServiceRepository>();
         _professionalRepositoryMock = new Mock<IProfessionalRepository>();
-        _timeBlockRepositoryMock = new Mock<ITimeBlockRepository>();
+        _availabilityServiceMock = new Mock<IAvailabilityService>();
         _timeProviderMock = new Mock<ITimeProvider>();
         _appointmentNotificationServiceMock = new Mock<IAppointmentNotificationService>();
-        _appConfigurationMock = new Mock<IAppConfiguration>();
         _customerRepositoryMock = new Mock<ICustomerRepository>();
         _cancelTokenGenerator = new CancelTokenGenerator();
 
-        _appConfigurationMock.Setup(c => c.MinimumSlotLeadTimeMinutes).Returns(0);
+        _availabilityServiceMock
+            .Setup(s => s.GetAvailableSlotsAsync(
+                It.IsAny<Guid>(),
+                It.IsAny<Guid>(),
+                It.IsAny<DateTimeOffset>(),
+                It.IsAny<Guid?>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Array.Empty<DateTimeOffset>());
 
-        _timeBlockRepositoryMock
-            .Setup(r => r.ListByProfessionalAndDateAsync(It.IsAny<Guid>(), It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<TimeBlock>());
-
-        _getAvailableSlotsUseCase = new GetAvailableSlotsUseCase(
-            _storeRepositoryMock.Object,
-            _serviceRepositoryMock.Object,
-            _professionalRepositoryMock.Object,
-            _appointmentRepositoryMock.Object,
-            _timeBlockRepositoryMock.Object,
-            _timeProviderMock.Object,
-            _appConfigurationMock.Object
-        );
+        _customerRepositoryMock
+            .Setup(r => r.GetByWhatsAppAsync(It.IsAny<Guid>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Customer?)null);
 
         _appointmentRepositoryMock
             .Setup(r => r.GetByCancelTokenAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
@@ -64,7 +58,7 @@ public class BookAppointmentUseCaseTests
             _storeRepositoryMock.Object,
             _serviceRepositoryMock.Object,
             _professionalRepositoryMock.Object,
-            _getAvailableSlotsUseCase,
+            _availabilityServiceMock.Object,
             _appointmentNotificationServiceMock.Object,
             _timeProviderMock.Object,
             _customerRepositoryMock.Object,
@@ -263,11 +257,12 @@ public class BookAppointmentUseCaseTests
 
         await Assert.ThrowsAsync<ConflictException>(() => _useCase.ExecuteAsync(input));
 
-        _timeProviderMock.Verify(t => t.UtcNow, Times.AtLeastOnce());
-        _storeRepositoryMock.Verify(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>()), Times.Exactly(2));
-        _serviceRepositoryMock.Verify(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>()), Times.Exactly(2));
-        _professionalRepositoryMock.Verify(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>()), Times.Exactly(3));
-        _appointmentRepositoryMock.Verify(r => r.ListByProfessionalAndDateAsync(professionalId, It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()), Times.Never);
+        _timeProviderMock.Verify(t => t.UtcNow, Times.Once);
+        _storeRepositoryMock.Verify(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>()), Times.Once);
+        _serviceRepositoryMock.Verify(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>()), Times.Once);
+        _professionalRepositoryMock.Verify(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>()), Times.Once);
+        _availabilityServiceMock.Verify(s => s.GetAvailableSlotsAsync(
+            storeId, serviceId, input.StartTime, professionalId, It.IsAny<CancellationToken>()), Times.Once);
         _appointmentRepositoryMock.Verify(r => r.AddAsync(It.IsAny<Appointment>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
@@ -298,14 +293,14 @@ public class BookAppointmentUseCaseTests
         var professional = Professional.Create(storeId, "Jane Doe");
         var idField = typeof(Professional).GetProperty("Id");
         idField?.SetValue(professional, professionalId);
-        professional.AddWeeklyHours(4, new TimeOnly(9, 0), new TimeOnly(12, 0), intervalMinutes: 30);
 
         _storeRepositoryMock.Setup(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>())).ReturnsAsync(store);
         _serviceRepositoryMock.Setup(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>())).ReturnsAsync(service);
         _professionalRepositoryMock.Setup(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>())).ReturnsAsync(professional);
-        _appointmentRepositoryMock
-            .Setup(r => r.ListByProfessionalAndDateAsync(professionalId, It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new List<Appointment>());
+
+        _availabilityServiceMock
+            .Setup(s => s.GetAvailableSlotsAsync(storeId, serviceId, input.StartTime, professionalId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<DateTimeOffset> { input.StartTime });
 
         var result = await _useCase.ExecuteAsync(input);
 
@@ -314,32 +309,36 @@ public class BookAppointmentUseCaseTests
         Assert.Equal(professionalId, result.ProfessionalId);
         Assert.Equal(serviceId, result.ServiceId);
         Assert.Equal(input.CustomerName, result.CustomerName);
-        Assert.Equal(input.CustomerWhatsApp, result.CustomerWhatsApp.Value);
+        Assert.Equal(input.CustomerWhatsApp, result.CustomerWhatsApp);
         Assert.Equal(input.StartTime, result.StartTime);
         Assert.Equal(input.StartTime.AddMinutes(30), result.EndTime);
         Assert.NotNull(result.CancelToken);
         Assert.Equal(5, result.CancelToken.Length);
 
-        _timeProviderMock.Verify(t => t.UtcNow, Times.AtLeastOnce());
-        _storeRepositoryMock.Verify(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>()), Times.Exactly(2));
-        _serviceRepositoryMock.Verify(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>()), Times.Exactly(2));
-        _professionalRepositoryMock.Verify(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>()), Times.Exactly(3));
-        _appointmentRepositoryMock.Verify(r => r.ListByProfessionalAndDateAsync(professionalId, It.IsAny<DateTimeOffset>(), It.IsAny<CancellationToken>()), Times.Once);
-        
-        _appointmentRepositoryMock.Verify(r => r.AddAsync(It.Is<Appointment>(a => 
+        _timeProviderMock.Verify(t => t.UtcNow, Times.Once);
+        _storeRepositoryMock.Verify(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>()), Times.Once);
+        _serviceRepositoryMock.Verify(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>()), Times.Once);
+        _professionalRepositoryMock.Verify(r => r.GetByIdAsync(professionalId, It.IsAny<CancellationToken>()), Times.Once);
+        _availabilityServiceMock.Verify(s => s.GetAvailableSlotsAsync(
+            storeId, serviceId, input.StartTime, professionalId, It.IsAny<CancellationToken>()), Times.Once);
+
+        _appointmentRepositoryMock.Verify(r => r.AddAsync(It.Is<Appointment>(a =>
             a.Id == result.Id &&
             a.StoreId == storeId &&
             a.ProfessionalId == professionalId &&
             a.ServiceId == serviceId &&
             a.CustomerName == input.CustomerName &&
             a.CustomerWhatsApp.Value == input.CustomerWhatsApp &&
-            
             a.StartTime == input.StartTime &&
             a.EndTime == input.StartTime.AddMinutes(30) &&
             a.CancelToken == result.CancelToken
         ), It.IsAny<CancellationToken>()), Times.Once);
 
         _appointmentNotificationServiceMock.Verify(n => n.DispatchBookingNotificationsAsync(
-            result, store, service, professional, It.IsAny<CancellationToken>()), Times.Once);
+            It.Is<Appointment>(a => a.Id == result.Id),
+            store,
+            service,
+            professional,
+            It.IsAny<CancellationToken>()), Times.Once);
     }
 }

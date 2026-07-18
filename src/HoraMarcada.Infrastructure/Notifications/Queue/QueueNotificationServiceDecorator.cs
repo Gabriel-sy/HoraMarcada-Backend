@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using HoraMarcada.Application.Common;
+using HoraMarcada.Application.Common.Interfaces;
 using HoraMarcada.Domain.Entities;
 using HoraMarcada.Infrastructure.Notifications.Channels.WhatsApp;
 

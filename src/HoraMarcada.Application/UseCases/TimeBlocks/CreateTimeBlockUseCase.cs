@@ -11,7 +11,7 @@ public class CreateTimeBlockUseCase(
     IProfessionalRepository professionalRepository,
     IStoreOwnershipPolicy ownershipPolicy)
 {
-    public async Task<TimeBlock> ExecuteAsync(
+    public async Task<TimeBlockDto> ExecuteAsync(
         Guid userId,
         Guid storeId,
         Guid professionalId,
@@ -34,6 +34,6 @@ public class CreateTimeBlockUseCase(
 
         await timeBlockRepository.AddAsync(timeBlock, cancellationToken);
 
-        return timeBlock;
+        return TimeBlockDto.FromDomain(timeBlock);
     }
 }

@@ -3,7 +3,7 @@ using Xunit;
 using HoraMarcada.Application.UseCases.Appointments;
 using HoraMarcada.Application.Repositories;
 using HoraMarcada.Application.Exceptions;
-using HoraMarcada.Application.Common;
+using HoraMarcada.Application.Common.Interfaces;
 using HoraMarcada.Domain.Entities;
 using HoraMarcada.Domain.Exceptions;
 using HoraMarcada.Domain.Enums;

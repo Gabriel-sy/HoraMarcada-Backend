@@ -1,8 +1,7 @@
-using HoraMarcada.Application.Common;
+using HoraMarcada.Application.Common.Interfaces;
 using HoraMarcada.Application.Exceptions;
 using HoraMarcada.Application.Models;
 using HoraMarcada.Application.Repositories;
-using HoraMarcada.Application.UseCases.Availability;
 using HoraMarcada.Domain.Entities;
 using HoraMarcada.Domain.Exceptions;
 
@@ -13,13 +12,13 @@ public class BookAppointmentUseCase(
     IStoreRepository storeRepository,
     IServiceRepository serviceRepository,
     IProfessionalRepository professionalRepository,
-    GetAvailableSlotsUseCase getAvailableSlotsUseCase,
+    IAvailabilityService availabilityService,
     IAppointmentNotificationService appointmentNotificationService,
     ITimeProvider timeProvider,
     ICustomerRepository customerRepository,
     ICancelTokenGenerator cancelTokenGenerator)
 {
-    public async Task<Appointment> ExecuteAsync(BookAppointmentInput input, CancellationToken cancellationToken = default)
+    public async Task<AppointmentDto> ExecuteAsync(BookAppointmentInput input, CancellationToken cancellationToken = default)
     {
         if (input.StartTime < timeProvider.UtcNow)
             throw new DomainValidationException("Cannot book an appointment in the past.");
@@ -48,7 +47,7 @@ public class BookAppointmentUseCase(
         if (!service.ProfessionalIds.Contains(input.ProfessionalId))
             throw new DomainValidationException($"Professional {input.ProfessionalId} is not assigned to service {input.ServiceId}.");
 
-        var slots = await getAvailableSlotsUseCase.ExecuteAsync(
+        var slots = await availabilityService.GetAvailableSlotsAsync(
             input.StoreId,
             input.ServiceId,
             input.StartTime,
@@ -89,6 +88,6 @@ public class BookAppointmentUseCase(
         await appointmentNotificationService.DispatchBookingNotificationsAsync(
             appointment, store, service, professional, cancellationToken);
 
-        return appointment;
+        return AppointmentDto.FromDomain(appointment);
     }
 }

@@ -1,6 +1,4 @@
-using System;
-
-namespace HoraMarcada.Application.Common;
+namespace HoraMarcada.Application.Common.Interfaces;
 
 public interface IBackgroundJobService
 {

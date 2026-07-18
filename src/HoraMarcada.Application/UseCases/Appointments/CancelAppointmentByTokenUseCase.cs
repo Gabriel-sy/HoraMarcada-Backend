@@ -1,4 +1,4 @@
-using HoraMarcada.Application.Common;
+using HoraMarcada.Application.Common.Interfaces;
 using HoraMarcada.Application.Exceptions;
 using HoraMarcada.Application.Repositories;
 using HoraMarcada.Domain.Exceptions;

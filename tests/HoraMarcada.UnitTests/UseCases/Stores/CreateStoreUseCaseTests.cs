@@ -72,9 +72,9 @@ public class CreateStoreUseCaseTests
         Assert.NotNull(result);
         Assert.Equal(userId, result.UserId);
         Assert.Equal(input.Name, result.Name);
-        Assert.Equal(input.Slug, result.Slug.Value);
-        Assert.Equal(input.WhatsApp, result.WhatsApp.Value);
-        Assert.Equal(input.Email, result.Email.Value);
+        Assert.Equal(input.Slug, result.Slug);
+        Assert.Equal(input.WhatsApp, result.WhatsApp);
+        Assert.Equal(input.Email, result.Email);
 
         _storeRepositoryMock.Verify(
             r => r.AddAsync(It.Is<Store>(s => 
