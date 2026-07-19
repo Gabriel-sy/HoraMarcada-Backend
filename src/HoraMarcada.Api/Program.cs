@@ -21,6 +21,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
+        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
         options.AllowInputFormatterExceptionMessages = builder.Environment.IsDevelopment();
     });
 builder.Services.AddProblemDetails();
