@@ -205,7 +205,7 @@ public class BookAppointmentUseCaseTests
             .Returns(input.StartTime.AddMinutes(-5));
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         var professional = Professional.Create(storeId, "Jane Doe");
         var idField = typeof(Professional).GetProperty("Id");
         idField?.SetValue(professional, professionalId);
@@ -244,7 +244,7 @@ public class BookAppointmentUseCaseTests
             .Returns(input.StartTime.AddMinutes(-5));
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         service.AssignProfessional(professionalId);
 
         var professional = Professional.Create(storeId, "Jane Doe");
@@ -287,7 +287,7 @@ public class BookAppointmentUseCaseTests
             .Returns(input.StartTime.AddMinutes(-5));
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         service.AssignProfessional(professionalId);
 
         var professional = Professional.Create(storeId, "Jane Doe");

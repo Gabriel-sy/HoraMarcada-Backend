@@ -99,7 +99,7 @@ public class UpdateServiceUseCaseTests
             .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
-        var service = Service.Create(otherStoreId, "Old Haircut", 30);
+        var service = Service.Create(otherStoreId, Guid.NewGuid(), "Old Haircut", 30);
         _serviceRepositoryMock
             .Setup(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(service);
@@ -131,7 +131,7 @@ public class UpdateServiceUseCaseTests
             .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
-        var service = Service.Create(storeId, "Old Haircut", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Old Haircut", 30);
         var idField = typeof(Service).GetProperty("Id");
         idField?.SetValue(service, serviceId);
 
@@ -173,7 +173,7 @@ public class UpdateServiceUseCaseTests
             .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
-        var service = Service.Create(storeId, "Old Haircut", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Old Haircut", 30);
         var idField = typeof(Service).GetProperty("Id");
         idField?.SetValue(service, serviceId);
         service.AssignProfessional(Guid.NewGuid()); // Old assigned professional

@@ -9,6 +9,7 @@ public sealed class Service
 
     public Guid Id { get; private set; }
     public Guid StoreId { get; private set; }
+    public Guid CategoryId { get; private set; }
     public string Name { get; private set; } = string.Empty;
     public short DurationMinutes { get; private set; }
     public Money? Price { get; private set; }
@@ -21,6 +22,7 @@ public sealed class Service
 
     public static Service Create(
         Guid storeId,
+        Guid categoryId,
         string name,
         short durationMinutes,
         decimal? price = null,
@@ -28,6 +30,9 @@ public sealed class Service
     {
         if (storeId == Guid.Empty)
             throw new DomainValidationException("Store id is required.");
+
+        if (categoryId == Guid.Empty)
+            throw new DomainValidationException("Category id is required.");
 
         if (string.IsNullOrWhiteSpace(name))
             throw new DomainValidationException("Service name is required.");
@@ -39,6 +44,7 @@ public sealed class Service
         {
             Id = Guid.NewGuid(),
             StoreId = storeId,
+            CategoryId = categoryId,
             Name = name.Trim(),
             DurationMinutes = durationMinutes,
             Price = Money.CreateOptional(price),

@@ -74,12 +74,13 @@ public sealed class Store
     }
 
     public Service AddService(
+        Guid categoryId,
         string name,
         short durationMinutes,
         decimal? price = null,
         bool active = true)
     {
-        var service = Service.Create(Id, name, durationMinutes, price, active);
+        var service = Service.Create(Id, categoryId, name, durationMinutes, price, active);
         _services.Add(service);
         return service;
     }

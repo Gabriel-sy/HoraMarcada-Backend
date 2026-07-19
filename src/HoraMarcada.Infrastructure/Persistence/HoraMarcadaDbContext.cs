@@ -6,6 +6,7 @@ namespace HoraMarcada.Infrastructure.Persistence;
 public sealed class HoraMarcadaDbContext(DbContextOptions<HoraMarcadaDbContext> options) : DbContext(options)
 {
     public DbSet<Store> Stores => Set<Store>();
+    public DbSet<Category> Categories => Set<Category>();
     public DbSet<Professional> Professionals => Set<Professional>();
     public DbSet<WeeklyHours> WeeklyHours => Set<WeeklyHours>();
     public DbSet<Service> Services => Set<Service>();

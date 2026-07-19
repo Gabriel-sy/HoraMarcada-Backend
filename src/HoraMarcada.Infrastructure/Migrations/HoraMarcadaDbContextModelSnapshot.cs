@@ -92,6 +92,31 @@ namespace HoraMarcada.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("HoraMarcada.Domain.Entities.Category", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("name");
+
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("store_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("StoreId")
+                        .HasDatabaseName("idx_categories_store");
+
+                    b.ToTable("categories", (string)null);
+                });
+
             modelBuilder.Entity("HoraMarcada.Domain.Entities.Customer", b =>
                 {
                     b.Property<Guid>("Id")
@@ -179,6 +204,10 @@ namespace HoraMarcada.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("active");
 
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("category_id");
+
                     b.Property<short>("DurationMinutes")
                         .HasColumnType("smallint")
                         .HasColumnName("duration_min");
@@ -198,6 +227,8 @@ namespace HoraMarcada.Infrastructure.Migrations
                         .HasColumnName("store_id");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
 
                     b.HasIndex("StoreId");
 
@@ -395,6 +426,15 @@ namespace HoraMarcada.Infrastructure.Migrations
                     b.Navigation("Customer");
                 });
 
+            modelBuilder.Entity("HoraMarcada.Domain.Entities.Category", b =>
+                {
+                    b.HasOne("HoraMarcada.Domain.Entities.Store", null)
+                        .WithMany()
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("HoraMarcada.Domain.Entities.Customer", b =>
                 {
                     b.HasOne("HoraMarcada.Domain.Entities.Store", null)
@@ -415,6 +455,12 @@ namespace HoraMarcada.Infrastructure.Migrations
 
             modelBuilder.Entity("HoraMarcada.Domain.Entities.Service", b =>
                 {
+                    b.HasOne("HoraMarcada.Domain.Entities.Category", null)
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("HoraMarcada.Domain.Entities.Store", null)
                         .WithMany("Services")
                         .HasForeignKey("StoreId")

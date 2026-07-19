@@ -107,7 +107,7 @@ public class CancelAppointmentByTokenUseCaseTests
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         var professional = Professional.Create(storeId, "Professional");
 
         _appointmentRepositoryMock

@@ -3,6 +3,7 @@ using HoraMarcada.Application.Common.Services;
 using HoraMarcada.Application.Policies;
 using HoraMarcada.Application.UseCases.Appointments;
 using HoraMarcada.Application.UseCases.Availability;
+using HoraMarcada.Application.UseCases.Categories;
 using HoraMarcada.Application.UseCases.Customers;
 using HoraMarcada.Application.UseCases.Professionals;
 using HoraMarcada.Application.UseCases.Services;
@@ -38,6 +39,9 @@ public static class ApplicationServiceCollectionExtensions
         services.AddScoped<UpdateServiceUseCase>();
         services.AddScoped<DeleteServiceUseCase>();
         services.AddScoped<ListProfessionalsForServiceUseCase>();
+
+        services.AddScoped<CreateCategoryUseCase>();
+        services.AddScoped<ListCategoriesUseCase>();
 
         services.AddScoped<GetAvailableSlotsUseCase>();
 

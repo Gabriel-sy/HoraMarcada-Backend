@@ -49,7 +49,7 @@ public class ListProfessionalsForServiceUseCaseTests
         var inactiveProfId = Guid.NewGuid();
         var nonExistentProfId = Guid.NewGuid();
 
-        var service = Service.Create(storeId, "Service Name", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service Name", 30);
         var serviceIdField = typeof(Service).GetProperty("Id");
         serviceIdField?.SetValue(service, serviceId);
 
@@ -106,7 +106,7 @@ public class ListProfessionalsForServiceUseCaseTests
         var profBId = Guid.NewGuid();
         var profCId = Guid.NewGuid();
 
-        var service = Service.Create(storeId, "Service Name", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service Name", 30);
         typeof(Service).GetProperty("Id")?.SetValue(service, serviceId);
 
         service.AssignProfessional(profCId);

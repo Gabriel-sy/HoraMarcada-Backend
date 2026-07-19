@@ -36,7 +36,7 @@ public class WahaWhatsAppNotificationServiceTests
     {
         var storeId = Guid.NewGuid();
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Corte", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Corte", 30);
         var professional = Professional.Create(storeId, "João");
         var appointment = Appointment.Create(
             storeId,
@@ -91,7 +91,7 @@ public class WahaWhatsAppNotificationServiceTests
             address: "Rua das Flores, 123",
             addressLat: -23.5505m,
             addressLng: -46.6333m);
-        var service = Service.Create(storeId, "Corte", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Corte", 30);
         var professional = Professional.Create(storeId, "João");
         var appointment = Appointment.Create(
             storeId,
@@ -126,7 +126,7 @@ public class WahaWhatsAppNotificationServiceTests
     {
         var storeId = Guid.NewGuid();
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Corte", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Corte", 30);
         var professional = Professional.Create(storeId, "João");
         var appointment = Appointment.Create(
             storeId,
@@ -162,7 +162,7 @@ public class WahaWhatsAppNotificationServiceTests
     {
         var storeId = Guid.NewGuid();
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Corte", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Corte", 30);
         var professional = Professional.Create(storeId, "João", whatsApp: "+5511977776666");
         var appointment = Appointment.Create(
             storeId,

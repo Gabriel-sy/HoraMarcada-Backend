@@ -35,7 +35,7 @@ public class QueueNotificationServiceDecoratorTests
     public async Task SendBookingConfirmationToCustomerAsync_ShouldQueueJob()
     {
         var store = Store.Create(Guid.NewGuid(), "Store Name", "store-slug", "+5511999999999", "store@example.com");
-        var service = Service.Create(store.Id, "Haircut", 30);
+        var service = Service.Create(store.Id, Guid.NewGuid(), "Haircut", 30);
         var professional = Professional.Create(store.Id, "Jane Doe");
         var appointment = Appointment.Create(
             store.Id,
@@ -62,7 +62,7 @@ public class QueueNotificationServiceDecoratorTests
     public async Task SendBookingNotificationToProfessionalAsync_ShouldQueueJob()
     {
         var store = Store.Create(Guid.NewGuid(), "Store Name", "store-slug", "+5511999999999", "store@example.com");
-        var service = Service.Create(store.Id, "Haircut", 30);
+        var service = Service.Create(store.Id, Guid.NewGuid(), "Haircut", 30);
         var professional = Professional.Create(store.Id, "Jane Doe");
         var appointment = Appointment.Create(
             store.Id,
@@ -89,7 +89,7 @@ public class QueueNotificationServiceDecoratorTests
     public async Task SendCancellationNoticeToCustomerAsync_ShouldQueueJob()
     {
         var store = Store.Create(Guid.NewGuid(), "Store Name", "store-slug", "+5511999999999", "store@example.com");
-        var service = Service.Create(store.Id, "Haircut", 30);
+        var service = Service.Create(store.Id, Guid.NewGuid(), "Haircut", 30);
         var professional = Professional.Create(store.Id, "Jane Doe");
         var appointment = Appointment.Create(
             store.Id,
@@ -116,7 +116,7 @@ public class QueueNotificationServiceDecoratorTests
     public async Task SendCancellationNotificationToProfessionalAsync_ShouldQueueJob()
     {
         var store = Store.Create(Guid.NewGuid(), "Store Name", "store-slug", "+5511999999999", "store@example.com");
-        var service = Service.Create(store.Id, "Haircut", 30);
+        var service = Service.Create(store.Id, Guid.NewGuid(), "Haircut", 30);
         var professional = Professional.Create(store.Id, "Jane Doe");
         var appointment = Appointment.Create(
             store.Id,
@@ -144,7 +144,7 @@ public class QueueNotificationServiceDecoratorTests
     {
         _configMock.Setup(c => c.NotificationsEnabled).Returns(false);
         var store = Store.Create(Guid.NewGuid(), "Store Name", "store-slug", "+5511999999999", "store@example.com");
-        var service = Service.Create(store.Id, "Haircut", 30);
+        var service = Service.Create(store.Id, Guid.NewGuid(), "Haircut", 30);
         var professional = Professional.Create(store.Id, "Jane Doe");
         var appointment = Appointment.Create(
             store.Id,

@@ -22,8 +22,8 @@ public class ListServicesUseCaseTests
     {
         // Arrange
         var storeId = Guid.NewGuid();
-        var service1 = Service.Create(storeId, "Service 1", 30, active: true);
-        var service2 = Service.Create(storeId, "Service 2", 60, active: false);
+        var service1 = Service.Create(storeId, Guid.NewGuid(), "Service 1", 30, active: true);
+        var service2 = Service.Create(storeId, Guid.NewGuid(), "Service 2", 60, active: false);
         var serviceList = new List<Service> { service1, service2 }.AsReadOnly();
 
         _serviceRepositoryMock
@@ -47,8 +47,8 @@ public class ListServicesUseCaseTests
     {
         // Arrange
         var storeId = Guid.NewGuid();
-        var service1 = Service.Create(storeId, "Service 1", 30, active: true);
-        var service2 = Service.Create(storeId, "Service 2", 60, active: false);
+        var service1 = Service.Create(storeId, Guid.NewGuid(), "Service 1", 30, active: true);
+        var service2 = Service.Create(storeId, Guid.NewGuid(), "Service 2", 60, active: false);
         var serviceList = new List<Service> { service1, service2 }.AsReadOnly();
 
         _serviceRepositoryMock

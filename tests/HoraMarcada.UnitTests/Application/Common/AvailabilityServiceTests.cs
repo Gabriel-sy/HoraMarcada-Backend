@@ -83,7 +83,7 @@ public class AvailabilityServiceTests
         var serviceId = Guid.NewGuid();
         var otherStoreId = Guid.NewGuid();
         var store = Store.Create(Guid.NewGuid(), "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(otherStoreId, "Service", 30);
+        var service = Service.Create(otherStoreId, Guid.NewGuid(), "Service", 30);
 
         _storeRepositoryMock.Setup(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>())).ReturnsAsync(store);
         _serviceRepositoryMock.Setup(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>())).ReturnsAsync(service);
@@ -101,7 +101,7 @@ public class AvailabilityServiceTests
         var storeId = Guid.NewGuid();
         var serviceId = Guid.NewGuid();
         var store = Store.Create(Guid.NewGuid(), "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30, active: false);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30, active: false);
 
         _storeRepositoryMock.Setup(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>())).ReturnsAsync(store);
         _serviceRepositoryMock.Setup(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>())).ReturnsAsync(service);
@@ -123,7 +123,7 @@ public class AvailabilityServiceTests
         var professionalId = Guid.NewGuid();
 
         var store = Store.Create(Guid.NewGuid(), "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
 
         _storeRepositoryMock.Setup(r => r.GetByIdAsync(storeId, It.IsAny<CancellationToken>())).ReturnsAsync(store);
         _serviceRepositoryMock.Setup(r => r.GetByIdAsync(serviceId, It.IsAny<CancellationToken>())).ReturnsAsync(service);
@@ -144,7 +144,7 @@ public class AvailabilityServiceTests
         var professionalId = Guid.NewGuid();
 
         var store = Store.Create(Guid.NewGuid(), "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         var professional = Professional.Create(storeId, "Jane Doe");
         var idField = typeof(Professional).GetProperty("Id");
         idField?.SetValue(professional, professionalId);
@@ -170,7 +170,7 @@ public class AvailabilityServiceTests
         var date = new DateTimeOffset(2026, 5, 21, 0, 0, 0, TimeSpan.FromHours(-3));
 
         var store = Store.Create(Guid.NewGuid(), "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         service.AssignProfessional(professionalId);
 
         var professional = Professional.Create(storeId, "Jane Doe");
@@ -227,7 +227,7 @@ public class AvailabilityServiceTests
         var date = new DateTimeOffset(2026, 5, 21, 0, 0, 0, TimeSpan.FromHours(-3));
 
         var store = Store.Create(Guid.NewGuid(), "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         service.AssignProfessional(professionalId);
 
         var professional = Professional.Create(storeId, "Jane Doe");
@@ -270,7 +270,7 @@ public class AvailabilityServiceTests
         var date = new DateTimeOffset(2026, 5, 21, 0, 0, 0, TimeSpan.FromHours(-3));
 
         var store = Store.Create(Guid.NewGuid(), "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         service.AssignProfessional(professionalId);
 
         var professional = Professional.Create(storeId, "Jane Doe");
@@ -316,7 +316,7 @@ public class AvailabilityServiceTests
         var date = new DateTimeOffset(2026, 5, 21, 0, 0, 0, TimeSpan.FromHours(-3));
 
         var store = Store.Create(Guid.NewGuid(), "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         service.AssignProfessional(professionalId);
 
         var professional = Professional.Create(storeId, "Jane Doe");

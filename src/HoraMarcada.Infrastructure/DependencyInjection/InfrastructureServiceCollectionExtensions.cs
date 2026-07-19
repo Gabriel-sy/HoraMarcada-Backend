@@ -36,6 +36,7 @@ public static class InfrastructureServiceCollectionExtensions
             options.UseNpgsql(connectionString));
 
         services.AddScoped<IStoreRepository, EfStoreRepository>();
+        services.AddScoped<ICategoryRepository, EfCategoryRepository>();
         services.AddScoped<IProfessionalRepository, EfProfessionalRepository>();
         services.AddScoped<IServiceRepository, EfServiceRepository>();
         services.AddScoped<IAppointmentRepository, EfAppointmentRepository>();

@@ -66,7 +66,7 @@ public class GetStoreStatisticsUseCaseTests
             .Setup(p => p.EnsureUserOwnsStoreAsync(userId, storeId, It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
-        var service = Service.Create(storeId, "Corte de Cabelo", 30, 50.00m);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Corte de Cabelo", 30, 50.00m);
         var professional = Professional.Create(storeId, "João Barbeiro");
 
         var app1 = Appointment.Create(

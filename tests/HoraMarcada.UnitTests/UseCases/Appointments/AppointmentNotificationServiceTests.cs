@@ -41,7 +41,7 @@ public class AppointmentNotificationServiceTests
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         var professional = Professional.Create(storeId, "Jane Doe");
 
         _timeProviderMock.Setup(t => t.UtcNow).Returns(appointment.StartTime.AddDays(-2));
@@ -70,7 +70,7 @@ public class AppointmentNotificationServiceTests
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         var professional = Professional.Create(storeId, "Jane Doe");
 
         _timeProviderMock.Setup(t => t.UtcNow).Returns(appointment.StartTime.AddDays(-2));
@@ -95,7 +95,7 @@ public class AppointmentNotificationServiceTests
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         var professional = Professional.Create(storeId, "Jane Doe");
 
         _timeProviderMock.Setup(t => t.UtcNow).Returns(appointment.StartTime.AddHours(-29));
@@ -120,7 +120,7 @@ public class AppointmentNotificationServiceTests
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         var professional = Professional.Create(storeId, "Jane Doe");
 
         _timeProviderMock.Setup(t => t.UtcNow).Returns(appointment.StartTime.AddDays(-2));
@@ -146,7 +146,7 @@ public class AppointmentNotificationServiceTests
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         var professional = Professional.Create(storeId, "Jane Doe");
 
         _timeProviderMock.Setup(t => t.UtcNow).Returns(appointment.StartTime.AddDays(-2));
@@ -172,7 +172,7 @@ public class AppointmentNotificationServiceTests
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         var professional = Professional.Create(storeId, "Jane Doe");
 
         _timeProviderMock.Setup(t => t.UtcNow).Returns(new DateTimeOffset(2026, 5, 20, 3, 0, 0, TimeSpan.FromHours(-3)));
@@ -197,7 +197,7 @@ public class AppointmentNotificationServiceTests
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         var professional = Professional.Create(storeId, "Jane Doe");
 
         _timeProviderMock.Setup(t => t.UtcNow).Returns(new DateTimeOffset(2026, 5, 31, 15, 30, 0, TimeSpan.FromHours(-3)));
@@ -223,7 +223,7 @@ public class AppointmentNotificationServiceTests
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         var professional = Professional.Create(storeId, "Jane Doe");
 
         _timeProviderMock.Setup(t => t.UtcNow).Returns(new DateTimeOffset(2026, 5, 31, 15, 30, 0, TimeSpan.FromHours(-3)));
@@ -248,7 +248,7 @@ public class AppointmentNotificationServiceTests
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         var professional = Professional.Create(storeId, "Jane Doe");
 
         _timeProviderMock.Setup(t => t.UtcNow).Returns(new DateTimeOffset(2026, 6, 1, 5, 0, 0, TimeSpan.FromHours(-3)));
@@ -273,7 +273,7 @@ public class AppointmentNotificationServiceTests
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         var professional = Professional.Create(storeId, "Jane Doe", whatsApp: "+5511888888888");
 
         _timeProviderMock.Setup(t => t.UtcNow).Returns(appointment.StartTime.AddDays(-2));
@@ -299,7 +299,7 @@ public class AppointmentNotificationServiceTests
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         var professional = Professional.Create(storeId, "Jane Doe");
 
         _timeProviderMock.Setup(t => t.UtcNow).Returns(appointment.StartTime.AddDays(-2));
@@ -325,7 +325,7 @@ public class AppointmentNotificationServiceTests
         );
 
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
-        var service = Service.Create(storeId, "Service", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Service", 30);
         var professional = Professional.Create(storeId, "Jane Doe");
 
         await _service.DispatchCancellationNotificationsAsync(appointment, store, service, professional);

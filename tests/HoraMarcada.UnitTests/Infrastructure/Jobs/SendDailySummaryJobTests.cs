@@ -47,7 +47,7 @@ public class SendDailySummaryJobTests
         var store = Store.Create(storeId, "Store", "store", "+5511999999999", "store@example.com");
         var professional1 = Professional.Create(storeId, "Bruno", whatsApp: "+5511977776666");
         var professional2 = Professional.Create(storeId, "Ana", whatsApp: "+5511988887777");
-        var service = Service.Create(storeId, "Corte", 30);
+        var service = Service.Create(storeId, Guid.NewGuid(), "Corte", 30);
 
         var appointment1 = Appointment.Create(
             storeId,
