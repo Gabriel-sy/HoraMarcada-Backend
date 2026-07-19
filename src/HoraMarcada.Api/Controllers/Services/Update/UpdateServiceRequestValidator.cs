@@ -10,6 +10,9 @@ public class UpdateServiceRequestValidator : AbstractValidator<UpdateServiceInpu
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Service name is required.");
 
+        RuleFor(x => x.CategoryId)
+            .NotEmpty().WithMessage("Category id is required.");
+
         RuleFor(x => x.DurationMinutes)
             .GreaterThan((short)0).WithMessage("Service duration must be greater than zero.");
 

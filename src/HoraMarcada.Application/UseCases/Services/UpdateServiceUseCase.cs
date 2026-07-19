@@ -9,6 +9,7 @@ namespace HoraMarcada.Application.UseCases.Services;
 public class UpdateServiceUseCase(
     IServiceRepository serviceRepository,
     IProfessionalRepository professionalRepository,
+    ICategoryRepository categoryRepository,
     IStoreOwnershipPolicy ownershipPolicy)
 {
     public async Task<ServiceDto> ExecuteAsync(Guid userId, Guid storeId, Guid serviceId, UpdateServiceInput input, CancellationToken cancellationToken = default)
@@ -19,6 +20,17 @@ public class UpdateServiceUseCase(
         if (service == null || service.StoreId != storeId)
         {
             throw new NotFoundException($"Service with ID {serviceId} not found in store {storeId}.");
+        }
+
+        if (input.CategoryId == Guid.Empty)
+        {
+            throw new DomainValidationException("Category id is required.");
+        }
+
+        var category = await categoryRepository.GetByIdAsync(input.CategoryId, cancellationToken);
+        if (category == null || category.StoreId != storeId)
+        {
+            throw new DomainValidationException($"Category {input.CategoryId} does not belong to store {storeId}.");
         }
 
         if (input.ProfessionalIds != null && input.ProfessionalIds.Count > 0)
@@ -34,6 +46,7 @@ public class UpdateServiceUseCase(
         }
 
         service.Update(input.Name, input.DurationMinutes, input.Price, input.Active);
+        service.ChangeCategory(input.CategoryId);
 
         service.ClearProfessionals();
         if (input.ProfessionalIds != null)
@@ -45,6 +58,6 @@ public class UpdateServiceUseCase(
         }
 
         await serviceRepository.UpdateAsync(service, cancellationToken);
-        return ServiceDto.FromDomain(service);
+        return ServiceDto.FromDomain(service, category.Name);
     }
 }

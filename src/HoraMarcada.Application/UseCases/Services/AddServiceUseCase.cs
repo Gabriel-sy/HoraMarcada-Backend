@@ -55,6 +55,6 @@ public class AddServiceUseCase(
         }
 
         await serviceRepository.AddAsync(service, cancellationToken);
-        return ServiceDto.FromDomain(service);
+        return ServiceDto.FromDomain(service, category.Name);
     }
 }

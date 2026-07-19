@@ -83,4 +83,12 @@ public sealed class Service
     {
         _professionalIds.Clear();
     }
+
+    public void ChangeCategory(Guid categoryId)
+    {
+        if (categoryId == Guid.Empty)
+            throw new DomainValidationException("Category id is required.");
+
+        CategoryId = categoryId;
+    }
 }

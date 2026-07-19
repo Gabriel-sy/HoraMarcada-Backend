@@ -6,15 +6,19 @@ namespace HoraMarcada.Application.Models;
 public record ServiceDto(
     Guid Id,
     Guid StoreId,
+    Guid CategoryId,
+    string CategoryName,
     string Name,
     short DurationMinutes,
     decimal? Price,
     bool Active,
     IReadOnlyList<Guid> ProfessionalIds)
 {
-    public static ServiceDto FromDomain(Service service) => new(
+    public static ServiceDto FromDomain(Service service, string categoryName) => new(
         service.Id,
         service.StoreId,
+        service.CategoryId,
+        categoryName,
         service.Name,
         service.DurationMinutes,
         service.Price?.Amount,
@@ -32,6 +36,7 @@ public record AddServiceInput(
 public record UpdateServiceInput(
     [property: SwaggerExample("Haircut Premium")] string Name,
     [property: SwaggerExample("45")] short DurationMinutes,
+    [property: SwaggerExample("3fa85f64-5717-4562-b3fc-2c963f66afa6")] Guid CategoryId,
     [property: SwaggerExample("65.00")] decimal? Price = null,
     [property: SwaggerExample("true")] bool Active = true,
     List<Guid>? ProfessionalIds = null);
